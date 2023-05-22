@@ -12,15 +12,14 @@ class NewUserForm(UserCreationForm):
     class Meta:
         model = Account
         fields = (
-        "username", "email", "second_name", "first_name", "middle_name", "password1", "password2", "date_of_birth", "role")
+        "username", "email", "second_name", "first_name", "middle_name", "password1", "password2", "date_of_birth")
         labels = {
             "username": "Имя пользователя",
             "email": "Почта",
             "second_name": "Фамилия",
             "first_name": "Имя",
             "middle_name": "Отчество",
-            "date_of_birth": "Дата рождения",
-            "role": "Роль"
+            "date_of_birth": "Дата рождения"
 
         }
         widgets = {

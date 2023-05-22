@@ -44,17 +44,24 @@ class Building(models.Model):
     def __str__(self):
         return self.name
 
+class Permissions(models.Model):
+    permission = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.permission
+class Roles(models.Model):
+    name = models.CharField(max_length=255)
+    permissions = models.ManyToManyField(Permissions, blank=True)
+
+    def __str__(self):
+        return self.name
+
 class Account(AbstractBaseUser):
-    ROLES = [
-        ("admin", "Администратор"),
-        ("teacher", "Учитель"),
-        ("parent", "Родитель"),
-        ("student", "Ученик"),
-    ]
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     username = models.CharField(max_length=30, unique=True)
     date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
     last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
+    roles = models.ManyToManyField(Roles, blank=True)
 
     first_name = models.CharField(max_length=50, null=True)  # Имя
     second_name = models.CharField(max_length=50, null=True)  # Фамилия
@@ -62,7 +69,6 @@ class Account(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    role = models.TextField(choices=ROLES, null=True, max_length=10)
     date_of_birth = models.DateField(null=True)
     building = models.ForeignKey(Building, on_delete=models.SET_NULL, null=True)
     points = models.IntegerField(default=0)
@@ -74,11 +80,17 @@ class Account(AbstractBaseUser):
     def __str__(self):
         return f"{self.second_name} {self.first_name} {self.middle_name}"
 
-    def has_perm(self, perm, obj=None):
-        return self.is_superuser
-
     def full_name(self):
         return f"{self.second_name} {self.first_name} {self.middle_name}"
+
+    def has_perm(self, perm, ignore_superuser = False):
+        if not ignore_superuser and self.is_superuser:
+            return True
+        r = False
+        for i in self.roles.all():
+            r = i.permissions.all().filter(permission=perm).exists()
+        return r
+
 
     def get_status(self):
         if self.points <= 200:

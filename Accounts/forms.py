@@ -13,7 +13,6 @@ class NewTeacherForm(UserCreationForm):
     def save(self, commit=True):
         user = super(NewTeacherForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
-        user.is_teacher = True
         if commit:
             user.save()
         return user
@@ -29,7 +28,6 @@ class NewStudentForm(UserCreationForm):
     def save(self, commit=True):
         user = super(NewStudentForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
-        user.is_teacher = True
         if commit:
             user.save()
         return user

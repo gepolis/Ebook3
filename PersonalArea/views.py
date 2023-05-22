@@ -12,7 +12,7 @@ from Accounts.models import Building
 from Accounts import decorators
 from .models import Notications
 def index(request):
-    if request.user.role == "admin":
+    if request.user.has_perm("lk.admin", ignore_superuser=True):
         context = {
             "users": Account.objects.all().count(),
             "events": Events.objects.all().count(),
@@ -20,11 +20,12 @@ def index(request):
             "builds": Building.objects.all().count()
         }
         return render(request, "index.html", context)
-    elif request.user.role == "teacher":
+    elif request.user.has_perm("lk.teacher", ignore_superuser=True):
         return render(request,"teacher/index.html")
-    elif request.user.role == "student":
+    elif request.user.has_perm("lk.student", ignore_superuser=True):
         return render(request,"student/index.html")
-@decorators.is_admin
+
+@decorators.has_perm(perm='lk.admin')
 def edit_user(request, id):
     user = Account.objects.get(pk=id)
     if request.method == "GET":
@@ -39,13 +40,12 @@ def edit_user(request, id):
         return redirect("/lk/users/list")
 
 
-@decorators.is_admin
+@decorators.has_perm(perm='lk.admin')
 def view_user(request, id):
     user = Account.objects.get(pk=id)
     return render(request, "view_user.html", {"view_user": user})
 
-
-@decorators.is_admin
+@decorators.has_perm(perm='lk.admin')
 def users_list(request, role=None):
     users = Account.objects.all().order_by("-id")
     context = {
@@ -60,7 +60,7 @@ def users_list(request, role=None):
     return render(request, "users_list.html", context=context)
 
 
-@decorators.is_admin
+@decorators.has_perm(perm='lk.admin')
 def user_create(request):
     if request.method == "GET":
         form = NewUserForm()
@@ -72,7 +72,7 @@ def user_create(request):
     return render(request, "user_create.html", {"form": form})
 
 
-@decorators.is_admin
+@decorators.has_perm(perm='lk.admin')
 def events_list(request, search=None):
     events = Events.objects.all().order_by("-id")
     context = {
@@ -86,7 +86,7 @@ def events_list(request, search=None):
     return render(request, "events_list.html", context)
 
 
-@decorators.is_admin
+@decorators.has_perm(perm='lk.admin')
 def events_view(request, id):
     event = Events.objects.get(pk=id)
     context = {
@@ -97,7 +97,7 @@ def events_view(request, id):
     return render(request, "event_view.html", context)
 
 
-@decorators.is_admin
+@decorators.has_perm(perm='lk.admin')
 def event_create(request):
     if request.method == "GET":
         form = EventAddForm()
@@ -111,7 +111,7 @@ def event_create(request):
     return render(request, "event_create.html", {"form": form})
 
 
-@decorators.is_admin
+@decorators.has_perm(perm='lk.admin')
 def event_accept_user(request, id, user):
     user = EventsMembers.objects.get(id=user)
     user.is_active = True
@@ -119,14 +119,14 @@ def event_accept_user(request, id, user):
     return redirect(f"/lk/events/{id}/view")
 
 
-@decorators.is_admin
+@decorators.has_perm(perm='lk.admin')
 def event_reject_user(request, id, user):
     user = EventsMembers.objects.get(id=user)
     user.delete()
     return redirect(f"/lk/events/{id}/view")
 
 
-@decorators.is_admin
+@decorators.has_perm(perm='lk.admin')
 def event_add_user(request, id, user):
     user = Account.objects.get(id=user)
     user = EventsMembers(user=user, is_active=False)
@@ -136,7 +136,7 @@ def event_add_user(request, id, user):
     return redirect(f"/lk/events/{id}/view")
 
 
-@decorators.is_admin
+@decorators.has_perm(perm='lk.admin')
 def add_building(request):
     if request.method == "GET":
         form = NewBuildingForm()
@@ -148,7 +148,7 @@ def add_building(request):
     return render(request, "building_create.html", {"form": form})
 
 
-@decorators.is_admin
+@decorators.has_perm(perm='lk.admin')
 def building_list(request):
     context = {
         "buildings": Building.objects.all().order_by("-id")
@@ -164,7 +164,10 @@ def handler404(request, *args, **argv):
 def handler500(request, *args, **argv):
     return render(request, '500.html', status=500)
 
-@decorators.is_teacher
+
+
+
+@decorators.has_perm(perm='lk.teacher')
 def create_classroom(request):
     if ClassRoom.objects.all().filter(teacher=request.user).exists():
         return redirect("/lk/")
@@ -179,17 +182,48 @@ def create_classroom(request):
         return redirect("/lk/")
     return render(request, "teacher/create_classroom.html", {"form": form})
 
-@decorators.is_teacher
+@decorators.has_perm(perm='lk.teacher')
 def create_invite(request):
     classroom = ClassRoom.objects.get(teacher=request.user)
     return render(request, "teacher/invite.html", {"invite_url": classroom.invite_url()})
-@decorators.is_teacher
+@decorators.has_perm(perm='lk.teacher')
 def update_invite(request):
     classroom = ClassRoom.objects.get(teacher=request.user)
     classroom.uuid = uuid.uuid4()
     classroom.save()
     return redirect("/lk/classroom/invite/create/")
-@decorators.is_student
+@decorators.has_perm(perm='lk.teacher')
+def invite_classroom_event(request, id):
+    classroom = ClassRoom.objects.get(teacher=request.user)
+    events = Events.objects.get(pk=id)
+    for member in classroom.member.all():
+        i = TeacherInviteEvent(user=member, classroom=classroom, event=events)
+        i.save()
+    messages.success(request,"Вы успешно пригласили класс на мероприятие.")
+    return redirect("/lk/events/")
+
+@decorators.has_perm(perm='lk.teacher')
+def classroom_students(request):
+    classroom = ClassRoom.objects.get(teacher=request.user)
+    members = classroom.member.all()
+    return render(request, "teacher/students.html", {"members": members})
+
+@decorators.has_perm(perm='lk.teacher')
+def classroom_view_student(request, user):
+    classroom = ClassRoom.objects.get(teacher=request.user)
+    if classroom.member.all().filter(pk=user).exists():
+        user = classroom.member.get(pk=user)
+        events = Events.objects.all().filter(volunteer__user=user)
+        return render(request,"teacher/view_student.html", {"student": user, "events": events})
+    else:
+        return redirect("/lk/classroom/students/")
+
+
+
+
+
+
+@decorators.has_perm(perm='lk.student')
 def invite(request, classroom):
     classroom = ClassRoom.objects.get(uuid=classroom)
     classroom.member.add(request.user)
@@ -207,33 +241,8 @@ def events(request):
         classroom = ClassRoom.objects.get(member=request.user)
         events = Events.objects.all().filter(classroom_number=ClassRoomsNumber.objects.get(value=classroom.classroom))
         return render(request,"student/events.html", {"events": events})
-@decorators.is_teacher
-def invite_classroom_event(request, id):
-    classroom = ClassRoom.objects.get(teacher=request.user)
-    events = Events.objects.get(pk=id)
-    for member in classroom.member.all():
-        i = TeacherInviteEvent(user=member, classroom=classroom, event=events)
-        i.save()
-    messages.success(request,"Вы успешно пригласили класс на мероприятие.")
-    return redirect("/lk/events/")
 
-@decorators.is_teacher
-def classroom_students(request):
-    classroom = ClassRoom.objects.get(teacher=request.user)
-    members = classroom.member.all()
-    return render(request, "teacher/students.html", {"members": members})
-
-@decorators.is_teacher
-def classroom_view_student(request, user):
-    classroom = ClassRoom.objects.get(teacher=request.user)
-    if classroom.member.all().filter(pk=user).exists():
-        user = classroom.member.get(pk=user)
-        events = Events.objects.all().filter(volunteer__user=user)
-        return render(request,"teacher/view_student.html", {"student": user, "events": events})
-    else:
-        return redirect("/lk/classroom/students/")
-
-@decorators.is_student
+@decorators.has_perm(perm='lk.student')
 def event_request(request, event):
     event = Events.objects.get(pk=event)
     member = EventsMembers(user=request.user)
@@ -242,7 +251,7 @@ def event_request(request, event):
     messages.success(request, "Вы успешно подали заявку на мероприятие")
     return redirect("/lk/events/")
 
-@decorators.is_student
+@decorators.has_perm(perm='lk.student')
 def my_events(request):
     events = Events.objects.all().filter(volunteer__user=request.user)
     wait = events.filter(start_date__gt=datetime.now())
