@@ -1,0 +1,38 @@
+{% extends "inc/base.html" %}
+{% block sidebar %}
+{% load crispy_forms_tags %}
+<a href="/lk/" class="nav-item nav-link" xmlns="http://www.w3.org/1999/html"><i class="fa fa-home me-2"></i>Главная</a>
+<div class="nav-item dropdown">
+    <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i class="fa fa-users me-2"></i>Пользователи</a>
+    <div class="dropdown-menu bg-transparent border-0">
+        <a href="/lk/users/list/" class="dropdown-item">Список</a>
+        <a href="/lk/users/create/" class="dropdown-item">Создать</a>
+    </div>
+</div>
+<div class="nav-item dropdown">
+    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-calendar me-2"></i>Мероприятия</a>
+    <div class="dropdown-menu bg-transparent border-0">
+        <a href="/lk/events/list/" class="dropdown-item">Список</a>
+        <a href="/lk/events/create/" class="dropdown-item">Создать</a>
+    </div>
+</div>
+{% endblock sidebar %}
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-12">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">{{view_user.full_name}}</h6>
+                <p>Почта: <strong>{{ view_user.email}}</strong></p>
+                <p>Имя пользователя: <strong>{{ view_user.username}}</strong></p>
+                <p>Роль: <strong>{{ view_user.get_role_display}}</strong></p>
+
+                <p>Дата регистрации: <strong>{{ view_user.date_joined}}</strong></p>
+                <p>Последний вход: <strong>{{ view_user.last_login}}</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

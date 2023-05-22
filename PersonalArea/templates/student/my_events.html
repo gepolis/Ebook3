@@ -1,0 +1,52 @@
+{% extends "inc/base.html" %}
+{% block sidebar %}
+<a href="/lk/" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Главная</a>
+<div class="nav-item dropdown">
+    <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i class="fa fa-users me-2"></i>Мой
+        класс</a>
+    <div class="dropdown-menu bg-transparent border-0">
+        <a href="/lk/classroom/students/" class="dropdown-item">Ученики</a>
+        <a href="/lk/classroom/invite/create/" class="dropdown-item">Пригласить</a>
+    </div>
+</div>
+<a href="/lk/events/" class="nav-item nav-link"><i class="fa fa-calendar me-2"></i>Мероприятия</a>
+
+{% endblock sidebar %}
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-12">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">{{ student.full_name }}</h6>
+                <p>Родился: <strong>{{ student.date_of_birth }}</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-12">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Мероприятия</h6>
+                <div class="row row-cols-1 row-cols-md-4 g-4">
+                    {% for event in events %}
+                    <div class="col">
+                        <div class="card">
+                            <img src="{% if event.image%}{{event.image.url}}{% else%}{% endif %}" class="card-img-top"
+                                 alt="">
+                            <div class="card-body">
+                                <h5 class="card-title">{{event.name}}</h5>
+                                <p class="card-text">{{ event.description | truncatechars:100 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

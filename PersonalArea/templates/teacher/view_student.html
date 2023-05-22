@@ -1,0 +1,84 @@
+{% extends "inc/base.html" %}
+{% block sidebar %}
+    <a href="/lk/" class="nav-item nav-link active"><i class="fa fa-home me-2"></i>Главная</a>
+    <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-users me-2"></i>Мой класс</a>
+        <div class="dropdown-menu bg-transparent border-0">
+            <a href="/lk/classroom/students/" class="dropdown-item">Ученики</a>
+            <a href="/lk/classroom/invite/create/" class="dropdown-item">Пригласить</a>
+        </div>
+    </div>
+    <a href="/lk/events/" class="nav-item nav-link"><i class="fa fa-calendar me-2"></i>Мероприятия</a>
+
+{% endblock sidebar %}
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-users fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Пользователей</p>
+                    <h6 class="mb-0">{{users}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-calendar fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Мероприятий</p>
+                    <h6 class="mb-0">{{events}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-user-plus fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Заявок</p>
+                    <h6 class="mb-0">{{reqs}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-building fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Корпус</p>
+                    <h6 class="mb-0">{{builds}}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sale & Revenue End -->
+
+
+<!-- Sales Chart Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Worldwide Sales</h6>
+                    <a href="">Show All</a>
+                </div>
+                <canvas id="worldwide-sales"></canvas>
+            </div>
+        </div>
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Salse & Revenue</h6>
+                    <a href="">Show All</a>
+                </div>
+                <canvas id="salse-revenue"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sales Chart End -->
+
+
+{% endblock content %}
