@@ -9,10 +9,13 @@ class NewTeacherForm(UserCreationForm):
     class Meta:
         model = Account
         fields = ("username", "email", "second_name", "first_name", "middle_name", "password1", "password2", "date_of_birth")
-
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={"type": "date"})
+        }
     def save(self, commit=True):
         user = super(NewTeacherForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
+        user.role = "teacher"
         if commit:
             user.save()
         return user
@@ -24,10 +27,13 @@ class NewStudentForm(UserCreationForm):
     class Meta:
         model = Account
         fields = ("username", "email", "second_name", "first_name", "middle_name", "password1", "password2", "date_of_birth")
-
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={"type": "date"})
+        }
     def save(self, commit=True):
         user = super(NewStudentForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
+        user.role = "student"
         if commit:
             user.save()
         return user

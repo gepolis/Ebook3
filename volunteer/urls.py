@@ -25,11 +25,6 @@ urlpatterns = [
     path('register/<str:mode>/', accounts_views.register),
     path('login/', accounts_views.login_request),
     path('logout/', accounts_views.logout_request, name="logout"),
-    path('events/add', views.add_event),
-    path('events/<int:id>/',views.get_event),
-    path('events/<int:id>/register', views.event_register, name="event_register"),
-    path('', views.home, name="home"),
-    path('test/<str:name>', views.test),
 
     path('lk/', include("PersonalArea.urls")),
     path('setup/', accounts_views.setup, name="setup"),

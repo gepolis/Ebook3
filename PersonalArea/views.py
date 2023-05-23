@@ -213,46 +213,57 @@ def create_classroom(request):
 
 @decorators.is_teacher
 def create_invite(request):
-    classroom = ClassRoom.objects.get(teacher=request.user)
-    return render(request, "teacher/invite.html", {"invite_url": classroom.invite_url()})
+    if ClassRoom.objects.all().filter(teacher=request.user).exists():
+        classroom = ClassRoom.objects.get(teacher=request.user)
+        return render(request, "teacher/invite.html", {"invite_url": classroom.invite_url()})
+    else:
+        return redirect("/lk/classroom/create/")
 
 
 @decorators.is_teacher
 def update_invite(request):
-    classroom = ClassRoom.objects.get(teacher=request.user)
-    classroom.uuid = uuid.uuid4()
-    classroom.save()
-    return redirect("/lk/classroom/invite/create/")
-
+    if ClassRoom.objects.all().filter(teacher=request.user).exists():
+        classroom = ClassRoom.objects.get(teacher=request.user)
+        classroom.uuid = uuid.uuid4()
+        classroom.save()
+        return redirect("/lk/classroom/invite/create/")
+    else:
+        return redirect("/lk/classroom/create/")
 
 @decorators.is_teacher
 def invite_classroom_event(request, id):
-    classroom = ClassRoom.objects.get(teacher=request.user)
-    events = Events.objects.get(pk=id)
-    for member in classroom.member.all():
-        i = TeacherInviteEvent(user=member, classroom=classroom, event=events)
-        i.save()
-    messages.success(request, "Вы успешно пригласили класс на мероприятие.")
-    return redirect("/lk/events/")
-
+    if ClassRoom.objects.all().filter(teacher=request.user).exists():
+        classroom = ClassRoom.objects.get(teacher=request.user)
+        events = Events.objects.get(pk=id)
+        for member in classroom.member.all():
+            i = TeacherInviteEvent(user=member, classroom=classroom, event=events)
+            i.save()
+        messages.success(request, "Вы успешно пригласили класс на мероприятие.")
+        return redirect("/lk/events/")
+    else:
+        return redirect("/lk/classroom/create/")
 
 @decorators.is_teacher
 def classroom_students(request):
-    classroom = ClassRoom.objects.get(teacher=request.user)
-    members = classroom.member.all()
-    return render(request, "teacher/students.html", {"members": members})
-
+    if ClassRoom.objects.all().filter(teacher=request.user).exists():
+        classroom = ClassRoom.objects.get(teacher=request.user)
+        members = classroom.member.all()
+        return render(request, "teacher/students.html", {"members": members})
+    else:
+        return redirect("/lk/classroom/create/")
 
 @decorators.is_teacher
 def classroom_view_student(request, user):
-    classroom = ClassRoom.objects.get(teacher=request.user)
-    if classroom.member.all().filter(pk=user).exists():
-        user = classroom.member.get(pk=user)
-        events = Events.objects.all().filter(volunteer__user=user)
-        return render(request, "teacher/view_student.html", {"student": user, "events": events})
+    if ClassRoom.objects.all().filter(teacher=request.user).exists():
+        classroom = ClassRoom.objects.get(teacher=request.user)
+        if classroom.member.all().filter(pk=user).exists():
+            user = classroom.member.get(pk=user)
+            events = Events.objects.all().filter(volunteer__user=user)
+            return render(request, "teacher/view_student.html", {"student": user, "events": events})
+        else:
+            return redirect("/lk/classroom/students/")
     else:
-        return redirect("/lk/classroom/students/")
-
+        return redirect("/lk/classroom/create/")
 
 @decorators.is_student
 def invite(request, classroom):

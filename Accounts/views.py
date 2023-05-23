@@ -6,22 +6,20 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from Accounts.forms import *
 from .models import Account
-
-def otp(request):
-    return render(request, "dashboard/otp.html")
+from .forms import *
 
 
 def register(request, mode):
     if request.user.is_authenticated:
-        return redirect("home")
+        return redirect("/lk/")
 
     if request.method == "GET":
         if mode.lower() == "teacher":
             form = NewTeacherForm()
-            return render(request, "pages/auth/register.html", context={"form": form})
+            return render(request, "auth/register.html", context={"form": form})
         if mode.lower() == "student":
             form = NewStudentForm()
-            return render(request, "pages/auth/register.html", context={"form": form})
+            return render(request, "auth/register.html", context={"form": form})
         else:
             return HttpResponse("mode not found!")
         return render(request, "pages/auth/register.html")
@@ -30,28 +28,25 @@ def register(request, mode):
         if mode.lower() == "teacher":
             form = NewTeacherForm(request.POST)
             if form.is_valid():
-                user = form.save(commit=False)
-                user.is_teacher = True
+                user = form.save()
                 user.save()
                 login(request, user)
                 messages.success(request, 'Вы успешно зарегистрировались!')
-                return redirect("home")
+                return redirect("/lk/")
             else:
                 messages.success(request, 'Ошибка!')
-                return render(request, "pages/auth/register.html", context={'form': form})
+                return render(request, "auth/register.html", context={'form': form})
 
         if mode.lower() == "student":
             form = NewStudentForm(request.POST)
             if form.is_valid():
-                user = form.save(commit=False)
-                user.is_student = True
-                user.save()
+                user = form.save()
                 login(request, user)
                 messages.success(request, 'Вы успешно зарегистрировались!')
-                return redirect("home")
+                return redirect("/lk/")
             else:
                 messages.success(request, 'Ошибка!')
-                return render(request, "pages/auth/register.html", context={"form": form})
+                return render(request, "auth/register.html", context={"form": form})
         else:
             return HttpResponse("mode not found!")
 
