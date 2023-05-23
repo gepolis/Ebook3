@@ -78,28 +78,6 @@ def lk(request, arg=None, arg_two=None, arg_three=None):
                 context['users'] = Account.objects.all().order_by('-id')[:20]
                 context['active_all'] = True
                 return render(request, f"lk/administrator/users.html", context=context)
-
-            elif arg_two=="students":
-                context['users'] = Account.objects.all().filter(is_student=True).order_by('-id')[:20]
-                context['active_students']=True
-                return render(request, f"lk/administrator/users.html", context=context)
-            elif arg_two=="teachers":
-                context['users'] = Account.objects.all().filter(is_teacher=True).order_by('-id')[:20]
-                context['active_teachers'] = True
-                return render(request, f"lk/administrator/users.html", context=context)
-            elif arg_two=="parents":
-                context['users'] = Account.objects.all().filter(is_parent=True).order_by('-id')[:20]
-                context['active_parents'] = True
-                return render(request, f"lk/administrator/users.html", context=context)
-            elif arg_two=="admins":
-                context['users'] = Account.objects.all().filter(is_admin=True).order_by('-id')[:20]
-                context['active_admins'] = True
-                return render(request, f"lk/administrator/users.html", context=context)
-            elif arg_three is not None:
-                if arg_three == "delete":
-                    user = Account.objects.get(pk=int(arg_two))
-                    user.delete()
-                    return redirect("/lk/users")
     elif 1==1:
         rank = "Учитель"
         color = "primary"

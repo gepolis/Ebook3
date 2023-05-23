@@ -87,7 +87,7 @@
                             <th scope="row">{{ table_user.id}}</th>
                             <td>{{table_user.full_name}}</td>
                             <td>{{table_user.email}}</td>
-                            <td>{% if table_user.role %}{{table_user.get_role_display}}{% else %}Гость{% endif%}</td>
+                            <td>{% if table_user.get_role_display %}{{table_user.get_role_display}}{% else %}Гость{% endif%}</td>
                             <td>
                                 <a class="btn btn-primary"  href="/lk/users/{{table_user.id}}/view"><i class="fa fa-eye"></i></a>
                                 <a class="btn btn-primary" href="/lk/users/{{table_user.id}}/edit"><i class="fa fa-user-edit"></i></a>

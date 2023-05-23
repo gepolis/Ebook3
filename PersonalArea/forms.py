@@ -5,7 +5,36 @@ from Accounts.models import Account
 
 from MainApp.models import Events, ClassRoom
 
+class EditUserForm(forms.ModelForm):
+    email = forms.EmailField(required=True)
 
+    class Meta:
+        model = Account
+        fields = (
+        "username", "email", "second_name", "first_name", "middle_name", "date_of_birth", "role")
+        labels = {
+            "username": "Имя пользователя",
+            "email": "Почта",
+            "second_name": "Фамилия",
+            "first_name": "Имя",
+            "middle_name": "Отчество",
+            "date_of_birth": "Дата рождения",
+            "role": "Роль"
+        }
+        widgets = {
+            'date_of_birth': forms.DateInput(
+                format='%Y-%m-%d',
+                attrs={'class': 'form-control',
+                       'placeholder': 'Select a date',
+                       'type': 'date'
+                       }),
+        }
+    def save(self, commit=True):
+        user = super(EditUserForm, self).save(commit=False)
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+        return user
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)
 

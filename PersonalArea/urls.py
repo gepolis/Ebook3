@@ -21,7 +21,6 @@ from django.urls import path
 from . import views
 urlpatterns = [
     path("", views.index),
-
     path("users/list/", views.users_list),
     path("users/list/<str:role>", views.users_list),
     path("users/create/", views.user_create),
@@ -33,7 +32,7 @@ urlpatterns = [
     path("events/<int:id>/accept/<int:user>", views.event_accept_user),
     path("events/<int:id>/reject/<int:user>", views.event_reject_user),
     path("events/<int:id>/add/<int:user>", views.event_add_user),
-
+    path("events/<int:id>/export", views.event_export),
     path("building/list/", views.building_list),
     path("building/add/", views.add_building),
     path("events/list/<str:search>", views.events_list),
