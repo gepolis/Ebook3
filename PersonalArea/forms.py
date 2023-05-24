@@ -118,3 +118,32 @@ class NewClassRoom(forms.ModelForm):
         if commit:
             classroom.save()
         return classroom
+
+
+
+class EditProfileForm(forms.ModelForm):
+
+    class Meta:
+        model = Account
+        fields = (
+        "username", "second_name", "first_name", "middle_name", "date_of_birth")
+        labels = {
+            "username": "Имя пользователя",
+            "second_name": "Фамилия",
+            "first_name": "Имя",
+            "middle_name": "Отчество",
+            "date_of_birth": "Дата рождения"
+        }
+        widgets = {
+            'date_of_birth': forms.DateInput(
+                format='%Y-%m-%d',
+                attrs={'class': 'form-control',
+                       'placeholder': 'Select a date',
+                       'type': 'date'
+                       }),
+        }
+    def save(self, commit=True):
+        user = super(EditProfileForm, self).save(commit=False)
+        if commit:
+            user.save()
+        return user

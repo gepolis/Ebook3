@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 import time
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, Http404, FileResponse
 from django.shortcuts import render, redirect
 from Accounts.models import Account
@@ -76,6 +77,20 @@ def edit_user(request, id):
     return render(request, "edit_user.html", {"form": form})
 
 
+@login_required
+def edit_profile(request):
+    if request.method == "GET":
+        form = EditProfileForm(instance=request.user)
+    else:
+        form = EditProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+        else:
+            return HttpResponse(form.errors)
+        return redirect("/lk/settings/")
+    return render(request, "settings.html", {"form": form})
+
+
 @decorators.is_admin
 def events_list(request, search=None):
     events = Events.objects.all().filter(archive=False).order_by("-id")
@@ -88,6 +103,7 @@ def events_list(request, search=None):
     else:
         context['events'] = Events.objects.all().filter(name__icontains=search)
     return render(request, "events_list.html", context)
+
 
 @decorators.is_admin
 def give_points(request, id):
@@ -103,6 +119,8 @@ def give_points(request, id):
             return redirect(f"/lk/events/{event.pk}/points/give")
     else:
         return render(request, "give_points.html", {"event": event, "volunteers": volunteers})
+
+
 @decorators.is_admin
 def events_archive_list(request):
     events = Events.objects.all().filter(archive=True).order_by("-id")
@@ -112,6 +130,8 @@ def events_archive_list(request):
         "events": events
     }
     return render(request, "events_archive_list.html", context)
+
+
 @decorators.is_admin
 def event_export(request, id):
     event = Events.objects.get(pk=id)
@@ -146,14 +166,13 @@ def event_archive(request, id):
     event.save()
     return redirect("/lk/events/list/")
 
+
 @decorators.is_admin
 def event_unarchived(request, id):
     event = Events.objects.get(pk=id)
     event.archive = False
     event.save()
     return redirect("/lk/events/archive/")
-
-
 
 
 @decorators.is_admin
@@ -269,6 +288,7 @@ def update_invite(request):
     else:
         return redirect("/lk/classroom/create/")
 
+
 @decorators.is_teacher
 def invite_classroom_event(request, id):
     if ClassRoom.objects.all().filter(teacher=request.user).exists():
@@ -282,6 +302,7 @@ def invite_classroom_event(request, id):
     else:
         return redirect("/lk/classroom/create/")
 
+
 @decorators.is_teacher
 def classroom_students(request):
     if ClassRoom.objects.all().filter(teacher=request.user).exists():
@@ -290,6 +311,7 @@ def classroom_students(request):
         return render(request, "teacher/students.html", {"members": members})
     else:
         return redirect("/lk/classroom/create/")
+
 
 @decorators.is_teacher
 def classroom_view_student(request, user):
@@ -303,6 +325,7 @@ def classroom_view_student(request, user):
             return redirect("/lk/classroom/students/")
     else:
         return redirect("/lk/classroom/create/")
+
 
 @decorators.is_student
 def invite(request, classroom):
@@ -341,5 +364,3 @@ def my_events(request):
     ended = events.filter(end_date__lt=datetime.now())
     started = events.filter(end_date__gt=datetime.now(), start_date__lte=datetime.now())
     return render(request, "student/my_events.html", {"started": started, "ended": ended, "wait": wait})
-
-

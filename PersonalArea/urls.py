@@ -40,7 +40,7 @@ urlpatterns = [
     path("building/add/", views.add_building),
     path("events/list/<str:search>", views.events_list),
     path("events/archive/", views.events_archive_list),
-
+    path('settings/', views.edit_profile),
     path("events/create/", views.event_create),
 
     path("classroom/create/", views.create_classroom),
