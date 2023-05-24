@@ -17,16 +17,28 @@ class ClassRoomsNumber(models.Model):
 
     def __str__(self):
         return self.name
-class Events(models.Model):
 
+class EventCategory(models.Model):
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = "Event category"
+        verbose_name_plural = "Event categories"
+
+    def __str__(self):
+        return self.name
+
+class Events(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(max_length=2550)
     start_date = models.DateTimeField(auto_now=False)
     end_date = models.DateTimeField(auto_now=False)
-    classroom_number =models.ManyToManyField(ClassRoomsNumber)
+    classroom_number = models.ManyToManyField(ClassRoomsNumber)
     volunteer = models.ManyToManyField(EventsMembers)
+    category = models.ForeignKey(EventCategory,related_name="category", on_delete=models.SET_NULL, null=True)
     organizer = models.ForeignKey(Account, on_delete=models.SET_NULL, related_name="orgonizaer",null=True)
     building = models.ForeignKey(Building, on_delete=models.SET_NULL, related_name="building", null=True)
+    archive = models.BooleanField(default=False)
     image = models.ImageField(upload_to="images", null=True)
     class Meta:
         verbose_name = "Event"

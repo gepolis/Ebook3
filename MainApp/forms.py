@@ -6,7 +6,7 @@ class EventAddForm(forms.ModelForm):
     class Meta:
         model = Events
         # Описываем поля, которые будем заполнять в форме
-        fields = ['name', 'description', 'start_date', 'end_date', 'classroom_number', 'organizer']
+        fields = ['name', 'description', 'start_date', 'end_date', 'classroom_number', 'organizer', 'category']
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'Название сниппета'}),
             'description': forms.Textarea(attrs={'placeholder': "Описание"}),

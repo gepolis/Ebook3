@@ -78,7 +78,7 @@ def edit_user(request, id):
 
 @decorators.is_admin
 def events_list(request, search=None):
-    events = Events.objects.all().order_by("-id")
+    events = Events.objects.all().filter(archive=False).order_by("-id")
     context = {
         "count_events": events.count(),
         "count_requests": EventsMembers.objects.all().filter(is_active=True).count()
@@ -89,7 +89,29 @@ def events_list(request, search=None):
         context['events'] = Events.objects.all().filter(name__icontains=search)
     return render(request, "events_list.html", context)
 
-
+@decorators.is_admin
+def give_points(request, id):
+    event = Events.objects.get(pk=id)
+    volunteers = event.volunteer.all().filter(points=None)
+    if request.method == "POST":
+        user = request.POST.get("user")
+        points = request.POST.get("points")
+        if user is not None and points is not None:
+            volunteer = volunteers.get(pk=user)
+            volunteer.points = points
+            volunteer.save()
+            return redirect(f"/lk/events/{event.pk}/points/give")
+    else:
+        return render(request, "give_points.html", {"event": event, "volunteers": volunteers})
+@decorators.is_admin
+def events_archive_list(request):
+    events = Events.objects.all().filter(archive=True).order_by("-id")
+    context = {
+        "count_events": events.count(),
+        "count_requests": EventsMembers.objects.all().filter(is_active=True).count(),
+        "events": events
+    }
+    return render(request, "events_archive_list.html", context)
 @decorators.is_admin
 def event_export(request, id):
     event = Events.objects.get(pk=id)
@@ -115,6 +137,23 @@ def event_export(request, id):
     buffer.seek(0)
 
     return FileResponse(buffer, as_attachment=True, filename=f'{event.name}.xlsx')
+
+
+@decorators.is_admin
+def event_archive(request, id):
+    event = Events.objects.get(pk=id)
+    event.archive = True
+    event.save()
+    return redirect("/lk/events/list/")
+
+@decorators.is_admin
+def event_unarchived(request, id):
+    event = Events.objects.get(pk=id)
+    event.archive = False
+    event.save()
+    return redirect("/lk/events/archive/")
+
+
 
 
 @decorators.is_admin
@@ -304,19 +343,3 @@ def my_events(request):
     return render(request, "student/my_events.html", {"started": started, "ended": ended, "wait": wait})
 
 
-def read_notifications(request):
-    t = round(time.time())
-    notifications = Notications.objects.all().filter(user=request.user, created__lt=t)
-    return JsonResponse({"message": "success", "user": request.user.id, "time": t, "viewed": notifications.count()})
-
-
-def list_notifications(request):
-    t = round(time.time())
-    notifications = Notications.objects.all().filter(user=request.user)
-    out = []
-    for notification in notifications:
-        out.append({
-            'title': notification.title,
-            'description': notification.description
-        })
-    return JsonResponse({"message": "success", "user": request.user.id, "time": t, "notification": out})

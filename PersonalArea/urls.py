@@ -33,9 +33,14 @@ urlpatterns = [
     path("events/<int:id>/reject/<int:user>", views.event_reject_user),
     path("events/<int:id>/add/<int:user>", views.event_add_user),
     path("events/<int:id>/export", views.event_export),
+    path("events/<int:id>/unarchived", views.event_unarchived),
+    path("events/<int:id>/archive", views.event_archive),
+    path("events/<int:id>/points/give", views.give_points),
     path("building/list/", views.building_list),
     path("building/add/", views.add_building),
     path("events/list/<str:search>", views.events_list),
+    path("events/archive/", views.events_archive_list),
+
     path("events/create/", views.event_create),
 
     path("classroom/create/", views.create_classroom),
@@ -51,9 +56,6 @@ urlpatterns = [
 
     path("events/<int:event>/request", views.event_request),
     path("my/events/", views.my_events),
-
-    path('notifications/read/', views.read_notifications),
-    path('notifications/list/', views.list_notifications)
     #path("classroom/student/<int:user>/delete", views.classroom_delete_student),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

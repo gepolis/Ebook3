@@ -5,19 +5,20 @@
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-users me-2"></i>Пользователи</a>
     <div class="dropdown-menu bg-transparent border-0">
         <a href="/lk/users/list/" class="dropdown-item">Список</a>
-        <a href="/lk/events/archive/" class="dropdown-item">Архив</a>
         <a href="/lk/users/create/" class="dropdown-item">Создать</a>
     </div>
 </div>
 <div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-calendar me-2"></i>Мероприятия</a>
+    <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i class="far fa-calendar me-2"></i>Мероприятия</a>
     <div class="dropdown-menu bg-transparent border-0">
         <a href="/lk/events/list/" class="dropdown-item">Список</a>
+        <a href="/lk/events/archive/" class="dropdown-item">Архив</a>
         <a href="/lk/events/create/" class="dropdown-item">Создать</a>
     </div>
 </div>
 <div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i class="far fa-building me-2"></i>Здания</a>
+    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i
+            class="far fa-building me-2"></i>Здания</a>
     <div class="dropdown-menu bg-transparent border-0">
         <a href="/lk/building/list/" class="dropdown-item">Список</a>
         <a href="/lk/building/add/" class="dropdown-item">Добавить</a>
@@ -30,23 +31,29 @@
     <div class="row g-4">
         <div class="col-sm-12 col-xl-12">
             <div class="bg-light rounded h-100 p-4">
-                <h6 class="mb-4">Здания
+                <h6 class="mb-4">Пользователи
                 </h6>
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Название</th>
-                        <th scope="col">Тип</th>
+                        <th scope="col">ФИО</th>
+                        <th scope="col">Баллы</th>
+                        <th scope="col">Действия</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for building in buildings %}
+                    {% for volunteer in volunteers %}
+                    <form method="post">
+                        {% csrf_token %}
                         <tr>
-                            <th scope="row">{{ building.id}}</th>
-                            <td>{{building.name}}</td>
-                            <td>{{building.get_type_display}}</td>
+                            <input type="hidden" class="form-control" name="user" value="{{volunteer.pk}}">
+                            <td>{{volunteer.user.full_name}}</td>
+                            <td><input type="number" class="form-control"  name="points" id="" min="0" max="100"></td>
+                            <td>
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                            </td>
                         </tr>
+                    </form>
                     {% endfor %}
                     </tbody>
                 </table>
