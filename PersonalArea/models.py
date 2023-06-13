@@ -10,7 +10,7 @@ class Notications(models.Model):
     description = models.TextField(max_length=1000)
     user = models.ForeignKey(Account, on_delete=models.CharField)
     created = models.IntegerField(blank=True,null=True)
-    viewed = models.BooleanField(default=False)
+    sent = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         self.created = round(time.time())

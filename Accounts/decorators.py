@@ -15,7 +15,15 @@ def is_admin(view_func):
 
     return wrapper
 
+def has_role(view_func):
+    @functools.wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if request.user.role is not None:
+            return view_func(request, *args, **kwargs)
+        else:
+            return render(request, "404.html")
 
+    return wrapper
 def is_teacher(view_func):
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):

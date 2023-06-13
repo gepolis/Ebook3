@@ -1,111 +1,252 @@
 {% extends "inc/base.html" %}
-{% block sidebar %}
-<a href="/lk/" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Главная</a>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i class="fa fa-users me-2"></i>Пользователи</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="/lk/users/list/" class="dropdown-item">Список</a>
-        <a href="/lk/users/create/" class="dropdown-item">Создать</a>
-    </div>
-</div>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-calendar me-2"></i>Мероприятия</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="/lk/events/list/" class="dropdown-item">Список</a>
-        <a href="/lk/events/archive/" class="dropdown-item">Архив</a>
-        <a href="/lk/events/create/" class="dropdown-item">Создать</a>
-    </div>
-</div>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-building me-2"></i>Здания</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="/lk/building/list/" class="dropdown-item">Список</a>
-        <a href="/lk/building/add/" class="dropdown-item">Добавить</a>
-    </div>
-</div>
-{% endblock sidebar %}
+{% load static %}
+{% load crispy_forms_tags %}
 {% block content %}
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-6 col-xl-3">
-            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-users fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Пользователей</p>
-                    <h6 class="mb-0">{{count_users}}</h6>
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-users fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Пользователей</p>
+                        <h6 class="mb-0">{{ count_users }}</h6>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-child fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Учеников</p>
-                    <h6 class="mb-0">{{count_students}}</h6>
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-child fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Учеников</p>
+                        <h6 class="mb-0">{{ count_students }}</h6>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-user fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Родителей</p>
-                    <h6 class="mb-0">{{count_parents}}</h6>
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-user fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Родителей</p>
+                        <h6 class="mb-0">{{ count_parents }}</h6>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fas fa-user-graduate fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Сотрудников</p>
-                    <h6 class="mb-0">{{count_staff}}</h6>
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fas fa-user-shield fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Сотрудников</p>
+                        <h6 class="mb-0">{{ count_staff }}</h6>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Sales Chart Start -->
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-xl-12">
-            <div class="bg-light rounded h-100 p-4">
-                <h6 class="mb-4">Пользователи
-                </h6>
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">ФИО</th>
-                        <th scope="col">Почта</th>
-                        <th scope="col">Роль</th>
-                        <th scope="col">Действия</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for table_user in users %}
-                        <tr>
-                            <th scope="row">{{ table_user.id}}</th>
-                            <td>{{table_user.full_name}}</td>
-                            <td>{{table_user.email}}</td>
-                            <td>{% if table_user.get_role_display %}{{table_user.get_role_display}}{% else %}Гость{% endif%}</td>
-                            <td>
-                                <a class="btn btn-primary"  href="/lk/users/{{table_user.id}}/view"><i class="fa fa-eye"></i></a>
-                                <a class="btn btn-primary" href="/lk/users/{{table_user.id}}/edit"><i class="fa fa-user-edit"></i></a>
-                                {% if table_user.is_superuser or table_user.pk == user.pk %}
-                                {% else %}
-                                    <a class="btn btn-danger" href="/lk/users/{{table_user.id}}/delete"><i class="fa fa-trash"></i></a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Sales Chart End -->
+    <!-- Sales Chart Start -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-12">
+                <div class="bg-light rounded h-100 p-4">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm col-sm-6">
+                                <h6 class="mb-4">Пользователи</h6>
+                            </div>
+                            <div class="col-sm col-sm-5">
+                                <input type="search" class="form-control" placeholder="Поиск" id="search"
+                                       onkeyup="search()">
+                            </div>
+                            <div class="col-sm">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#createUserModal">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div>
+                        <!--<input type="search" class="form-control" placeholder="Поиск" id="search" onkeyup="search()">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#createUserModal">
+                            <i class="fa fa-plus"></i>
+                        </button>-->
+                    </div>
+                    <!-- Modal -->
+
+                    <!--<script>
+                        const full_name_text = document.getElementById("full_name_model")
+                        const email_text = document.getElementById("email_model")
+                        const role_text = document.getElementById("role_model")
+                        const join_date_text = document.getElementById("join_date_model")
+                        const last_login_text = document.getElementById("last_login_model")
+                        const received = document.getElementById("received")
+                        const modal = document.getElementById("exampleModal")
+                        const loader = document.getElementById("modal_loader")
+                        const modal_data = document.getElementById("information")
+                        const modal_footer = document.getElementById("modal_footer")
+                        const url = `${window.location.protocol}//${window.location.host}/lk/users/data/`
+                        let interv = null;
+                        console.log(url)
+
+                        function open_user_detail(pk) {
+                            if (interv == null) {
+                                modal_data.style = "display: None;"
+                                loader.style = "display: block;"
+                                modal_footer.style = "display: None;"
+                                setTimeout(function () {
+                                    get_user_detail(pk)
+                                    interv = setInterval(get_user_detail, 10000, pk)
+                                }, 500)
+
+                            } else {
+                                console.warn("error!")
+                            }
+
+                        }
+
+                        function close_user_detail() {
+                            if (interv !== null) {
+                                clearInterval(interv)
+                                console.log("c")
+                                interv = null
+                            }
+                            console.log("close")
+
+                        }
+
+                        function get_user_detail(pk) {
+                            if (!modal.classList.contains("show")) {
+                                if (interv) {
+
+                                    clearInterval(interv)
+                                    interv = null
+                                }
+                                return null
+                            } else {
+                                loader.style = "display: None;"
+                                modal_footer.style = "display: block;"
+                                modal_data.style = "display: block;"
+                            }
+                            fetch(url + pk.toString()).then((response) => {
+                                return response.json()
+                            }).then((data) => {
+                                full_name_text.innerHTML = data.user.full_name
+                                email_text.innerHTML = data.user.email
+                                role_text.innerHTML = data.user.role.display
+                                join_date_text.innerHTML = data.user.date_joined
+                                last_login_text.innerHTML = data.user.last_login
+                                received.innerHTML = data.received
+                            })
+
+                        }
+
+                    </script>-->
+                    <!-- Button trigger modal -->
+                    <table class="table table-hover" id="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">ФИО</th>
+                            <th scope="col">Почта</th>
+                            <th scope="col">Роль</th>
+                            <th scope="col">Действия</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for table_user in users %}
+                            <tr>
+                                <th scope="row">{{ table_user.id }}</th>
+                                <td>{{ table_user.full_name }}</td>
+                                <td>{{ table_user.email }}</td>
+                                <td>{% if table_user.get_role_display %}{{ table_user.get_role_display }}{% else %}
+                                    Гость{% endif %}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#exampleModal"
+                                            onclick="open_user_detail({{ table_user.pk }})">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    <a class="btn btn-primary" href="/lk/users/{{ table_user.id }}/edit"><i
+                                            class="fa fa-user-edit"></i></a>
+                                    {% if table_user.is_superuser or table_user.pk == user.pk %}
+                                    {% else %}
+                                        <a class="btn btn-danger" href="/lk/users/{{ table_user.id }}/delete"><i
+                                                class="fa fa-trash"></i></a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Информация</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"
+                            onclick="close_user_detail()">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="loader" id="modal_loader">
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="information" id="information">
+                        <p>ФИО: <strong id="full_name_model"></strong></p>
+                        <p>Почта: <strong id="email_model"></strong></p>
+                        <p>Роль: <strong id="role_model"></strong></p>
+                        <p>Дата регистрации: <strong id="join_date_model"></strong></p>
+                        <p>Последний вход: <strong id="last_login_model"></strong></p>
+                    </div>
+
+                </div>
+                <div class="modal-footer" id="modal_footer">
+                    <p class="small float-start">Информация актуальна на <span id="received"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Button trigger modal -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Создание пользователя</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'create_user' %}">
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            {% csrf_token %}
+                            {{ create_user_form|crispy }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <!-- Sales Chart End -->
 
 {% endblock content %}

@@ -6,12 +6,12 @@ from Accounts.models import Account
 from MainApp.models import Events, ClassRoom
 
 class EditUserForm(forms.ModelForm):
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=True, disabled=True)
 
     class Meta:
         model = Account
         fields = (
-        "username", "email", "second_name", "first_name", "middle_name", "date_of_birth", "role")
+        "username", "email", "second_name", "first_name", "middle_name", "date_of_birth", "role","points")
         labels = {
             "username": "Имя пользователя",
             "email": "Почта",
@@ -19,7 +19,8 @@ class EditUserForm(forms.ModelForm):
             "first_name": "Имя",
             "middle_name": "Отчество",
             "date_of_birth": "Дата рождения",
-            "role": "Роль"
+            "role": "Роль",
+            "points": "Баллов"
         }
         widgets = {
             'date_of_birth': forms.DateInput(
@@ -27,7 +28,7 @@ class EditUserForm(forms.ModelForm):
                 attrs={'class': 'form-control',
                        'placeholder': 'Select a date',
                        'type': 'date'
-                       }),
+                       })
         }
     def save(self, commit=True):
         user = super(EditUserForm, self).save(commit=False)
@@ -36,19 +37,20 @@ class EditUserForm(forms.ModelForm):
             user.save()
         return user
 class NewUserForm(UserCreationForm):
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=True, label="Почта")
 
     class Meta:
         model = Account
         fields = (
-        "username", "email", "second_name", "first_name", "middle_name", "password1", "password2", "date_of_birth")
+        "username", "email", "second_name", "first_name", "middle_name", "password1", "password2", "date_of_birth", 'role')
         labels = {
             "username": "Имя пользователя",
             "email": "Почта",
             "second_name": "Фамилия",
             "first_name": "Имя",
             "middle_name": "Отчество",
-            "date_of_birth": "Дата рождения"
+            "date_of_birth": "Дата рождения",
+            'role': "Роль"
 
         }
         widgets = {
@@ -76,7 +78,8 @@ class EventAddForm(forms.ModelForm):
             'end_date': forms.DateTimeInput(format=['%d/%m/%y'], attrs={'type': 'datetime-local'}),
             'organizer': forms.Select(),
             'classroom_number': forms.SelectMultiple(attrs={"style": "height: 350px"}),
-            'building': forms.Select()
+            'building': forms.Select(),
+            'image': forms.FileInput(attrs={"class": "form-control"})
         }
         labels = {
             "name": "Название",

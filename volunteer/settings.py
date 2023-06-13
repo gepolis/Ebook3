@@ -32,6 +32,16 @@ ALLOWED_HOSTS = ['localhost','127.0.0.1','mysite.com']
 AUTH_USER_MODEL = 'Accounts.Account'
 
 # Application definition
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,11 +53,22 @@ INSTALLED_APPS = [
     'Accounts',
     'MainApp',
     'PersonalArea',
-    'social_django',
     'crispy_forms',
     'crispy_bootstrap4',
     "django_extensions",
     'multiselectfield',
+    'django.contrib.sites',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.telegram',
+    'allauth.socialaccount.providers.vk',
+
+    'ckeditor'
 ]
 
 MIDDLEWARE = [
@@ -58,8 +79,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'social_django.middleware.SocialAuthExceptionMiddleware'
 ]
 
 ROOT_URLCONF = 'volunteer.urls'
@@ -75,13 +94,27 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-
-                'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect',
             ],
         },
     },
 ]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'telegram': {
+        'TOKEN': '6166116500:AAHGWV_tqk0hvp8QQ21mLxSUfkDS5U-GTTs'
+    }
+}
+
+
+#SOCIAL_AUTH_GITHUB_KEY = '6fc847253db80fa63428'
+#SOCIAL_AUTH_GITHUB_SECRET = 'a84c07183572485c7c87c92c3aa044fc44ec8b46'
+
+#SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '626671176107-fofbkumdfvo5okp1qshnkbotljcl17s7.apps.googleusercontent.com'
+#SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+#SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email']
+
+#SOCIAL_AUTH_MAILRU_KEY = ''
+#SOCIAL_AUTH_MAILRU_SECRET = ''
 
 WSGI_APPLICATION = 'volunteer.wsgi.application'
 
@@ -115,16 +148,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-)
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -152,20 +182,13 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-SOCIAL_AUTH_GITHUB_KEY = '6fc847253db80fa63428'
-SOCIAL_AUTH_GITHUB_SECRET = 'a84c07183572485c7c87c92c3aa044fc44ec8b46'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '626671176107-fofbkumdfvo5okp1qshnkbotljcl17s7.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email']
-
-SOCIAL_AUTH_MAILRU_KEY = ''
-SOCIAL_AUTH_MAILRU_SECRET = ''
 
 LOGIN_REDIRECT_URL = '/setup/'
-SOCIAL_AUTH_VK_APP_KEY = '51641208'
-SOCIAL_AUTH_VK_APP_SECRET = 'BXFWp1Gjkiwxcw4OUsnG'
-SOCIAL_AUTH_VK_APP_USER_MODE = 2
+
+#SOCIAL_AUTH_VK_APP_KEY = '51662554'
+#SOCIAL_AUTH_VK_APP_SECRET = 'fPSqWCRQzbWWcesunYhc'
+#SOCIAL_AUTH_VK_APP_USER_MODE = 2
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'

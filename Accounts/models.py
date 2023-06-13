@@ -1,20 +1,19 @@
 import random
 import time
-
+from MainApp.models import EventsMembers
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
 from django.core import validators
 
 
 class MyAccountManager(BaseUserManager):
-    def create_user(self, email=None, age=None, second_name=None, first_name=None, middle_name=None, password=None,
+    def create_user(self, email=None, second_name=None, first_name=None, middle_name=None, password=None,
                     username: str = None):
         if username is None:
             raise ValueError("User must have an username.")
         user = self.model(
             email=self.normalize_email(email),
             username=username,
-            age=age,
             second_name=second_name,
             first_name=first_name,
             middle_name=middle_name
@@ -23,11 +22,10 @@ class MyAccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, password, age, second_name, first_name, middle_name):
+    def create_superuser(self, email, username, password, second_name, first_name, middle_name):
         user = self.create_user(email=self.normalize_email(email),
                                 username=username,
                                 password=password,
-                                age=age,
                                 second_name=second_name,
                                 first_name=first_name,
                                 middle_name=middle_name
@@ -52,6 +50,7 @@ class Account(AbstractBaseUser):
         ("teacher", "Учитель"),
         ("parent", "Родитель"),
         ("student", "Ученик"),
+        ("methodist", "Методист объединения")
     ]
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     username = models.CharField(max_length=30, unique=True)
@@ -68,7 +67,7 @@ class Account(AbstractBaseUser):
     building = models.ForeignKey(Building, on_delete=models.SET_NULL, null=True)
     points = models.IntegerField(default=0)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'age', "second_name", "first_name", "middle_name"]
+    REQUIRED_FIELDS = ['username', "second_name", "first_name", "middle_name"]
 
     objects = MyAccountManager()
 
@@ -78,6 +77,12 @@ class Account(AbstractBaseUser):
     def full_name(self):
         return f"{self.second_name} {self.first_name} {self.middle_name}"
 
+    def get_events(self):
+        events = EventsMembers.all().filter(user=self)
+        return events
+    def get_events_count(self):
+        events = EventsMembers.all().filter(user=self)
+        return len(events)
     def has_perm(self, perm, obj=None):
         return self.is_superuser
 
@@ -97,9 +102,3 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
-
-
-class OTPs(models.Model):
-    user = models.ForeignKey(Account, on_delete=models.CASCADE)
-    code = models.IntegerField(default=random.randint(100000, 999999))
-    is_active = models.BooleanField(default=True)

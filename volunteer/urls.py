@@ -28,8 +28,8 @@ urlpatterns = [
 
     path('lk/', include("PersonalArea.urls")),
     path('setup/', accounts_views.setup, name="setup"),
-
-    path('oauth/', include('social_django.urls', namespace='social')),
+    path('', views.index),
+path('accounts/', include('allauth.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

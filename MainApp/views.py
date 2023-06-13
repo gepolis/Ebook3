@@ -6,3 +6,7 @@ from .models import Events
 from django.contrib.auth.decorators import login_required
 from Accounts.models import Account
 
+
+def index(request):
+    return render(request, "index.html")
+

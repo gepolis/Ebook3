@@ -88,7 +88,7 @@ def setup(request):
         elif request.user.middle_name is None or request.user.middle_name == "":
             return render(request, "setup/middle_name.html")
         else:
-            return redirect("lk_main")
+            return redirect("/")
     else:
         t = request.POST['type']
         if t == "email":
@@ -115,4 +115,4 @@ def setup(request):
             user.save()
             return redirect("setup")
         else:
-            return redirect("lk_main")
+            return redirect("/")

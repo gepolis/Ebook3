@@ -47,7 +47,7 @@ class NewBuildingForm(forms.ModelForm):
     class Meta:
         model = Building
         fields = ("name", "type")
-        lables = {
+        labels = {
             "name": "Название",
             "type": "Тип"
         }
