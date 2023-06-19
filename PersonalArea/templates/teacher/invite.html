@@ -1,41 +1,82 @@
 {% extends "inc/base.html" %}
 {% block sidebar %}
-<a href="/lk/" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Главная</a>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i class="fa fa-users me-2"></i>Мой класс</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="/lk/classroom/students/" class="dropdown-item">Ученики</a>
-        <a href="/lk/classroom/invite/create/" class="dropdown-item">Пригласить</a>
+    <a href="/lk/" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Главная</a>
+    <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i class="fa fa-users me-2"></i>Мой
+            класс</a>
+        <div class="dropdown-menu bg-transparent border-0">
+            <a href="/lk/classroom/students/" class="dropdown-item">Ученики</a>
+            <a href="/lk/classroom/invite/create/" class="dropdown-item">Пригласить</a>
+        </div>
     </div>
-</div>
-<a href="/lk/events/" class="nav-item nav-link"><i class="fa fa-calendar me-2"></i>Мероприятия</a>
+    <a href="/lk/events/" class="nav-item nav-link"><i class="fa fa-calendar me-2"></i>Мероприятия</a>
 
 {% endblock sidebar %}
 {% block content %}
-<div class="container-fluid pt-4 px-4">
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" id="copytext" disabled aria-label="Recipient's username" value="{{invite_url}}"
-               aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" onclick="copy_url()"><i class="fas fa-copy"></i></button>
+    <div class="container-fluid pt-4 px-4">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="copytext" uuid="{{ uuid }}" disabled
+                   aria-label="Recipient's username" value="{{ invite_url }}"
+                   aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()" id="copytext_button"><i
+                        class="fas fa-copy"></i></button>
+            </div>
+
         </div>
+        <a href="/lk/classroom/invite/update/" class="btn btn-secondary">Изменить ссылку</a>
+        <script>
+            //const copytext_button = document.getElementById("copytext_button")
+            //if (!window.isSecureContext) {
+            //    copytext_button.style.display = "None"
+            //}
+            //console.log(window.isSecureContext);
+            //const copyText = document.getElementById("copytext");
+            //let uuid = copyText.getAttribute("uuid")
+            //copyText.setAttribute("value", `${window.location.protocol}//${window.location.host}/lk/classroom/invite/${uuid}`)
+//
+            //function copy_url() {
+            //    // Get the text field
+//
+            //    // Select the text field
+            //    copyText.select();
+            //    copyText.setSelectionRange(0, 99999); // For mobile devices
+//
+            //    // Copy the text inside the text field
+            //    navigator.clipboard.writeText(copyText.value);
+            //}
+            const copyText = document.getElementById("copytext");
+            let uuid = copyText.getAttribute("uuid")
+            copyText.setAttribute("value", `${window.location.protocol}//${window.location.host}/lk/classroom/invite/${uuid}`)
+            async function copyToClipboard() {
 
+                // Navigator clipboard api needs a secure context (https)
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(copyText.value);
+                } else {
+
+                    // Use the 'out of viewport hidden text area' trick
+                    const textArea = document.createElement("textarea");
+                    textArea.value = copyText.value;
+                    // Move textarea out of the viewport so it's not visible
+                    textArea.style.position = "absolute";
+                    textArea.style.left = "-999999px";
+
+                    document.body.prepend(textArea);
+                    textArea.select();
+
+                    try {
+                        document.execCommand('copy');
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        textArea.remove();
+                    }
+                };
+            }
+
+        </script>
     </div>
-    <a href="/lk/classroom/invite/update/" class="btn btn-secondary">Изменить ссылку</a>
-    <script>
-        function copy_url() {
-          // Get the text field
-          var copyText = document.getElementById("copytext");
-
-          // Select the text field
-          copyText.select();
-          copyText.setSelectionRange(0, 99999); // For mobile devices
-
-           // Copy the text inside the text field
-          navigator.clipboard.writeText(copyText.value);
-        }
-    </script>
-</div>
 
 
 {% endblock content %}
