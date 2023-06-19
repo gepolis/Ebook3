@@ -127,6 +127,11 @@
                             </div>
                         </div>
                     {% endif %}
+                {% elif user.role == "student" %}
+                    <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i class="fa fa-home me-2"></i>Главная</a>
+                    <a href="/lk/my/events/" class="nav-item nav-link {% if section == "my_events" %}active{% endif %}"><i class="fa fa-calendar me-2"></i>Мои
+                        события</a>
+                    <a href="/lk/events/" class="nav-item nav-link {% if section == "events" %}active{% endif %}"><i class="fa fa-calendar me-2"></i>Мероприятия</a>
                 {% else %}
                     {% block sidebar %}
                     {% endblock sidebar %}

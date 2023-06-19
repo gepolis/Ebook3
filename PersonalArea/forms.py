@@ -166,7 +166,8 @@ class EventCategoryForm(forms.ModelForm):
         # Описываем поля, которые будем заполнять в форме
         fields = ('name','methodists')
         labels = {
-            "name": "Название"
+            "name": "Название",
+            "methodists": "Методисты"
         }
 
     def save(self, commit=True):

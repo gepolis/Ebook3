@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-51iz0mv4-(lh!8a#d_mz9_fmj7u75l9@f)9=upgc+8fpvk_yf(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-LOGIN_URL = "/login/"
+LOGIN_URL = "/auth/"
 LOGOUT_REDIRECT_URL = None
 ALLOWED_HOSTS = ['localhost','127.0.0.1','mysite.com']
 
@@ -35,11 +35,7 @@ AUTH_USER_MODEL = 'Accounts.Account'
 SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = [
-    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-
-    # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 
@@ -58,16 +54,6 @@ INSTALLED_APPS = [
     "django_extensions",
     'multiselectfield',
     'django.contrib.sites',
-
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-
-    'allauth.socialaccount.providers.github',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.telegram',
-    'allauth.socialaccount.providers.vk',
-
     'ckeditor'
 ]
 
@@ -99,22 +85,7 @@ TEMPLATES = [
     },
 ]
 
-SOCIALACCOUNT_PROVIDERS = {
-    'telegram': {
-        'TOKEN': '6166116500:AAHGWV_tqk0hvp8QQ21mLxSUfkDS5U-GTTs'
-    }
-}
 
-
-#SOCIAL_AUTH_GITHUB_KEY = '6fc847253db80fa63428'
-#SOCIAL_AUTH_GITHUB_SECRET = 'a84c07183572485c7c87c92c3aa044fc44ec8b46'
-
-#SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '626671176107-fofbkumdfvo5okp1qshnkbotljcl17s7.apps.googleusercontent.com'
-#SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
-#SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email']
-
-#SOCIAL_AUTH_MAILRU_KEY = ''
-#SOCIAL_AUTH_MAILRU_SECRET = ''
 
 WSGI_APPLICATION = 'volunteer.wsgi.application'
 

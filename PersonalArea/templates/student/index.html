@@ -9,7 +9,7 @@
 {% block content %}
 <div class="container-fluid pt-4 px-4">
     <div class="row g-4">
-        <div class="col-sm-6 col-xl-6">
+        <div class="col-sm-4 col-xl-4">
             <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fas fa-coins fa-3x text-primary"></i>
                 <div class="ms-3">
@@ -18,13 +18,24 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-xl-6">
+        <div class="col-sm-4 col-xl-4">
             <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fas fa-user-tag fa-3x text-primary"></i>
                 <div class="ms-3">
                     <p class="mb-2">Статус</p>
                     <h6 class="mb-0">
                         {{user.get_status}}
+                    </h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xl-4">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                <i class="far fa-building text-primary fa-3x"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Класс</p>
+                    <h6 class="mb-0">
+                        {{user.get_classroom}}
                     </h6>
                 </div>
             </div>
@@ -37,7 +48,6 @@
     <div class="row g-4">
         <div class="col-sm-12 col-xl-12">
             <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <h6 class="mb-4">Календарь мероприятий</h6>
                 <div id="calendar"></div>
             </div>
         </div>

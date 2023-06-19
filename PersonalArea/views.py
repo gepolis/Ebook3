@@ -18,6 +18,7 @@ import xlsxwriter
 import pandas as pd
 from .models import Notications
 
+@login_required
 @decorators.has_role
 def index(request):
     if request.user.role == "admin":
@@ -43,7 +44,10 @@ def index(request):
             context['students'] = item
         return render(request, "teacher/index.html", context=context)
     elif request.user.role == "student":
-        return render(request, "student/index.html")
+        context = {
+            "section": "index"
+        }
+        return render(request, "student/index.html", context=context)
     elif request.user.role == "methodist":
         context = {
             "section": "index"
@@ -417,20 +421,23 @@ def invite(request, classroom):
     messages.success(request, "Вы успешно вошли в класс")
     return redirect("/lk/")
 
-
+@login_required
 def events(request):
     if request.user.role == "teacher":
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(teacher=request.user)
-            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__gt=datetime.now())
+            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=datetime.now(), end_date__gt=datetime.now())
             return render(request, "teacher/events.html", {"events": events, "section": "events"})
         else:
             return redirect("/lk/classroom/create/")
     elif request.user.role == "student":
-        classroom = ClassRoom.objects.get(member=request.user)
-        events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__gt=datetime.now())
-        return render(request, "student/events.html", {"events": events})
-
+        if request.user.has_classroom():
+            classroom = ClassRoom.objects.get(member=request.user)
+            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=datetime.now(), end_date__gt=datetime.now())
+            return render(request, "student/events.html", {"events": events, 'section': 'events'})
+        else:
+            messages.warning(request, "Сначала вступите в класс, по приглашению от классного руковадителя.")
+            return redirect("/lk/")
 
 @decorators.is_student
 def event_request(request, event):
@@ -448,9 +455,8 @@ def my_events(request):
     wait = events.filter(start_date__gt=datetime.now())
     ended = events.filter(end_date__lt=datetime.now())
     started = events.filter(end_date__gt=datetime.now(), start_date__lte=datetime.now())
-    return render(request, "student/my_events.html", {"started": started, "ended": ended, "wait": wait})
+    return render(request, "student/my_events.html", {"started": started, "ended": ended, "wait": wait, 'section': 'my_events'})
 
-@login_required
 @decorators.is_admin
 def user_data(request, id):
     user = Account.objects.get(pk=id)
@@ -494,7 +500,7 @@ def category_list(request):
     categories = EventCategory.objects.all()
     form = EventCategoryForm()
     return render(request, "category_list.html", {"categories": categories,"form": form,"section": "events"})
-@login_required
+
 @decorators.is_admin
 def category_data(request, id):
     category = EventCategory.objects.get(pk=id)
@@ -515,7 +521,7 @@ def category_data(request, id):
         }
     return JsonResponse(category_data, safe=False)
 
-
+@login_required
 def category_edit(request, id):
     category = EventCategory.objects.get(pk=id)
     if request.method == "POST":
@@ -534,7 +540,7 @@ def category_edit(request, id):
 def student_invites(request):
     pass
 
-
+@login_required
 def all_events(request):
     e = Events.objects.all()
     mode = request.GET.get("mode")
@@ -560,7 +566,7 @@ def all_events(request):
 
     return JsonResponse(out, safe=False)
 
-
+@login_required
 def classroom_view_export(request, user):
     user = Account.objects.get(pk=user)
     events = Events.objects.all().filter(volunteer__in=EventsMembers.objects.all().filter(user=user, is_active=True))
@@ -619,7 +625,7 @@ def photo_report(request, id):
             p = PhotoReport(image=f, event=event)
             p.save()
         return redirect(f"/lk/events/{event.pk}/photo/report")
-
+@login_required
 def event_detail(request, id):
     event = get_object_or_404(Events, pk=id)
     context = {
