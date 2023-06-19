@@ -1,0 +1,6 @@
+GET http://127.0.0.1:8000/lk/users/data/1
+Accept: application/json
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0
+Cookie: csrftoken: Ftop36pnNSOTE3ISg8Yo8wypoz5IuTYO; django_language: en; sessionid: wi4mwxtuvqkuhv4ky3pje7ux6ouoexbh
+
+###
