@@ -14,7 +14,7 @@ def is_admin(view_func):
             else:
                 return render(request, "404.html")
         else:
-            return render(request, "404.html")
+            return redirect("auth")
     return wrapper
 
 def has_role(view_func):
@@ -23,7 +23,7 @@ def has_role(view_func):
         if request.user.role is not None:
             return view_func(request, *args, **kwargs)
         else:
-            return render(request, "404.html")
+            return redirect("auth")
 
     return wrapper
 def is_teacher(view_func):
@@ -35,7 +35,7 @@ def is_teacher(view_func):
             else:
                 return render(request, "404.html")
         else:
-            return render(request, "404.html")
+            return redirect("auth")
 
     return wrapper
 
@@ -49,7 +49,7 @@ def is_student(view_func):
             else:
                 return render(request, "404.html")
         else:
-            return render(request, "404.html")
+            return redirect("auth")
 
     return wrapper
 
@@ -63,7 +63,7 @@ def is_methodist(view_func):
             else:
                 return render(request, "404.html")
         else:
-            return render(request, "404.html")
+            return redirect("auth")
 
     return wrapper
 
@@ -77,7 +77,7 @@ def is_admin_or_methodist(view_func):
             else:
                 return render(request, "404.html")
         else:
-            return render(request, "404.html")
+            return redirect("auth")
 
     return wrapper
 

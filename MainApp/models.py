@@ -74,7 +74,8 @@ class ClassRoom(models.Model):
     parallel = models.CharField(max_length=1)
     def invite_url(self):
         return f"https://mysite.com:8000/lk/classroom/invite/{self.uuid}/"
-
+    def __str__(self):
+        return f"{self.classroom}\"{self.parallel}\""
     class Meta:
         verbose_name = "Класс"
         verbose_name_plural = "Классы"

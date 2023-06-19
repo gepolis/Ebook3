@@ -63,7 +63,7 @@ class Account(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    date_of_birth = models.DateField(null=True)
+    date_of_birth = models.DateField(null=True, verbose_name="дата рождения")
     building = models.ForeignKey(Building, on_delete=models.SET_NULL, null=True)
     points = models.IntegerField(default=0)
     USERNAME_FIELD = 'email'
@@ -81,7 +81,17 @@ class Account(AbstractBaseUser):
         if self.role == "teacher":
             if ClassRoom.objects.all().filter(teacher=self).exists():
                 return True
+        elif self.role == "student":
+            if ClassRoom.objects.all().filter(member=self).exists():
+                return True
         return False
+    def get_classroom(self):
+        if not self.has_classroom():
+            return False
+        if self.role == "teacher":
+            return ClassRoom.objects.get(teacher=self)
+        elif self.role == "student":
+            return ClassRoom.objects.get(member=self)
     def get_events(self):
         events = EventsMembers.all().filter(user=self)
         return events
