@@ -18,7 +18,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path
+from django.http import HttpResponse
 from . import views
+
 urlpatterns = [
     path("", views.index),
     path("users/list/", views.users_list),
@@ -27,9 +29,10 @@ urlpatterns = [
     path("users/<int:id>/edit/", views.edit_user),
     path("users/data/<int:id>", views.user_data),
     path("users/<int:id>/view/", views.view_user),
-    path("events/list/", views.events_list),
+    path("events/list/", views.events_list, name="events_list"),
     path("events/<int:id>/view/", views.events_view),
-
+    path("events/category/list/", views.category_list, name="category_list"),
+    path("events/category/<int:id>/edit/", views.category_edit),
     path("events/<int:id>/accept/<int:user>", views.event_accept_user),
     path("events/<int:id>/reject/<int:user>", views.event_reject_user),
     path("events/<int:id>/add/<int:user>", views.event_add_user),
@@ -37,6 +40,12 @@ urlpatterns = [
     path("events/<int:id>/unarchived", views.event_unarchived),
     path("events/<int:id>/archive", views.event_archive),
     path("events/<int:id>/points/give", views.give_points),
+    path("events/<int:id>/photo/report", views.photo_report),
+    path("events/<int:id>/detail", views.event_detail),
+    path("events/category/data/<int:id>", views.category_data),
+    path("events/invites/", views.student_invites),
+    path("events/all_events/", views.all_events),
+
     path("building/list/", views.building_list),
     path("building/add/", views.add_building),
     path("events/list/<str:search>", views.events_list),
@@ -54,6 +63,7 @@ urlpatterns = [
     path("classroom/students/", views.classroom_students),
 
     path("classroom/student/<int:user>/view", views.classroom_view_student),
+    path("classroom/student/<int:user>/export", views.classroom_view_export),
 
     path("events/<int:event>/request", views.event_request),
     path("my/events/", views.my_events),

@@ -15,3 +15,5 @@ class Notications(models.Model):
     def save(self, *args, **kwargs):
         self.created = round(time.time())
         super(Notications, self).save(*args, **kwargs)
+
+

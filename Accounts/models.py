@@ -1,6 +1,6 @@
 import random
 import time
-from MainApp.models import EventsMembers
+from MainApp.models import EventsMembers, ClassRoom
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
 from django.core import validators
@@ -50,7 +50,7 @@ class Account(AbstractBaseUser):
         ("teacher", "Учитель"),
         ("parent", "Родитель"),
         ("student", "Ученик"),
-        ("methodist", "Методист объединения")
+        ("methodist", "Методист")
     ]
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     username = models.CharField(max_length=30, unique=True)
@@ -77,6 +77,11 @@ class Account(AbstractBaseUser):
     def full_name(self):
         return f"{self.second_name} {self.first_name} {self.middle_name}"
 
+    def has_classroom(self):
+        if self.role == "teacher":
+            if ClassRoom.objects.all().filter(teacher=self).exists():
+                return True
+        return False
     def get_events(self):
         events = EventsMembers.all().filter(user=self)
         return events

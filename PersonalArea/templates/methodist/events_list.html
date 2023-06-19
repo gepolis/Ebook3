@@ -27,8 +27,9 @@
     <div class="row g-4">
         <div class="col-sm-12 col-xl-12">
             <div class="bg-light rounded h-100 p-4">
-                <h6 class="mb-4">Архив мероприятий
+                <h6 class="mb-4">Мероприятия
                 </h6>
+                <p>Вы видите только те мероприятия к которым у вас есть доступ.</p>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -36,6 +37,7 @@
                         <th scope="col">Название</th>
                         <th scope="col">Дата начала</th>
                         <th scope="col">Дата конца</th>
+                        <th scope="col">Участников</th>
                         <th scope="col">Действия</th>
                     </tr>
                     </thead>
@@ -46,10 +48,15 @@
                             <td>{{event.name}}</td>
                             <td>{{event.start_date}}</td>
                             <td>{{event.end_date}}</td>
+                            <td>{{event.volunteer.count}}</td>
                             <td>
-                                <a class="btn btn-primary"  href="/lk/events/{{event.pk}}/unarchived"><i class="fas fa-box-open"></i></a>
+                                <a class="btn btn-primary"  href="/lk/events/{{event.pk}}/archive"><i class="fas fa-box"></i></a>
                                 <a class="btn btn-primary" href="/lk/events/{{event.pk}}/export"><i class="fas fa-file-download"></i></a>
                             </td>
+                            <!--<td>
+                                <a class="btn btn-primary"  href="/lk/users/{{user.id}}/view"><i class="fa fa-eye"></i></a>
+                                <a class="btn btn-primary" href="/lk/users/{{user.id}}/edit"><i class="fa fa-user-edit"></i></a>
+                            </td>-->
                         </tr>
                     {% endfor %}
                     </tbody>

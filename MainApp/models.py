@@ -30,12 +30,26 @@ class EventCategory(models.Model):
         return self.name
 
 class Events(models.Model):
+    CLASSROOM = [
+        ("0", "Детский сад"),
+        ("1", "1 класс"),
+        ("2", "2 класс"),
+        ("3", "3 класс"),
+        ("4", "4 класс"),
+        ("5", "5 класс"),
+        ("6", "6 класс"),
+        ("7", "7 класс"),
+        ("8", "8 класс"),
+        ("9", "9 класс"),
+        ("10", "10 класс"),
+        ("11", "11 класс")
+    ]
     name = models.CharField(max_length=255)
     description = models.TextField(max_length=2550)
     start_date = models.DateTimeField(auto_now=False)
     end_date = models.DateTimeField(auto_now=False)
-    classroom_number = models.ManyToManyField(ClassRoomsNumber)
-    volunteer = models.ManyToManyField(EventsMembers)
+    classroom_number = models.CharField(max_length=255,choices=CLASSROOM, null=True)
+    volunteer = models.ManyToManyField(EventsMembers, related_name="volunteers")
     category = models.ForeignKey(EventCategory,related_name="category", on_delete=models.SET_NULL, null=True)
     organizer = models.ForeignKey(Account, on_delete=models.SET_NULL, related_name="orgonizaer",null=True)
     building = models.ForeignKey("Accounts.building", on_delete=models.SET_NULL, related_name="building", null=True)
@@ -48,7 +62,10 @@ class Events(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.volunteer}"
-
+class PhotoReport(models.Model):
+    image = models.ImageField(upload_to="photo_reports/%Y/%m/%d/")
+    event = models.ForeignKey(Events, on_delete=models.CASCADE, null=True)
+    uploaded = models.DateTimeField(auto_now_add=True)
 class ClassRoom(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     teacher = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="teacher")

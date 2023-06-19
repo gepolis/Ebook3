@@ -11,7 +11,9 @@
 
     <!-- Favicon -->
     <link href="{% static 'img/favicon.ico' %}" rel="icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css">
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,32 +60,76 @@
             </div>
             <div class="navbar-nav w-100">
                 {% if user.role == "admin" %}
-                    <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i class="fa fa-home me-2"></i>Главная</a>
+                    <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i
+                            class="fa fa-home me-2"></i>Главная</a>
+                    <a href="/lk/users/list/" class="nav-item nav-link {% if section == "users" %}active{% endif %}"><i
+                            class="fa fa-users me-2"></i>Пользователи</a>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle {% if section == "users" %}active{% endif %}" data-bs-toggle="dropdown"><i
-                                class="fa fa-users me-2"></i>Пользователи</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="/lk/users/list/" class="dropdown-item">Список</a>
-                            <a href="/lk/users/create/" class="dropdown-item">Создать</a>
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle {% if section == "events" %}active{% endif %}" data-bs-toggle="dropdown"><i
+                        <a href="#" class="nav-link dropdown-toggle {% if section == "events" %}active{% endif %}"
+                           data-bs-toggle="dropdown"><i
                                 class="far fa-calendar me-2"></i>Мероприятия</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="/lk/events/list/" class="dropdown-item">Список</a>
                             <a href="/lk/events/archive/" class="dropdown-item">Архив</a>
+                            <a href="/lk/events/category/list/" class="dropdown-item">Категории</a>
                             <a href="/lk/events/create/" class="dropdown-item">Создать</a>
+
                         </div>
                     </div>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle {% if section == "building" %}active{% endif %}" data-bs-toggle="dropdown"><i
+                        <a href="#" class="nav-link dropdown-toggle {% if section == "building" %}active{% endif %}"
+                           data-bs-toggle="dropdown"><i
                                 class="far fa-building me-2"></i>Здания</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="/lk/building/list/" class="dropdown-item">Список</a>
                             <a href="/lk/building/add/" class="dropdown-item">Добавить</a>
                         </div>
                     </div>
+                {% elif user.role == "methodist" %}
+                    <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i
+                            class="fa fa-home me-2"></i>Главная</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle {% if section == "events" %}active{% endif %}"
+                           data-bs-toggle="dropdown"><i
+                                class="far fa-calendar me-2"></i>Мероприятия</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="/lk/events/list/" class="dropdown-item">Список</a>
+                            <a href="/lk/events/archive/" class="dropdown-item">Архив</a>
+                            <a href="/lk/events/create/" class="dropdown-item">Создать</a>
+
+                        </div>
+                    </div>
+                {% elif user.role == "teacher" %}
+                    <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i
+                            class="fa fa-home me-2"></i>Главная</a>
+                    {% if user.has_classroom %}
+
+                        <div class="nav-item dropdown ">
+                            <a href="#"
+                               class="nav-link dropdown-toggle {% if section == "classroom" %}active{% endif %}"
+                               data-bs-toggle="dropdown"><i
+                                    class="fa fa-users me-2"></i>Мой класс</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="/lk/classroom/students/" class="dropdown-item">Ученики</a>
+                                <a href="/lk/classroom/invite/create/" class="dropdown-item">Пригласить</a>
+                            </div>
+                        </div>
+                        <a href="/lk/events/" class="nav-item nav-link {% if section == "events" %}active{% endif %}"><i
+                                class="fa fa-calendar me-2"></i>Мероприятия</a>
+                    {% else %}
+                        <div class="nav-item dropdown ">
+                            <a href="#"
+                               class="nav-link dropdown-toggle {% if section == "classroom" %}active{% endif %}"
+                               data-bs-toggle="dropdown"><i
+                                    class="fa fa-users me-2"></i>Мой класс</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="/lk/classroom/create/" class="dropdown-item">Создать класс</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    {% block sidebar %}
+                    {% endblock sidebar %}
                 {% endif %}
             </div>
         </nav>
@@ -100,7 +146,11 @@
             {% if messages %}
                 <ul class="messagelist">
                     {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}" role="alert">{{ message.message }}</div>
+                        {% if message.tags == "error" %}
+                            <div class="alert alert-danger" role="alert">{{ message.message }}</div>
+                        {% else %}
+                            <div class="alert alert-{{ message.tags }}" role="alert">{{ message.message }}</div>
+                        {% endif %}
                     {% endfor %}
                 </ul>
             {% endif %}
@@ -122,6 +172,8 @@
 <!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
 <script src="{% static 'lib/chart/chart.min.js' %}"></script>
 <script src="{% static 'lib/easing/easing.min.js' %}"></script>
 <script src="{% static 'lib/waypoints/waypoints.min.js' %}"></script>
@@ -141,6 +193,9 @@
 <!-- Template Javascript -->
 <script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/search.js' %}"></script>
+<script src="{% static 'js/calendar.js' %}"></script>
+{% block js %}
+{% endblock js %}
 </body>
 
 </html>

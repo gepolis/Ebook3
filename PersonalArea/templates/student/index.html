@@ -3,6 +3,7 @@
     <a href="/lk/" class="nav-item nav-link active"><i class="fa fa-home me-2"></i>Главная</a>
     <a href="/lk/my/events/" class="nav-item nav-link"><i class="fa fa-calendar me-2"></i>Мои события</a>
     <a href="/lk/events/" class="nav-item nav-link"><i class="fa fa-calendar me-2"></i>Мероприятия</a>
+<!--<a href="/lk/events/invites/" class="nav-item nav-link"><i class="fa me-2 fa-calendar"></i>Приглашения</a>-->
 
 {% endblock sidebar %}
 {% block content %}
@@ -32,8 +33,41 @@
 </div>
 <!-- Sale & Revenue End -->
 
-<!-- Sales Chart Start -->
-<!-- Sales Chart End -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-12">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                <h6 class="mb-4">Календарь мероприятий</h6>
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 {% endblock content %}
+
+{% block js %}
+<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/moment.min.js'></script>
+<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery.min.js'></script>
+<script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery-ui.custom.min.js"></script>
+<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/fullcalendar.min.js'></script>
+<script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lang-all.js"></script>
+<script>
+   $(document).ready(function () {
+       var calendar = $(`#calendar`).fullCalendar({
+           header: {
+               left: 'prev,next today',
+               center: 'title',
+               right: 'month,agendaWeek,agendaDay'
+           },
+           events: `/lk/events/all_events/?mode=my`,
+           eventLimit: true,
+           lang: 'ru',
+           displayEventTime: false
+
+       });
+   });
+</script>
+{% endblock js %}
