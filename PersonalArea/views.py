@@ -245,8 +245,8 @@ def events_view(request, id):
         "reqs": event.volunteer.filter(is_active=False),
         "members": event.volunteer.filter(is_active=True),
         "section": "events",
-        "wait": Events.objects.all().filter(pk=event.pk,start_date__gt=datetime.now()).exists(),
-        "end":  Events.objects.all().filter(pk=event.pk,end_date__lt=datetime.now()).exists()
+        "wait": Events.objects.all().filter(pk=event.pk,start_date__lt=datetime.now()).exists(),
+        "end":  Events.objects.all().filter(pk=event.pk,end_date__gt=datetime.now()).exists()
     }
     return render(request, "event_view.html", context)
 

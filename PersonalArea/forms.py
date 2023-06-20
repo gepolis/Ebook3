@@ -77,7 +77,7 @@ class EventAddForm(forms.ModelForm):
             'start_date': forms.DateTimeInput(format=['%d/%m/%y'], attrs={'type': 'datetime-local'}),
             'end_date': forms.DateTimeInput(format=['%d/%m/%y'], attrs={'type': 'datetime-local'}),
             'organizer': forms.Select(),
-            'classroom_number': forms.SelectMultiple(attrs={"style": "height: 350px"}),
+            'classroom_number': forms.Select(),
             'building': forms.Select(),
             'image': forms.FileInput(attrs={"class": "form-control"})
         }
