@@ -117,32 +117,41 @@ def edit_profile(request):
     return render(request, "settings.html", {"form": form})
 
 @decorators.is_admin_or_methodist
-def events_list(request, search=None):
+def events_list(request):
+    category = request.GET.get("category")
+    if category:
+        category_events = get_object_or_404(EventCategory, pk=category)
     if request.user.role == "admin":
         events = Events.objects.all().filter(archive=False).order_by("-id")
+
+        if category:
+            events = events.filter(category=category_events)
         context = {
             "count_events": events.count(),
             "count_requests": EventsMembers.objects.all().filter(is_active=False).count(),
-            "section": "events"
+            "section": "events",
+            "events": events,
+            "categories": EventCategory.objects.all()
         }
-        if search is None:
-            context['events'] = events
-        else:
-            context['events'] = Events.objects.all().filter(name__icontains=search)
+        if category:
+            context['choice']=category_events.pk
         return render(request, "events_list.html", context)
     elif request.user.role == "methodist":
         categories = EventCategory.objects.all().filter(methodists=request.user)
         events = Events.objects.all().filter(archive=False, category__in=categories).order_by("-id")
+
+        if category:
+            events = events.filter(category=category_events)
         context = {
             "count_events": events.count(),
             "count_requests": EventsMembers.objects.all().filter(is_active=True).count(),
-            "section": "events"
+            "section": "events",
+            "events": events,
+            "categories": EventCategory.objects.all()
         }
-        if search is None:
-            context['events'] = events
-        else:
-            context['events'] = Events.objects.all().filter(name__icontains=search)
-        return render(request, "methodist/events_list.html", context)
+        if category:
+            context['choice']=category_events.pk
+        return render(request, "events_list.html", context)
 @decorators.is_admin_or_methodist
 def give_points(request, id):
     event = Events.objects.get(pk=id)
@@ -164,24 +173,39 @@ def give_points(request, id):
 
 @decorators.is_admin_or_methodist
 def events_archive_list(request):
+    category = request.GET.get("category")
+    if category:
+        category_events = get_object_or_404(EventCategory, pk=category)
+
+
     if request.user.role == "admin":
         events = Events.objects.all().filter(archive=True).order_by("-id")
+        if category:
+            events = events.filter(category=category_events)
         context = {
             "count_events": events.count(),
             "count_requests": EventsMembers.objects.all().filter(is_active=False).count(),
             "section": "events",
-            "events": events
+            "events": events,
+            "categories": EventCategory.objects.all()
         }
+        if category:
+            context['choice']=category_events.pk
         return render(request, "events_archive_list.html", context)
     elif request.user.role == "methodist":
         categories = EventCategory.objects.all().filter(methodists=request.user)
         events = Events.objects.all().filter(archive=True, category__in=categories).order_by("-id")
+        if category:
+            events = events.filter(category=category_events)
         context = {
             "count_events": events.count(),
             "count_requests": EventsMembers.objects.all().filter(is_active=True).count(),
             "section": "events",
-            "events": events
+            "events": events,
+            "categories": EventCategory.objects.all()
         }
+        if category:
+            context['choice']=category_events.pk
         return render(request, "methodist/events_archive_list.html", context)
 
 @decorators.is_admin_or_methodist
@@ -402,9 +426,19 @@ def classroom_view_student(request, user):
     if ClassRoom.objects.all().filter(teacher=request.user).exists():
         classroom = ClassRoom.objects.get(teacher=request.user)
         if classroom.member.all().filter(pk=user).exists():
+            category = request.GET.get("category")
+            if category:
+                category_events = get_object_or_404(EventCategory, pk=category)
             user = classroom.member.get(pk=user)
             events = Events.objects.all().filter(volunteer__user=user)
-            return render(request, "teacher/view_student.html", {"student": user, "events": events, "section": "classroom"})
+            if category:
+                events = events.filter(category=category_events)
+            context = {"student": user, "events": events, "section": "classroom", "categories": EventCategory.objects.all()}
+
+            if category:
+                context['choice'] = category_events.pk
+
+            return render(request, "teacher/view_student.html", context=context)
         else:
             return redirect("/lk/classroom/students/")
     else:
@@ -421,18 +455,34 @@ def invite(request, classroom):
 
 @login_required
 def events(request):
+    category = request.GET.get("category")
+    if category:
+        category_events = get_object_or_404(EventCategory, pk=category)
+
     if request.user.role == "teacher":
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(teacher=request.user)
             events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=timezone.now(), end_date__gt=timezone.now())
-            return render(request, "teacher/events.html", {"events": events, "section": "events"})
+            if category:
+                events = events.filter(category=category_events)
+
+            context = {"events": events, "section": "events", "categories": EventCategory.objects.all()}
+            if category:
+                context['choice'] = category_events.pk
+            return render(request, "teacher/events.html", context)
         else:
             return redirect("/lk/classroom/create/")
     elif request.user.role == "student":
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(member=request.user)
-            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=timezone.now(), end_date__gt=timezone.now())
-            return render(request, "student/events.html", {"events": events, 'section': 'events'})
+            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=timezone.now())
+            if category:
+                events = events.filter(category=category_events)
+            print(events)
+            context = {"events": events, "section": "events", "categories": EventCategory.objects.all()}
+            if category:
+                context['choice'] = category_events.pk
+            return render(request, "student/events.html", context)
         else:
             messages.warning(request, "Сначала вступите в класс, по приглашению от классного руководителя.")
             return redirect("/lk/")
@@ -449,11 +499,21 @@ def event_request(request, event):
 
 @decorators.is_student
 def my_events(request):
+    category = request.GET.get("category")
+    if category:
+        category_events = get_object_or_404(EventCategory, pk=category)
+
     events = Events.objects.all().filter(volunteer__user=request.user)
+    if category:
+        events = events.filter(category=category_events)
+
     wait = events.filter(start_date__gt=timezone.now())
     ended = events.filter(end_date__lt=timezone.now())
     started = events.filter(end_date__gt=timezone.now(), start_date__lte=timezone.now())
-    return render(request, "student/my_events.html", {"started": started, "ended": ended, "wait": wait, 'section': 'my_events'})
+    context = {"started": started, "ended": ended, "wait": wait, 'section': 'my_events', "categories": EventCategory.objects.all()}
+    if category:
+        context['choice'] = category_events.pk
+    return render(request, "student/my_events.html", context)
 
 @decorators.is_admin
 def user_data(request, id):

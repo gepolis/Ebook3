@@ -9,7 +9,19 @@
 {% block content %}
     <div class="container-fluid pt-4 px-4">
         <div class="bg-light rounded h-100 p-4">
-        <h6 class="mb-4">Мероприятия</h6>
+        <div class="row">
+            <div class="col-sm col-sm-10">
+                <h6 class="mb-4">Мероприятия</h6>
+            </div>
+            <div class="col-sm">
+                <select onchange="choice(this);" style="width: 100px"class="form-control">
+                    <option value="all" {% if not choice%}selected{% endif%}>Все</option>
+                    {% for i in categories %}
+                        <option value="{{i.pk}}" {% if choice == i.pk %}selected{% endif%}>{{ i.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+</div>
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 {% for event in events %}
                     <div class="col">
@@ -25,7 +37,7 @@
                                 Начало: {{ event.start_date }}<br>
                                 Конец: {{ event.end_date }}
                                 </p>
-                                <!--<a href="/lk/events/{{ event.pk }}/invite" class="btn btn-primary">Пригласить</a>-->
+                                <a href="/lk/events/{{ event.pk }}/request" class="btn btn-primary">Подать заявку</a>
                             </div>
                         </div>
                     </div>
@@ -36,3 +48,18 @@
 
 
 {% endblock content %}
+
+
+{% block js %}
+<script>
+    const url = `${window.location.protocol}//${window.location.host}/lk/events/`
+    const choice = (event) => {
+        if (event.value !== "all") {
+            window.open(url+`?category=${event.value}`,"_self")
+        } else {
+            window.open(url,"_self")
+        }
+    }
+</script>
+
+{% endblock js %}
