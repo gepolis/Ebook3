@@ -22,7 +22,7 @@ def register_request(request):
             messages.success(request, 'Вы успешно зарегистрировались!')
             return redirect("/lk/")
         else:
-            messages.success(request, f'Ошибка({form.errors})!')
+            messages.error(request, f'Ошибка')
             return redirect("/auth/?m=reg")
     else:
         return HttpResponse("m")
