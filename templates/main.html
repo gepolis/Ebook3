@@ -2,9 +2,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
 
     <title>комплексная автоматизация ГБОУ Школа №1236</title>
 
@@ -31,7 +28,11 @@
 
                 </li>
             </ul>
-            <a class="nav-link" style="color: #fff" href="/auth/">Авторизация</a>
+            {% if not user.is_authenticated %}
+                <a class="nav-link" style="color: #fff" href="/auth/">Авторизация</a>
+            {% else %}
+                <a class="nav-link" style="color: #fff" href="/lk/">Личный кабинет</a>
+            {% endif %}
         </div>
     </nav>
 </header>
