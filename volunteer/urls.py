@@ -22,7 +22,6 @@ from Accounts import views as accounts_views
 from MainApp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('register/<str:mode>/', accounts_views.register),
     path('login/', accounts_views.login_request),
     path('logout/', accounts_views.logout_request, name="logout"),
 

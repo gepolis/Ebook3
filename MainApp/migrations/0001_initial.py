@@ -74,6 +74,19 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='News',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('title', models.CharField(max_length=300, verbose_name='Название')),
+                ('content', ckeditor.fields.RichTextField(verbose_name='Содержание')),
+                ('created', models.DateTimeField(auto_now_add=True, null=True, verbose_name='Опубликованно')),
+            ],
+            options={
+                'verbose_name': 'Новость',
+                'verbose_name_plural': 'Новости',
+            },
+        ),
+        migrations.CreateModel(
             name='TeacherInviteEvent',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),

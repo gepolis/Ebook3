@@ -1,11 +1,7 @@
-import uuid
-import datetime
-import time
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, Http404, FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from Accounts.models import Account
 from MainApp.models import *
 from django.utils.formats import localize
 

@@ -2,7 +2,6 @@ import django.contrib.auth
 from django.db import models
 from django.core import validators
 Account = "Accounts.account"
-from multiselectfield import MultiSelectField
 import uuid
 class EventsMembers(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
