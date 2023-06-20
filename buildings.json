@@ -1,0 +1,138 @@
+[
+{
+  "model": "Accounts.building",
+  "pk": 1,
+  "fields": {
+    "name": "Учебный корпус № 252",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 2,
+  "fields": {
+    "name": "Учебный корпус № 1236",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 3,
+  "fields": {
+    "name": "Учебный корпус № 968",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 4,
+  "fields": {
+    "name": "Учебный корпус № 963",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 5,
+  "fields": {
+    "name": "Учебный корпус № 250",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 6,
+  "fields": {
+    "name": "Учебный корпус № 230",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 7,
+  "fields": {
+    "name": "Учебный корпус № 2149",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 8,
+  "fields": {
+    "name": "Учебный корпус № 1446",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 9,
+  "fields": {
+    "name": "Учебный корпус № 2151",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 10,
+  "fields": {
+    "name": "Учебный корпус № 1745",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 11,
+  "fields": {
+    "name": "Учебный корпус № 1832",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 12,
+  "fields": {
+    "name": "Учебный корпус № 5",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 13,
+  "fields": {
+    "name": "Учебный корпус № 181",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 14,
+  "fields": {
+    "name": "Учебный корпус № 121",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 15,
+  "fields": {
+    "name": "Учебный корпус № 832",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 16,
+  "fields": {
+    "name": "Учебный корпус № 567",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 17,
+  "fields": {
+    "name": "Учебный корпус № 425",
+    "type": "kg"
+  }
+}
+]
