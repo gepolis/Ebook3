@@ -46,6 +46,9 @@ urlpatterns = [
     path("events/invites/", views.student_invites),
     path("events/all_events/", views.all_events),
 
+    path("events/category/<int:id>/delete", views.category_delete),
+    path("users/<int:id>/delete", views.user_delete),
+
     path("building/list/", views.building_list),
     path("building/add/", views.add_building),
     path("events/list/<str:search>", views.events_list),

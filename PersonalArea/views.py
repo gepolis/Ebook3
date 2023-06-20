@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+import datetime
 import time
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -17,6 +17,8 @@ import io
 import xlsxwriter
 import pandas as pd
 from .models import Notications
+from django.utils import timezone
+import pytz
 
 @login_required
 @decorators.has_role
@@ -66,14 +68,13 @@ def users_list(request, role=None):
     create_user_form = NewUserForm()
     context = {
         "count_users": users.count(),
-        "count_staff": users.filter(role="admin").count() + users.filter(role="teacher").count(),
-        "count_parents": users.filter(role="parent").count(),
+        "count_staff": users.filter(role="admin").count() + users.filter(role="teacher").count() + users.filter(role="methodist").count(),
         "count_students": users.filter(role="student").count(),
         "create_user_form": create_user_form,
         "section": "users"
     }
     if role is not None:
-        users = users.filter(roles__name=role)
+        users = users.filter(role=role)
     context["users"] = users
     return render(request, "users_list.html", context=context)
 
@@ -245,9 +246,10 @@ def events_view(request, id):
         "reqs": event.volunteer.filter(is_active=False),
         "members": event.volunteer.filter(is_active=True),
         "section": "events",
-        "wait": Events.objects.all().filter(pk=event.pk,start_date__lt=datetime.now()).exists(),
-        "end":  Events.objects.all().filter(pk=event.pk,end_date__gt=datetime.now()).exists()
+        "wait": Events.objects.all().filter(pk=event.pk,start_date__gt=timezone.now()).exists(),
+        "end":  Events.objects.all().filter(pk=event.pk,end_date__lt=timezone.now()).exists()
     }
+    print(context)
     return render(request, "event_view.html", context)
 
 
@@ -426,17 +428,17 @@ def events(request):
     if request.user.role == "teacher":
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(teacher=request.user)
-            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=datetime.now(), end_date__gt=datetime.now())
+            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=timezone.now(), end_date__gt=timezone.now())
             return render(request, "teacher/events.html", {"events": events, "section": "events"})
         else:
             return redirect("/lk/classroom/create/")
     elif request.user.role == "student":
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(member=request.user)
-            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=datetime.now(), end_date__gt=datetime.now())
+            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=timezone.now(), end_date__gt=timezone.now())
             return render(request, "student/events.html", {"events": events, 'section': 'events'})
         else:
-            messages.warning(request, "Сначала вступите в класс, по приглашению от классного руковадителя.")
+            messages.warning(request, "Сначала вступите в класс, по приглашению от классного руководителя.")
             return redirect("/lk/")
 
 @decorators.is_student
@@ -452,16 +454,16 @@ def event_request(request, event):
 @decorators.is_student
 def my_events(request):
     events = Events.objects.all().filter(volunteer__user=request.user)
-    wait = events.filter(start_date__gt=datetime.now())
-    ended = events.filter(end_date__lt=datetime.now())
-    started = events.filter(end_date__gt=datetime.now(), start_date__lte=datetime.now())
+    wait = events.filter(start_date__gt=timezone.now())
+    ended = events.filter(end_date__lt=timezone.now())
+    started = events.filter(end_date__gt=timezone.now(), start_date__lte=timezone.now())
     return render(request, "student/my_events.html", {"started": started, "ended": ended, "wait": wait, 'section': 'my_events'})
 
 @decorators.is_admin
 def user_data(request, id):
     user = Account.objects.get(pk=id)
     user_data = {
-        'received': localize(datetime.now()),
+        'received': localize(timezone.now()),
         'user': {
             "id": user.id,
             "username": user.username,
@@ -505,7 +507,7 @@ def category_list(request):
 def category_data(request, id):
     category = EventCategory.objects.get(pk=id)
     category_data = {
-        'received': localize(datetime.now()),
+        'received': localize(timezone.now()),
         'category': {
             "id": category.id,
             "name": category.name,
@@ -582,9 +584,8 @@ def classroom_view_export(request, user):
     points = 0
     for i in events:
         m += 1
-        wait = events.filter(pk=i.pk,start_date__gt=datetime.now()).exists()
-        ended = events.filter(pk=i.pk,end_date__lt=datetime.now()).exists()
-        #started = events.filter(pk=i.pk,end_date__gt=datetime.now(), start_date__lte=datetime.now()).exists()
+        wait = events.filter(pk=i.pk,start_date__gt=timezone.now()).exists()
+        ended = events.filter(pk=i.pk,end_date__lt=timezone.now()).exists()
         if wait: # wait
             worksheet.write(f'D{m}', "Ожидание начала")
         elif ended: #end
@@ -632,6 +633,20 @@ def event_detail(request, id):
         "section": "events",
         "event": event,
         "report": PhotoReport.objects.all().filter(event=event),
-        "end": Events.objects.all().filter(pk=event.pk, end_date__lt=datetime.now()).exists()
+        "end": Events.objects.all().filter(pk=event.pk, end_date__lt=timezone.now()).exists()
     }
     return render(request,"event_detail.html", context=context)
+
+@decorators.is_admin
+def category_delete(request, id):
+    category = get_object_or_404(EventCategory, pk=id)
+    category.delete()
+    return redirect("/lk/events/category/list/")
+
+
+
+@decorators.is_admin
+def user_delete(request, id):
+    user = get_object_or_404(Account, pk=id)
+    user.delete()
+    return redirect("/lk/users/list/")

@@ -24,7 +24,7 @@ class EventCategory(models.Model):
     methodists = models.ManyToManyField(Account,limit_choices_to={"role": "methodist"}, blank=True)
     class Meta:
         verbose_name = "Категория"
-        verbose_name_plural = "Катигории"
+        verbose_name_plural = "Категории"
 
     def __str__(self):
         return self.name
@@ -49,7 +49,7 @@ class Events(models.Model):
     start_date = models.DateTimeField(auto_now=False)
     end_date = models.DateTimeField(auto_now=False)
     classroom_number = models.CharField(max_length=255,choices=CLASSROOM, null=True)
-    volunteer = models.ManyToManyField(EventsMembers, related_name="volunteers")
+    volunteer = models.ManyToManyField(EventsMembers, related_name="volunteers", blank=True)
     category = models.ForeignKey(EventCategory,related_name="category", on_delete=models.SET_NULL, null=True)
     organizer = models.ForeignKey(Account, on_delete=models.SET_NULL, related_name="orgonizaer",null=True)
     building = models.ForeignKey("Accounts.building", on_delete=models.SET_NULL, related_name="building", null=True)
