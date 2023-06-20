@@ -87,15 +87,3 @@ class TeacherInviteEvent(models.Model):
     class Meta:
         verbose_name = "Приглашение на мероприятие"
         verbose_name_plural = "Приглашения на мероприятия"
-from ckeditor.fields import *
-class News(models.Model):
-    title = models.CharField(max_length=300, verbose_name="Название")
-    content = RichTextField(verbose_name="Содержание")
-
-    created = models.DateTimeField(auto_now_add=True, verbose_name="Опубликованно", null=True)
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = "Новость"
-        verbose_name_plural = "Новости"
