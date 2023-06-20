@@ -1,9 +1,7 @@
 import functools
 
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
-from django.contrib import messages
 
+from django.shortcuts import redirect, render
 
 def is_admin(view_func):
     @functools.wraps(view_func)
