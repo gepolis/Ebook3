@@ -6,4 +6,3 @@ from .models import *
 class EventsAdminModel(admin.ModelAdmin):
     list_display = ("name", "start_date", "end_date")
 admin.site.register(EventCategory)
-admin.site.register(News)
