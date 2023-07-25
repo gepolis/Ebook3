@@ -1,0 +1,157 @@
+{% extends "inc/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .chat-container {
+            height: 83vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: scroll;
+            padding: 20px;
+        }
+
+        .chat-message {
+            width: 45%;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #e9f2fd;
+            word-wrap: break-word; /* Добавлено */
+            max-width: 60%; /* Добавлено */
+            align-self: flex-end; /* Добавлено */
+        }
+
+        .chat-message.sent {
+            align-self: flex-end;
+            background-color: #007bff;
+            color: #fff;
+            margin-left: auto;
+        }
+
+        .chat-message.received {
+            align-self: flex-start;
+
+            background-color: #C9E8FF ;
+        }
+
+        .chat-message.sent .sender {
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .chat-message.received .sender {
+            color: #000;
+            font-size: 14px;
+        }
+
+        .chat-message .time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .message-input {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .message-input input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .message-input button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+        }
+
+    </style>
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-12">
+                <div class="bg-light rounded h-90 p-4">
+                    <h6 class="mb-4">Чат</h6>
+                    <div class="chat-container">
+                        <div class="chat-messages">
+                            {% for msg in msgs %}
+                                {% if msg.user != user %}
+                                    <div class="chat-message received">
+                                        <span class="sender">{{ msg.user.full_name }}</span><br>
+                                        <span class="message">{{ msg.context }}</span>
+                                    </div>
+                                {% else %}
+                                    <div class="chat-message sent">
+                                        <span class="sender">{{ msg.user.full_name }}</span><br>
+
+                                        <span class="message">{{ msg.context }}</span>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            <!-- Add more chat messages here -->
+                        </div>
+
+                        <div class="message-input">
+                                <input id="message-input" type="text" placeholder="Сообщение">
+                                <button id="send-btn" ><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: none" id="username">{{ user.full_name }}</div>
+    <div style="display: none" id="classroom">{{ user.get_classroom.id }}</div>
+
+{% endblock content %}
+
+{% block js %}
+    <script>
+        var roomName = '{{ room }}'; // Имя комнаты чата
+
+        var socket = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/' + roomName + '/'
+        );
+
+        socket.onmessage = function(e) {
+            document.body.scrollTop = 1000;
+            var message = JSON.parse(e.data);
+            if (message.author == "{{ user.id }}") {
+                document.querySelector(".chat-messages").innerHTML += '<div class="chat-message sent"><span class="sender">' + message.username + '</span><br><span class="message">' + message.message + '</span></div>';
+            } else {
+                document.querySelector(".chat-messages").innerHTML += '<div class="chat-message received"><span class="sender">' + message.username + '</span><br><span class="message">' + message.message + '</span></div>';
+            }
+            document.querySelector(".chat-messages").scrollTo(0, 20000)
+        };
+
+        $(document).ready(function() {
+            $('#send-btn').click(function() {
+                var message = $('#message-input').val();
+                $('#message-input').val('');
+                if (message != "") {
+                    socket.send(JSON.stringify({
+                        'message': message,
+                        'username': '{{ user.full_name }}',
+                        'author': '{{ user.id }}',
+                        'room': roomName
+                    }));
+                }
+
+            });
+        });
+    </script>
+{% endblock js %}

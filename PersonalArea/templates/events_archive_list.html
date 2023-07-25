@@ -27,21 +27,8 @@
     <div class="row g-4">
         <div class="col-sm-12 col-xl-12">
             <div class="bg-light rounded h-100 p-4">
-                <div class="row">
-                    <div class="col-sm col-sm-10">
-                        <h6 class="mb-4">Архив мероприятий</h6>
-                    </div>
-                    <div class="col-sm">
-                        <select onchange="choice(this);" style="width: 100px" class="form-control">
-                            <option value="all" {% if not choice%}selected{% endif%}>Все</option>
-                            {% for i in categories %}
-                            <option value="{{i.pk}}" {% if choice == i.pk %}selected{% endif%}>{{ i.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-
-
+                <h6 class="mb-4">Архив мероприятий
+                </h6>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -54,18 +41,16 @@
                     </thead>
                     <tbody>
                     {% for event in events %}
-                    <tr>
-                        <th scope="row"><a href="/lk/events/{{event.id}}/view">{{ event.id}}</a></th>
-                        <td>{{event.name}}</td>
-                        <td>{{event.start_date}}</td>
-                        <td>{{event.end_date}}</td>
-                        <td>
-                            <a class="btn btn-primary" href="/lk/events/{{event.pk}}/unarchived"><i
-                                    class="fas fa-box-open"></i></a>
-                            <a class="btn btn-primary" href="/lk/events/{{event.pk}}/export"><i
-                                    class="fas fa-file-download"></i></a>
-                        </td>
-                    </tr>
+                        <tr>
+                            <th scope="row"><a href="/lk/events/{{event.id}}/view">{{ event.id}}</a></th>
+                            <td>{{event.name}}</td>
+                            <td>{{event.start_date}}</td>
+                            <td>{{event.end_date}}</td>
+                            <td>
+                                <a class="btn btn-primary"  href="/lk/events/{{event.pk}}/unarchived"><i class="fas fa-box-open"></i></a>
+                                <a class="btn btn-primary" href="/lk/events/{{event.pk}}/export"><i class="fas fa-file-download"></i></a>
+                            </td>
+                        </tr>
                     {% endfor %}
                     </tbody>
                 </table>
@@ -77,19 +62,3 @@
 
 
 {% endblock content %}
-
-
-{% block js %}
-<script>
-    const url = `${window.location.protocol}//${window.location.host}/lk/events/archive/`
-    const choice = (event) => {
-        if (event.value !== "all") {
-            window.open(url+`?category=${event.value}`,"_self")
-        } else {
-            window.open(url,"_self")
-        }
-    }
-
-</script>
-
-{% endblock js %}

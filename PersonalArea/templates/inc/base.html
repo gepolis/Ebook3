@@ -52,14 +52,14 @@
             <a href="/lk/" class="navbar-brand mx-4 mb-3">
                 <h3 class="text-primary">Волонтер</h3>
             </a>
-            <div class="d-flex align-items-center ms-4 mb-4">
+            <!--<div class="d-flex align-items-center ms-4 mb-4">
                 <div class="ms-3">
                     <h6 class="mb-0">{{ user.full_name }}</h6>
                     <span>{{ user.get_role_display }}</span>
                 </div>
-            </div>
+            </div>-->
             <div class="navbar-nav w-100">
-                {% if user.role == "admin" %}
+                {% if user.role == "admin" or user.role == "director" %}
                     <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i
                             class="fa fa-home me-2"></i>Главная</a>
                     <a href="/lk/users/list/" class="nav-item nav-link {% if section == "users" %}active{% endif %}"><i
@@ -85,6 +85,14 @@
                             <a href="/lk/building/add/" class="dropdown-item">Добавить</a>
                         </div>
                     </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle {% if section == "classrooms" %}active{% endif %}"
+                           data-bs-toggle="dropdown"><i class="fas fa-chalkboard-teacher me-2"></i>Классы</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="/lk/classrooms/" class="dropdown-item">Список</a>
+                        </div>
+                    </div>
+
                 {% elif user.role == "methodist" %}
                     <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i
                             class="fa fa-home me-2"></i>Главная</a>
@@ -136,6 +144,7 @@
                     {% block sidebar %}
                     {% endblock sidebar %}
                 {% endif %}
+                <a href="/lk/chat/" class="nav-item nav-link {% if section == "chat" %}active{% endif %}"><i class="fas fa-paper-plane me-2"></i>Чат</a>
             </div>
         </nav>
     </div>
@@ -171,7 +180,7 @@
 
 
     <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    <!--<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>-->
 </div>
 
 <!-- JavaScript Libraries -->
@@ -201,6 +210,7 @@
 <script src="{% static 'js/calendar.js' %}"></script>
 {% block js %}
 {% endblock js %}
+
 </body>
 
 </html>

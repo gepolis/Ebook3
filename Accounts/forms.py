@@ -46,6 +46,10 @@ class AccountSignInForm(AuthenticationForm):
     class Meta:
         model = Account
         fields = ['email', 'password']
+
+class AccountMosRuForm(forms.Form):
+    login = forms.CharField(label="Почта или номер телефона")
+    password = forms.CharField(widget=forms.PasswordInput(), label='Пароль')
 class NewBuildingForm(forms.ModelForm):
     class Meta:
         model = Building

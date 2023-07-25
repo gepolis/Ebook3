@@ -17,3 +17,12 @@ class Notications(models.Model):
         super(Notications, self).save(*args, **kwargs)
 
 
+class Message(models.Model):
+    room = models.CharField(max_length=244)
+    user = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
+    context = models.TextField(max_length=3000)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+
+    class Meta:
+        ordering = ('date_added',)

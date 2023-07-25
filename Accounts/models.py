@@ -43,20 +43,24 @@ class Building(models.Model):
     def __str__(self):
         return self.name
 
-
+def f(instance, filename):
+    ext = filename.split('.')[-1]
+    return '{}.{}'.format(f"avatars/{random.randint(1, 1000000)}_{str(time.time())}", ext)
 class Account(AbstractBaseUser):
     ROLES = [
         ("admin", "Администратор"),
         ("teacher", "Учитель"),
         ("parent", "Родитель"),
         ("student", "Ученик"),
-        ("methodist", "Методист")
+        ("methodist", "Методист"),
+        ("director", "Директор"),
+        ("head_teacher", "Завуч")
     ]
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     username = models.CharField(max_length=30, unique=True)
     date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
     last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
-    role = models.TextField(choices=ROLES, null=True, max_length=10)
+    role = models.TextField(choices=ROLES, null=True, max_length=20)
     first_name = models.CharField(max_length=50, null=True)  # Имя
     second_name = models.CharField(max_length=50, null=True)  # Фамилия
     middle_name = models.CharField(max_length=50, null=True)  # Отчество
@@ -66,6 +70,9 @@ class Account(AbstractBaseUser):
     date_of_birth = models.DateField(null=True, verbose_name="дата рождения")
     building = models.ForeignKey(Building, on_delete=models.SET_NULL, null=True)
     points = models.IntegerField(default=0)
+    avatar = models.ImageField(upload_to=f, null=True, blank=True)
+
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', "second_name", "first_name", "middle_name"]
 

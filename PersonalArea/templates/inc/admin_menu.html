@@ -1,13 +1,15 @@
-<nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">   <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
-        <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
-    </a>    <a href="#" class="sidebar-toggler flex-shrink-0">
-        <i class="fa fa-bars"></i>
-    </a>    <form class="d-none d-md-flex ms-4">
+<nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0"><a href="#" class="sidebar-toggler flex-shrink-0">
+    <i class="fa fa-bars"></i>
+</a>
+    <form class="d-none d-md-flex ms-4">
         <input class="form-control border-0" type="search" placeholder="Поиск">
     </form>
     <div class="navbar-nav align-items-center ms-auto">
         <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <img class="rounded-circle me-lg-2" id="user_avatar"
+                     src="{% if user.avatar %}{{ user.avatar.url }}{% endif %}" alt=""
+                     style="width: 40px; height: 40px;">
                 <span class="d-none d-lg-inline-flex">{{ user.full_name }}</span>
             </a>
             <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
@@ -17,3 +19,86 @@
         </div>
     </div>
 </nav>
+
+<div id="has_avatar" style="display: none">{% if user.avatar %}yes{% else %}no{% endif %}</div>
+{% block script %}
+    <script>
+        var stringToColor = function stringToColor(str) {
+            var hash = 0;
+            var color = '';
+            var i;
+            var value;
+            var strLength;
+
+
+
+            for (i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+
+            for (i = 0; i < 3; i++) {
+                value = (hash >> (i * 8)) & 0xFF;
+                color += ('00' + value.toString(16)).substr(-2);
+            }
+
+            return color;
+        };
+
+
+        function rgb2hsl(HTMLcolor) {
+            r = parseInt(HTMLcolor.substring(0, 2), 16) / 255;
+            g = parseInt(HTMLcolor.substring(2, 4), 16) / 255;
+            b = parseInt(HTMLcolor.substring(4, 6), 16) / 255;
+            var max = Math.max(r, g, b), min = Math.min(r, g, b);
+            var h, s, l = (max + min) / 2;
+            if (max == min) {
+                h = s = 0;
+            } else {
+                var d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r:
+                        h = (g - b) / d + (g < b ? 6 : 0);
+                        break;
+                    case g:
+                        h = (b - r) / d + 2;
+                        break;
+                    case b:
+                        h = (r - g) / d + 4;
+                        break;
+                }
+                h /= 6;
+            }
+            return [h, s, l]; // H - цветовой тон, S - насыщенность, L - светлота
+        }
+
+        function changeColor(HTMLcolor) {
+            e = rgb2hsl(HTMLcolor);
+            if ((e[0] < 0.55 && e[2] >= 0.5) || (e[0] >= 0.55 && e[2] >= 0.75)) {
+                fc = '000000'; // черный
+            } else {
+                fc = 'FFFFFF'; // белый
+            }
+            return fc
+            // далее меняем цвет, где это необходимо
+        }
+
+        function gen_avatar(fn, mn) {
+            bg = stringToColor(fn+" "+mn)
+            fc = changeColor(bg);
+
+            avatar_url = `https://ui-avatars.com/api/?name=${fn}+${mn}&background=${bg}&color=${fc}`
+
+            return avatar_url
+
+
+        }
+        has_avatar = document.querySelector("#has_avatar")
+        avatar = document.querySelector("#user_avatar")
+        if (has_avatar.innerHTML === "no") {
+            avatar.src = gen_avatar("{{ user.first_name }}", "{{ user.middle_name }}")
+
+        }
+        has_avatar.remove()
+    </script>
+{% endblock script %}

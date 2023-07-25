@@ -22,6 +22,7 @@ from Accounts import views as accounts_views
 from MainApp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
+    #path('register/<str:mode>/', accounts_views.register),
     path('login/', accounts_views.login_request),
     path('logout/', accounts_views.logout_request, name="logout"),
 
@@ -29,6 +30,7 @@ urlpatterns = [
     path('setup/', accounts_views.setup, name="setup"),
     path('', views.index),
     path('auth/', accounts_views.auth, name="auth"),
+    path('auth/mosru/', accounts_views.auth_mos_ru, name="auth"),
     path('auth/register', accounts_views.register_request),
     path('auth/login', accounts_views.login_request),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

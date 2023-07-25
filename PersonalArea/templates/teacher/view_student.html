@@ -1,99 +1,86 @@
 {% extends "inc/base.html" %}
 {% block sidebar %}
-<a href="/lk/" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Главная</a>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i class="fa fa-users me-2"></i>Мой
-        класс</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="/lk/classroom/students/" class="dropdown-item">Ученики</a>
-        <a href="/lk/classroom/invite/create/" class="dropdown-item">Пригласить</a>
+    <a href="/lk/" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Главная</a>
+    <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i class="fa fa-users me-2"></i>Мой
+            класс</a>
+        <div class="dropdown-menu bg-transparent border-0">
+            <a href="/lk/classroom/students/" class="dropdown-item">Ученики</a>
+            <a href="/lk/classroom/invite/create/" class="dropdown-item">Пригласить</a>
+        </div>
     </div>
-</div>
-<a href="/lk/events/" class="nav-item nav-link"><i class="fa fa-calendar me-2"></i>Мероприятия</a>
+    <a href="/lk/events/" class="nav-item nav-link"><i class="fa fa-calendar me-2"></i>Мероприятия</a>
 
 {% endblock sidebar %}
 {% block content %}
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-9 col-xl-9">
-            <div class="bg-light rounded h-100 p-4">
-                <h6 class="mb-4">{{ student.full_name }}</h6>
-                <p>Родился: <strong>{{ student.date_of_birth }}</strong></p>
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-9 col-xl-9">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">{{ student.full_name }}</h6>
+                    <p>Родился: <strong>{{ student.date_of_birth }}</strong></p>
+                </div>
             </div>
-        </div>
-        <div class="col-sm-3 col-xl-3">
-            <div class="bg-light rounded h-100 p-4">
-                <h6 class="mb-4">Действия</h6>
-                <a href="./export" class="btn btn-primary">Отчет</a>
+            <div class="col-sm-3 col-xl-3">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Действия</h6>
+                    <a href="./export" class="btn btn-primary">Отчет</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-xl-12">
-            <div class="bg-light rounded h-100 p-4">
-                <div class="row">
-                    <div class="col-sm col-sm-10">
-                        <h6 class="mb-4">Мероприятия</h6>
-                    </div>
-                    <div class="col-sm">
-                        <select onchange="choice(this);" style="width: 100px" class="form-control">
-                            <option value="all" {% if not choice%}selected{% endif%}>Все</option>
-                            {% for i in categories %}
-                            <option value="{{i.pk}}" {% if choice == i.pk %}selected{% endif%}>{{ i.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="row row-cols-1 row-cols-md-3 g-4">
-                    {% for event in events %}
-                    <div class="col">
-                        <div class="card">
-                            <img src="{% if event.image %}{{ event.image.url }}{% else %}{% endif %}"
-                                 class="card-img-top"
-                                 alt="">
-                            <div class="card-body">
-                                <h5 class="card-title"><a href="/lk/events/{{ event.pk }}/detail">{{ event.name }}</a>
-                                </h5>
-                                <p class="card-text">
-                                    {{ event.description | truncatechars:100 }}
-                                <hr>
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-12">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Мероприятия</h6>
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                        {% for event in events %}
+                            <div class="col">
+                                <div class="card">
+                                    <img src="{% if event.image %}{{ event.image.url }}{% else %}{% endif %}"
+                                         class="card-img-top"
+                                         alt="">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><a href="/lk/events/{{ event.pk }}/detail">{{ event.name }}</a></h5>
+                                        <p class="card-text">
+                                            {{ event.description | truncatechars:100 }}
+                                        <hr>
 
-                                Начало: {{ event.start_date }}<br>
-                                Конец: {{ event.end_date }}
-                                </p>
+                                        Начало: {{ event.start_date }}<br>
+                                        Конец: {{ event.end_date }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-xl-12">
-            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <div id="calendar"></div>
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-12">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <div id="calendar"></div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 {% endblock content %}
 
 {% block js %}
-<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/moment.min.js'></script>
-<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery.min.js'></script>
-<script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery-ui.custom.min.js"></script>
-<script src='http://fullcalendar.io/js/fullcalendar-2.1.1/fullcalendar.min.js'></script>
-<script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lang-all.js"></script>
-<script>
+    <script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/moment.min.js'></script>
+    <script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery.min.js'></script>
+    <script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery-ui.custom.min.js"></script>
+    <script src='http://fullcalendar.io/js/fullcalendar-2.1.1/fullcalendar.min.js'></script>
+    <script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lang-all.js"></script>
+    <script>
         $(document).ready(function () {
             var calendar = $(`#calendar`).fullCalendar({
                 header: {
@@ -108,14 +95,5 @@
 
             });
         });
-
-    const url = `${window.location.protocol}//${window.location.host}/lk/classroom/student/{{student.pk}}/view`
-    const choice = (event) => {
-        if (event.value !== "all") {
-            window.open(url+`?category=${event.value}`,"_self")
-        } else {
-            window.open(url,"_self")
-        }
-    }
-</script>
+    </script>
 {% endblock js %}

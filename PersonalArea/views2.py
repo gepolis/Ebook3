@@ -1,7 +1,10 @@
+import uuid
+from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse, Http404, FileResponse
+from django.http import JsonResponse, FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from Accounts.models import Account
 from MainApp.models import *
 from django.utils.formats import localize
 
@@ -12,14 +15,13 @@ from Accounts import decorators
 import io
 import xlsxwriter
 import pandas as pd
-from .models import Notications
-from django.utils import timezone
-import pytz
+from .models import Notications, Message
+
 
 @login_required
 @decorators.has_role
 def index(request):
-    if request.user.role == "admin":
+    if request.user.role == "admin" or request.user.role == "director":
         item = Account.objects.all().filter(points__gt=0).order_by("-points")[:10]
         context = {
             "users": Account.objects.all().count(),
@@ -38,19 +40,23 @@ def index(request):
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(teacher=request.user)
             item = classroom.member.all()
-            print(item.count())
             context['students'] = item
         return render(request, "teacher/index.html", context=context)
     elif request.user.role == "student":
         context = {
             "section": "index"
         }
+        #return render(request, "chat.html")
         return render(request, "student/index.html", context=context)
     elif request.user.role == "methodist":
         context = {
             "section": "index"
         }
         return render(request, "methodist/index.html", context)
+
+def chat(request):
+    msgs = Message.objects.all().filter(room=str(request.user.get_classroom().id))[0:25]
+    return render(request, "chat.html", context={"msgs": msgs,"section":"chat"})
 
 @decorators.is_admin
 def view_user(request, id):
@@ -60,17 +66,18 @@ def view_user(request, id):
 
 @decorators.is_admin
 def users_list(request, role=None):
-    users = Account.objects.all().order_by("-id")
+    users = Account.objects.all().filter(is_superuser=False).order_by("-id")
     create_user_form = NewUserForm()
     context = {
         "count_users": users.count(),
-        "count_staff": users.filter(role="admin").count() + users.filter(role="teacher").count() + users.filter(role="methodist").count(),
+        "count_staff": users.filter(role="admin").count() + users.filter(role="teacher").count(),
+        "count_parents": users.filter(role="parent").count(),
         "count_students": users.filter(role="student").count(),
         "create_user_form": create_user_form,
         "section": "users"
     }
     if role is not None:
-        users = users.filter(role=role)
+        users = users.filter(roles__name=role)
     context["users"] = users
     return render(request, "users_list.html", context=context)
 
@@ -83,9 +90,6 @@ def user_create(request):
         form = NewUserForm(request.POST)
         if form.is_valid():
             user = form.save(commit=True)
-            print("valid")
-        else:
-            print(form.errors)
         return redirect("/lk/users/list")
     return render(request, "user_create.html", {"form": form})
 
@@ -112,46 +116,37 @@ def edit_profile(request):
         if form.is_valid():
             form.save()
         else:
-            return HttpResponse(form.errors)
+            return render(request, "settings.html", {"form": form})
         return redirect("/lk/settings/")
     return render(request, "settings.html", {"form": form})
 
 @decorators.is_admin_or_methodist
-def events_list(request):
-    category = request.GET.get("category")
-    if category:
-        category_events = get_object_or_404(EventCategory, pk=category)
-    if request.user.role == "admin":
+def events_list(request, search=None):
+    if request.user.role == "admin" or request.user.role == "director":
         events = Events.objects.all().filter(archive=False).order_by("-id")
-
-        if category:
-            events = events.filter(category=category_events)
         context = {
             "count_events": events.count(),
             "count_requests": EventsMembers.objects.all().filter(is_active=False).count(),
-            "section": "events",
-            "events": events,
-            "categories": EventCategory.objects.all()
+            "section": "events"
         }
-        if category:
-            context['choice']=category_events.pk
+        if search is None:
+            context['events'] = events
+        else:
+            context['events'] = Events.objects.all().filter(name__icontains=search)
         return render(request, "events_list.html", context)
     elif request.user.role == "methodist":
         categories = EventCategory.objects.all().filter(methodists=request.user)
         events = Events.objects.all().filter(archive=False, category__in=categories).order_by("-id")
-
-        if category:
-            events = events.filter(category=category_events)
         context = {
             "count_events": events.count(),
             "count_requests": EventsMembers.objects.all().filter(is_active=True).count(),
-            "section": "events",
-            "events": events,
-            "categories": EventCategory.objects.all()
+            "section": "events"
         }
-        if category:
-            context['choice']=category_events.pk
-        return render(request, "events_list.html", context)
+        if search is None:
+            context['events'] = events
+        else:
+            context['events'] = Events.objects.all().filter(name__icontains=search)
+        return render(request, "methodist/events_list.html", context)
 @decorators.is_admin_or_methodist
 def give_points(request, id):
     event = Events.objects.get(pk=id)
@@ -173,39 +168,24 @@ def give_points(request, id):
 
 @decorators.is_admin_or_methodist
 def events_archive_list(request):
-    category = request.GET.get("category")
-    if category:
-        category_events = get_object_or_404(EventCategory, pk=category)
-
-
-    if request.user.role == "admin":
+    if request.user.role == "admin" or request.user.role == "director":
         events = Events.objects.all().filter(archive=True).order_by("-id")
-        if category:
-            events = events.filter(category=category_events)
         context = {
             "count_events": events.count(),
             "count_requests": EventsMembers.objects.all().filter(is_active=False).count(),
             "section": "events",
-            "events": events,
-            "categories": EventCategory.objects.all()
+            "events": events
         }
-        if category:
-            context['choice']=category_events.pk
         return render(request, "events_archive_list.html", context)
     elif request.user.role == "methodist":
         categories = EventCategory.objects.all().filter(methodists=request.user)
         events = Events.objects.all().filter(archive=True, category__in=categories).order_by("-id")
-        if category:
-            events = events.filter(category=category_events)
         context = {
             "count_events": events.count(),
             "count_requests": EventsMembers.objects.all().filter(is_active=True).count(),
             "section": "events",
-            "events": events,
-            "categories": EventCategory.objects.all()
+            "events": events
         }
-        if category:
-            context['choice']=category_events.pk
         return render(request, "methodist/events_archive_list.html", context)
 
 @decorators.is_admin_or_methodist
@@ -252,7 +232,7 @@ def event_unarchived(request, id):
 
 @decorators.is_admin_or_methodist
 def events_view(request, id):
-    if request.user.role == "admin":
+    if request.user.role == "admin" or request.user.role == "director":
         event = Events.objects.get(pk=id)
 
     elif request.user.role == "methodist":
@@ -266,17 +246,16 @@ def events_view(request, id):
         "reqs": event.volunteer.filter(is_active=False),
         "members": event.volunteer.filter(is_active=True),
         "section": "events",
-        "wait": Events.objects.all().filter(pk=event.pk,start_date__gt=timezone.now()).exists(),
-        "end":  Events.objects.all().filter(pk=event.pk,end_date__lt=timezone.now()).exists()
+        "wait": Events.objects.all().filter(pk=event.pk,start_date__lt=datetime.now()).exists(),
+        "end":  Events.objects.all().filter(pk=event.pk,end_date__gt=datetime.now()).exists()
     }
-    print(context)
     return render(request, "event_view.html", context)
 
 
 
 @login_required
 def event_create(request):
-    if request.user.role == "admin":
+    if request.user.role == "admin" or request.user.role == "director":
         if request.method == "GET":
             form = EventAddForm()
         else:
@@ -285,7 +264,7 @@ def event_create(request):
                 form.save()
                 form.save_m2m()
             else:
-                return HttpResponse(form.errors)
+                return render(request, "event_create.html", {"form": form, "section": "events"})
             return redirect("/lk/events/list")
     elif request.user.role == "methodist":
         if request.method == "GET":
@@ -296,10 +275,10 @@ def event_create(request):
                 form.save()
                 form.save_m2m()
             else:
-                return HttpResponse(form.errors)
+                return render(request, "event_create.html", {"form": form, "section": "events"})
             return redirect("/lk/events/list")
     else:
-        return HttpResponse("you haven`t permissions")
+        return redirect("/lk/")
     return render(request, "event_create.html", {"form": form, "section": "events"})
 
 
@@ -426,19 +405,9 @@ def classroom_view_student(request, user):
     if ClassRoom.objects.all().filter(teacher=request.user).exists():
         classroom = ClassRoom.objects.get(teacher=request.user)
         if classroom.member.all().filter(pk=user).exists():
-            category = request.GET.get("category")
-            if category:
-                category_events = get_object_or_404(EventCategory, pk=category)
             user = classroom.member.get(pk=user)
             events = Events.objects.all().filter(volunteer__user=user)
-            if category:
-                events = events.filter(category=category_events)
-            context = {"student": user, "events": events, "section": "classroom", "categories": EventCategory.objects.all()}
-
-            if category:
-                context['choice'] = category_events.pk
-
-            return render(request, "teacher/view_student.html", context=context)
+            return render(request, "teacher/view_student.html", {"student": user, "events": events, "section": "classroom"})
         else:
             return redirect("/lk/classroom/students/")
     else:
@@ -455,36 +424,20 @@ def invite(request, classroom):
 
 @login_required
 def events(request):
-    category = request.GET.get("category")
-    if category:
-        category_events = get_object_or_404(EventCategory, pk=category)
-
     if request.user.role == "teacher":
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(teacher=request.user)
-            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=timezone.now(), end_date__gt=timezone.now())
-            if category:
-                events = events.filter(category=category_events)
-
-            context = {"events": events, "section": "events", "categories": EventCategory.objects.all()}
-            if category:
-                context['choice'] = category_events.pk
-            return render(request, "teacher/events.html", context)
+            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=datetime.now(), end_date__gt=datetime.now())
+            return render(request, "teacher/events.html", {"events": events, "section": "events"})
         else:
             return redirect("/lk/classroom/create/")
     elif request.user.role == "student":
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(member=request.user)
-            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=timezone.now())
-            if category:
-                events = events.filter(category=category_events)
-            print(events)
-            context = {"events": events, "section": "events", "categories": EventCategory.objects.all()}
-            if category:
-                context['choice'] = category_events.pk
-            return render(request, "student/events.html", context)
+            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=datetime.now(), end_date__gt=datetime.now())
+            return render(request, "student/events.html", {"events": events, 'section': 'events'})
         else:
-            messages.warning(request, "Сначала вступите в класс, по приглашению от классного руководителя.")
+            messages.warning(request, "Сначала вступите в класс, по приглашению от классного руковадителя.")
             return redirect("/lk/")
 
 @decorators.is_student
@@ -499,27 +452,17 @@ def event_request(request, event):
 
 @decorators.is_student
 def my_events(request):
-    category = request.GET.get("category")
-    if category:
-        category_events = get_object_or_404(EventCategory, pk=category)
-
     events = Events.objects.all().filter(volunteer__user=request.user)
-    if category:
-        events = events.filter(category=category_events)
-
-    wait = events.filter(start_date__gt=timezone.now())
-    ended = events.filter(end_date__lt=timezone.now())
-    started = events.filter(end_date__gt=timezone.now(), start_date__lte=timezone.now())
-    context = {"started": started, "ended": ended, "wait": wait, 'section': 'my_events', "categories": EventCategory.objects.all()}
-    if category:
-        context['choice'] = category_events.pk
-    return render(request, "student/my_events.html", context)
+    wait = events.filter(start_date__gt=datetime.now())
+    ended = events.filter(end_date__lt=datetime.now())
+    started = events.filter(end_date__gt=datetime.now(), start_date__lte=datetime.now())
+    return render(request, "student/my_events.html", {"started": started, "ended": ended, "wait": wait, 'section': 'my_events'})
 
 @decorators.is_admin
 def user_data(request, id):
     user = Account.objects.get(pk=id)
     user_data = {
-        'received': localize(timezone.now()),
+        'received': localize(datetime.now()),
         'user': {
             "id": user.id,
             "username": user.username,
@@ -563,7 +506,7 @@ def category_list(request):
 def category_data(request, id):
     category = EventCategory.objects.get(pk=id)
     category_data = {
-        'received': localize(timezone.now()),
+        'received': localize(datetime.now()),
         'category': {
             "id": category.id,
             "name": category.name,
@@ -571,7 +514,6 @@ def category_data(request, id):
         }
     }
     for i in category.methodists.all():
-        print(i)
         category_data['category']['methodists'][i.pk] = {
             "id": i.pk,
             "full_name": i.full_name(),
@@ -587,8 +529,6 @@ def category_edit(request, id):
         if form.is_valid():
             form.save()
             form.save_m2m()
-        else:
-            print(form.errors)
         return redirect("category_list")
     else:
         form = EventCategoryForm(instance=category)
@@ -640,8 +580,9 @@ def classroom_view_export(request, user):
     points = 0
     for i in events:
         m += 1
-        wait = events.filter(pk=i.pk,start_date__gt=timezone.now()).exists()
-        ended = events.filter(pk=i.pk,end_date__lt=timezone.now()).exists()
+        wait = events.filter(pk=i.pk,start_date__gt=datetime.now()).exists()
+        ended = events.filter(pk=i.pk,end_date__lt=datetime.now()).exists()
+        #started = events.filter(pk=i.pk,end_date__gt=datetime.now(), start_date__lte=datetime.now()).exists()
         if wait: # wait
             worksheet.write(f'D{m}', "Ожидание начала")
         elif ended: #end
@@ -689,20 +630,6 @@ def event_detail(request, id):
         "section": "events",
         "event": event,
         "report": PhotoReport.objects.all().filter(event=event),
-        "end": Events.objects.all().filter(pk=event.pk, end_date__lt=timezone.now()).exists()
+        "end": Events.objects.all().filter(pk=event.pk, end_date__lt=datetime.now()).exists()
     }
     return render(request,"event_detail.html", context=context)
-
-@decorators.is_admin
-def category_delete(request, id):
-    category = get_object_or_404(EventCategory, pk=id)
-    category.delete()
-    return redirect("/lk/events/category/list/")
-
-
-
-@decorators.is_admin
-def user_delete(request, id):
-    user = get_object_or_404(Account, pk=id)
-    user.delete()
-    return redirect("/lk/users/list/")
