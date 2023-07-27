@@ -15,7 +15,7 @@ DEBUG = True
 
 LOGIN_URL = "/auth/"
 LOGOUT_REDIRECT_URL = None
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1", "212.113.123.161"]
 
 AUTH_USER_MODEL = 'Accounts.Account'
 
