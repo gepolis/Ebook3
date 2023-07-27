@@ -22,3 +22,4 @@ class SnippetModelAdmin(admin.ModelAdmin):
 class SnippetModelAdmin(admin.ModelAdmin):
     list_display = ("pk", "name", "type")
 
+

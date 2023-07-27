@@ -13,7 +13,7 @@ class EditUserForm(forms.ModelForm):
         model = Account
         fields = (
             "username", "email", "second_name", "first_name", "middle_name", "date_of_birth", "building", "role",
-            "points")
+            "points",'avatar')
         labels = {
             "username": "Имя пользователя",
             "email": "Почта",
@@ -23,7 +23,8 @@ class EditUserForm(forms.ModelForm):
             "date_of_birth": "Дата рождения",
             "role": "Роль",
             "building": "Корпус",
-            "points": "Баллов"
+            "points": "Баллов",
+            "avatar": "Изображение"
         }
         widgets = {
             'date_of_birth': forms.DateInput(
@@ -31,7 +32,10 @@ class EditUserForm(forms.ModelForm):
                 attrs={'class': 'form-control',
                        'placeholder': 'Select a date',
                        'type': 'date'
-                       })
+                       }),
+            'avatar': forms.FileInput(
+                attrs={"class":"form-control"}
+            )
         }
 
     def save(self, commit=True):
@@ -49,7 +53,7 @@ class NewUserForm(UserCreationForm):
         model = Account
         fields = (
             "username", "email", "second_name", "first_name", "middle_name", "password1", "password2", "date_of_birth",
-            'building','role')
+            'building','role', "avatar")
         labels = {
             "username": "Имя пользователя",
             "email": "Почта",
@@ -58,7 +62,8 @@ class NewUserForm(UserCreationForm):
             "middle_name": "Отчество",
             "date_of_birth": "Дата рождения",
             "building": "Корпус",
-            'role': "Роль"
+            'role': "Роль",
+            'avatar': "Изображение"
 
         }
         widgets = {
@@ -78,7 +83,7 @@ class EventAddForm(forms.ModelForm):
         model = Events
         # Описываем поля, которые будем заполнять в форме
         fields = (
-        'name', 'description', 'start_date', 'end_date', 'organizer', 'category', 'classroom_number', 'building',
+        'name', 'description', 'start_date', 'end_date', 'organizer', 'type','category', 'subject', 'classroom_number', 'building',
         'image')
 
         widgets = {
@@ -87,6 +92,8 @@ class EventAddForm(forms.ModelForm):
             'start_date': forms.DateTimeInput(format=['%d/%m/%y'], attrs={'type': 'datetime-local'}),
             'end_date': forms.DateTimeInput(format=['%d/%m/%y'], attrs={'type': 'datetime-local'}),
             'organizer': forms.Select(),
+            'type': forms.Select(attrs={"onchange": "change(this)"}),
+            'category': forms.Select(),
             'classroom_number': forms.Select(),
             'building': forms.Select(),
             'image': forms.FileInput(attrs={"class": "form-control"})
@@ -100,8 +107,9 @@ class EventAddForm(forms.ModelForm):
             "building": "Корпус",
             "classroom_number": "Доступно для",
             "image": "Изображение",
-            "category": "Категория"
-
+            "category": "Методическое объединение",
+            "subject": "Предмет",
+            "type": "Тип"
         }
 
     def save(self, commit=True):

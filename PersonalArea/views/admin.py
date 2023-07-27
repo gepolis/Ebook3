@@ -1,7 +1,10 @@
 import uuid
 from datetime import datetime
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import JsonResponse, FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from Accounts.models import Account
@@ -21,12 +24,15 @@ from PersonalArea.models import Notications, Message
 @decorators.is_admin
 def view_user(request, id):
     user = Account.objects.get(pk=id)
-    return render(request, "view_user.html", {"view_user": user})
+    if not user.is_superuser:
+        return render(request, "view_user.html", {"view_user": user})
+    return redirect("/lk/users/list")
 
 
 @decorators.is_admin
 def users_list(request, role=None):
     users = Account.objects.all().filter(is_superuser=False).order_by("-id")
+
     create_user_form = NewUserForm()
     context = {
         "count_users": users.count(),
@@ -36,9 +42,15 @@ def users_list(request, role=None):
         "create_user_form": create_user_form,
         "section": "users"
     }
-    if role is not None:
-        users = users.filter(roles__name=role)
-    context["users"] = users
+    if request.GET.get("role"):
+        users = users.filter(role=request.GET.get("role"))
+    paginator = Paginator(users, settings.ITEMS_FOR_PAGE)  # Show 25 contacts per page.
+    page_number = request.GET.get("page")
+    if page_number is None:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+    context["users"] = page_obj
+    context["role"] = request.GET.get("role")
     return render(request, "users_list.html", context=context)
 
 
@@ -60,11 +72,19 @@ def edit_user(request, id):
     if request.method == "GET":
         form = EditUserForm(instance=user)
     else:
-        form = EditUserForm(request.POST, instance=user)
+        form = EditUserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
         return redirect("/lk/users/list")
-    return render(request, "edit_user.html", {"form": form, "section": "users"})
+    return render(request, "edit_user.html", {"form": form, "section": "users", "table_user": user})
+
+
+@decorators.is_admin
+def avatar_remove(request, user):
+    user = get_object_or_404(Account, pk=user)
+    user.avatar = None
+    user.save()
+    return redirect(f"/lk/users/{user.pk}/edit")
 
 
 @decorators.is_admin
@@ -96,6 +116,7 @@ def building_list(request):
         "section": "building"
     }
     return render(request, "buildings_list.html", context=context)
+
 
 @decorators.is_admin
 def user_data(request, id):
@@ -131,6 +152,7 @@ def user_data(request, id):
         }
     return JsonResponse(user_data, safe=False)
 
+
 @decorators.is_admin
 def category_list(request):
     if request.method == "POST":
@@ -139,7 +161,8 @@ def category_list(request):
             form.save(commit=True)
     categories = EventCategory.objects.all()
     form = EventCategoryForm()
-    return render(request, "category_list.html", {"categories": categories,"form": form,"section": "events"})
+    return render(request, "category_list.html", {"categories": categories, "form": form, "section": "events"})
+
 
 @decorators.is_admin
 def category_data(request, id):
@@ -159,6 +182,8 @@ def category_data(request, id):
 
         }
     return JsonResponse(category_data, safe=False)
+
+
 @decorators.is_admin
 def category_edit(request, id):
     category = EventCategory.objects.get(pk=id)
@@ -173,14 +198,14 @@ def category_edit(request, id):
         return render(request, "edit_category.html", {"section": "events", "form": form})
 
 
-
 @decorators.is_admin
 def classrooms_list(request):
     classrooms = ClassRoom.objects.all()
-    return render(request, "classrooms.html", {"classrooms": classrooms, "section":"classrooms"})
+    return render(request, "classrooms.html", {"classrooms": classrooms, "section": "classrooms"})
+
 
 @decorators.is_admin
 def classrooms_view(request, id):
     classrooms = get_object_or_404(ClassRoom, id=id)
     msgs = Message.objects.all().filter(room=classrooms.id)[0:25]
-    return render(request, "classroom_view.html", {"classroom": classrooms, "msgs": msgs, "section":"classrooms"})
+    return render(request, "classroom_view.html", {"classroom": classrooms, "msgs": msgs, "section": "classrooms"})

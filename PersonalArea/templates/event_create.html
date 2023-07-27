@@ -1,22 +1,43 @@
 {% extends "inc/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-xl-12">
-            <div class="bg-light rounded h-100 p-4">
-                <h6 class="mb-4">Создание мероприятия</h6>
-                <form method="post" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        {% csrf_token %}
-                        {{ form|crispy}}
-                    </div>
-                    <button type="submit" class="btn btn-primary">Создать</button>
-                </form>
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-12">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Создание мероприятия</h6>
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
+    <script>
+        const event_type = document.querySelector("#id_type")
 
+        const subject_field = document.querySelector("#id_subject")
+        const category_field = document.querySelector("#id_category")
+
+        const div_subject_field = document.querySelector("#div_id_subject")
+        const div_category_field = document.querySelector("#div_id_category")
+        const change = (e) => {
+            if (e.value === "subject") {
+                div_subject_field.style.display = ""
+                div_category_field.style.display = "none"
+                category_field.getElementsByTagName("option")[0].selected=true
+            } else {
+                div_subject_field.style.display = "none"
+                div_category_field.style.display = ""
+                console.log(subject_field.getElementsByTagName("option"))
+                subject_field.getElementsByTagName("option")[0].selected=true
+            }
+        }
+        change(event_type)
+    </script>
 {% endblock content %}

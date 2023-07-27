@@ -3,8 +3,6 @@ import time
 from MainApp.models import EventsMembers, ClassRoom
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
-from django.core import validators
-
 
 class MyAccountManager(BaseUserManager):
     def create_user(self, email=None, second_name=None, first_name=None, middle_name=None, password=None,
@@ -43,9 +41,12 @@ class Building(models.Model):
     def __str__(self):
         return self.name
 
+
 def f(instance, filename):
     ext = filename.split('.')[-1]
     return '{}.{}'.format(f"avatars/{random.randint(1, 1000000)}_{str(time.time())}", ext)
+
+
 class Account(AbstractBaseUser):
     ROLES = [
         ("admin", "Администратор"),
@@ -70,8 +71,7 @@ class Account(AbstractBaseUser):
     date_of_birth = models.DateField(null=True, verbose_name="дата рождения")
     building = models.ForeignKey(Building, on_delete=models.SET_NULL, null=True)
     points = models.IntegerField(default=0)
-    avatar = models.ImageField(upload_to=f, null=True, blank=True)
-
+    avatar = models.ImageField(upload_to=f, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', "second_name", "first_name", "middle_name"]
@@ -92,6 +92,7 @@ class Account(AbstractBaseUser):
             if ClassRoom.objects.all().filter(member=self).exists():
                 return True
         return False
+
     def get_classroom(self):
         if not self.has_classroom():
             return False
@@ -99,16 +100,17 @@ class Account(AbstractBaseUser):
             return ClassRoom.objects.get(teacher=self)
         elif self.role == "student":
             return ClassRoom.objects.get(member=self)
+
     def get_events(self):
         events = EventsMembers.all().filter(user=self)
         return events
+
     def get_events_count(self):
         events = EventsMembers.all().filter(user=self)
         return len(events)
+
     def has_perm(self, perm, obj=None):
         return self.is_superuser
-
-
 
     def get_status(self):
         if self.points <= 200:
@@ -124,3 +126,94 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+    def stringToColor(self, text):
+        hash = 0
+        color = ''
+        for i in range(len(text)):
+            hash = ord(text[i]) + ((hash << 5) - hash)
+        for i in range(3):
+            value = (hash >> (i * 8)) & 0xFF
+            color += ('00' + hex(value)[2:])[-2:]
+        return color
+
+
+    def changeColor(self, HTMLcolor):
+        e = self.rgb2hsl(HTMLcolor)
+        if (e[0] < 0.55 and e[2] >= 0.5) or (e[0] >= 0.55 and e[2] >= 0.75):
+            fc = '000000'  # черный
+        else:
+            fc = 'FFFFFF'  # белый
+        return fc
+        # далее меняем цвет, где это необходимо
+
+    def rgb2hsl(self, HTMLcolor):
+        r = int(HTMLcolor[0:2], 16) / 255
+        g = int(HTMLcolor[2:4], 16) / 255
+        b = int(HTMLcolor[4:6], 16) / 255
+        max_val = max(r, g, b)
+        min_val = min(r, g, b)
+        l = (max_val + min_val) / 2
+        if max_val == min_val:
+            h = s = 0
+        else:
+            d = max_val - min_val
+            s = d / (2 - max_val - min_val) if l > 0.5 else d / (max_val + min_val)
+            if max_val == r:
+                h = (g - b) / d + (6 if g < b else 0)
+            elif max_val == g:
+                h = (b - r) / d + 2
+            else:
+                h = (r - g) / d + 4
+            h /= 6
+        return [h, s, l]
+
+    def gen_avatar(self):
+        bg = self.stringToColor(self.first_name + " " + self.middle_name)
+
+        fc = self.changeColor(bg)
+        avatar_url = f"https://ui-avatars.com/api/?name={self.first_name}+{self.middle_name}&background={bg}&color={fc}"
+        return avatar_url
+
+    def get_avatar(self):
+        print("test")
+        if self.avatar:
+            return self.avatar.url
+        else:
+            text = self.first_name + " " + self.middle_name
+            hash = 0
+            color = ''
+            for i in range(len(text)):
+                hash = ord(text[i]) + ((hash << 5) - hash)
+            for i in range(3):
+                value = (hash >> (i * 8)) & 0xFF
+                color += ('00' + hex(value)[2:])[-2:]
+            bg = color
+
+            r = int(bg[0:2], 16) / 255
+            g = int(bg[2:4], 16) / 255
+            b = int(bg[4:6], 16) / 255
+            max_val = max(r, g, b)
+            min_val = min(r, g, b)
+            l = (max_val + min_val) / 2
+            if max_val == min_val:
+                h = s = 0
+            else:
+                d = max_val - min_val
+                s = d / (2 - max_val - min_val) if l > 0.5 else d / (max_val + min_val)
+                if max_val == r:
+                    h = (g - b) / d + (6 if g < b else 0)
+                elif max_val == g:
+                    h = (b - r) / d + 2
+                else:
+                    h = (r - g) / d + 4
+                h /= 6
+            e = [h, s, l]
+            if (e[0] < 0.55 and e[2] >= 0.5) or (e[0] >= 0.55 and e[2] >= 0.75):
+                fc = '000000'  # черный
+            else:
+                fc = 'FFFFFF'  # белый
+
+            avatar_url = f"https://ui-avatars.com/api/?name={self.first_name}+{self.middle_name}&background={bg}&color={fc}"
+            return avatar_url
+

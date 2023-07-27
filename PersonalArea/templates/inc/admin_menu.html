@@ -8,7 +8,7 @@
         <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <img class="rounded-circle me-lg-2" id="user_avatar"
-                     src="{% if user.avatar %}{{ user.avatar.url }}{% endif %}" alt=""
+                     src="{{ user.get_avatar }}" alt=""
                      style="width: 40px; height: 40px;">
                 <span class="d-none d-lg-inline-flex">{{ user.full_name }}</span>
             </a>
@@ -95,10 +95,10 @@
         }
         has_avatar = document.querySelector("#has_avatar")
         avatar = document.querySelector("#user_avatar")
-        if (has_avatar.innerHTML === "no") {
-            avatar.src = gen_avatar("{{ user.first_name }}", "{{ user.middle_name }}")
+        //if (has_avatar.innerHTML === "no") {
+        //    avatar.src = gen_avatar("{{ user.first_name }}", "{{ user.middle_name }}")
 
-        }
-        has_avatar.remove()
+        //}
+        //has_avatar.remove()
     </script>
 {% endblock script %}

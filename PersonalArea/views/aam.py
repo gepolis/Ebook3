@@ -2,10 +2,11 @@ import uuid
 from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import JsonResponse, FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-
+from django.conf import settings
 from Accounts.models import Account
 from MainApp.models import *
 from django.utils.formats import localize
@@ -23,31 +24,24 @@ from PersonalArea.models import Notications, Message
 
 @decorators.is_admin_or_methodist
 def events_list(request, search=None):
-    if request.user.role == "admin" or request.user.role == "director":
-        events = Events.objects.all().filter(archive=False).order_by("-id")
-        context = {
-            "count_events": events.count(),
-            "count_requests": EventsMembers.objects.all().filter(is_active=False).count(),
-            "section": "events"
-        }
-        if search is None:
-            context['events'] = events
-        else:
-            context['events'] = Events.objects.all().filter(name__icontains=search)
-        return render(request, "events_list.html", context)
-    elif request.user.role == "methodist":
+    if request.user.role == "methodist":
         categories = EventCategory.objects.all().filter(methodists=request.user)
         events = Events.objects.all().filter(archive=False, category__in=categories).order_by("-id")
-        context = {
-            "count_events": events.count(),
-            "count_requests": EventsMembers.objects.all().filter(is_active=True).count(),
-            "section": "events"
-        }
-        if search is None:
-            context['events'] = events
-        else:
-            context['events'] = Events.objects.all().filter(name__icontains=search)
-        return render(request, "methodist/events_list.html", context)
+    else:
+        events = Events.objects.all().filter(archive=False).order_by("-id")
+    context = {
+        "count_events": events.count(),
+        "count_requests": EventsMembers.objects.all().filter(is_active=False, volunteers__in=events).count(),
+        "section": "events"
+    }
+    paginator = Paginator(events, settings.ITEMS_FOR_PAGE)
+    page_number = request.GET.get("page")
+    if page_number is None:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+    context["events"] = page_obj
+    return render(request, "events_list.html", context)
+
 @decorators.is_admin_or_methodist
 def give_points(request, id):
     event = Events.objects.get(pk=id)
@@ -69,25 +63,23 @@ def give_points(request, id):
 
 @decorators.is_admin_or_methodist
 def events_archive_list(request):
-    if request.user.role == "admin" or request.user.role == "director":
-        events = Events.objects.all().filter(archive=True).order_by("-id")
-        context = {
-            "count_events": events.count(),
-            "count_requests": EventsMembers.objects.all().filter(is_active=False).count(),
-            "section": "events",
-            "events": events
-        }
-        return render(request, "events_archive_list.html", context)
-    elif request.user.role == "methodist":
+    if request.user.role == "methodist":
         categories = EventCategory.objects.all().filter(methodists=request.user)
         events = Events.objects.all().filter(archive=True, category__in=categories).order_by("-id")
-        context = {
-            "count_events": events.count(),
-            "count_requests": EventsMembers.objects.all().filter(is_active=True).count(),
-            "section": "events",
-            "events": events
-        }
-        return render(request, "methodist/events_archive_list.html", context)
+    else:
+        events = Events.objects.all().filter(archive=True).order_by("-id")
+    context = {
+        "count_events": events.count(),
+        "count_requests": EventsMembers.objects.all().filter(is_active=True, volunteers__in=events).count(),
+        "section": "events"
+    }
+    paginator = Paginator(events, settings.ITEMS_FOR_PAGE)  # Show 25 contacts per page.
+    page_number = request.GET.get("page")
+    if page_number is None:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+    context["events"] = page_obj
+    return render(request, "events_archive_list.html", context)
 
 @decorators.is_admin_or_methodist
 def event_export(request, id):

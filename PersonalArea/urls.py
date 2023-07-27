@@ -31,6 +31,7 @@ urlpatterns = [
                   path("users/<int:id>/edit/", views.admin.edit_user),
                   path("users/data/<int:id>", views.admin.user_data),
                   path("users/<int:id>/view/", views.admin.view_user),
+                  path("users/<int:user>/avatar/remove", views.admin.avatar_remove),
                   path("events/list/", views.aam.events_list, name="events_list"),
                   path("events/<int:id>/view/", views.aam.events_view),
                   path("events/category/list/", views.admin.category_list, name="category_list"),

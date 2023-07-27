@@ -173,3 +173,4 @@ CHANNEL_LAYERS = {
         "BACKEND": 'channels.layers.InMemoryChannelLayer'
     }
 }
+ITEMS_FOR_PAGE = 25

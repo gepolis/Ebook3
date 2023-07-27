@@ -2,6 +2,15 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block content %}
+    <style>
+        .avatar:hover {
+            cursor: pointer;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
     <div class="container-fluid pt-4 px-4">
         <div class="row g-4">
             <div class="col-sm-6 col-xl-3">
@@ -49,12 +58,22 @@
                 <div class="bg-light rounded h-100 p-4">
                     <div class="container">
                         <div class="row">
-                            <div class="col-sm col-sm-6">
+                            <div class="col-sm col-sm-4">
                                 <h6 class="mb-4">Пользователи</h6>
                             </div>
-                            <div class="col-sm col-sm-5">
+                            <div class="col-sm col-sm-3">
                                 <input type="search" class="form-control" placeholder="Поиск" id="search"
                                        onkeyup="search()">
+
+                            </div>
+                            <div class="col-sm col-sm-3">
+                                <select id="role-filter" onchange="role_filter(this)" class="form-control">
+                                    <option value="all" {% if not role %}selected{% endif %}>Все</option>
+                                    <option value="director" {% if role == "director"%}selected{% endif %}>Директор</option>
+                                    <option value="teacher" {% if role  == "teacher"%}selected{% endif %}>Учителя</option>
+                                    <option value="student" {% if role  == "student"%}selected{% endif %}>Ученики</option>
+                                    <option value="methodist" {% if role  == "methodist" %}selected{% endif %}>Методисты</option>
+                                </select>
                             </div>
                             <div class="col-sm">
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
@@ -74,74 +93,6 @@
                     </div>
                     <!-- Modal -->
 
-                    <!--<script>
-                        const full_name_text = document.getElementById("full_name_model")
-                        const email_text = document.getElementById("email_model")
-                        const role_text = document.getElementById("role_model")
-                        const join_date_text = document.getElementById("join_date_model")
-                        const last_login_text = document.getElementById("last_login_model")
-                        const received = document.getElementById("received")
-                        const modal = document.getElementById("exampleModal")
-                        const loader = document.getElementById("modal_loader")
-                        const modal_data = document.getElementById("information")
-                        const modal_footer = document.getElementById("modal_footer")
-                        const url = `${window.location.protocol}//${window.location.host}/lk/users/data/`
-                        let interv = null;
-                        console.log(url)
-
-                        function open_user_detail(pk) {
-                            if (interv == null) {
-                                modal_data.style = "display: None;"
-                                loader.style = "display: block;"
-                                modal_footer.style = "display: None;"
-                                setTimeout(function () {
-                                    get_user_detail(pk)
-                                    interv = setInterval(get_user_detail, 10000, pk)
-                                }, 500)
-
-                            } else {
-                                console.warn("error!")
-                            }
-
-                        }
-
-                        function close_user_detail() {
-                            if (interv !== null) {
-                                clearInterval(interv)
-                                console.log("c")
-                                interv = null
-                            }
-                            console.log("close")
-
-                        }
-
-                        function get_user_detail(pk) {
-                            if (!modal.classList.contains("show")) {
-                                if (interv) {
-
-                                    clearInterval(interv)
-                                    interv = null
-                                }
-                                return null
-                            } else {
-                                loader.style = "display: None;"
-                                modal_footer.style = "display: block;"
-                                modal_data.style = "display: block;"
-                            }
-                            fetch(url + pk.toString()).then((response) => {
-                                return response.json()
-                            }).then((data) => {
-                                full_name_text.innerHTML = data.user.full_name
-                                email_text.innerHTML = data.user.email
-                                role_text.innerHTML = data.user.role.display
-                                join_date_text.innerHTML = data.user.date_joined
-                                last_login_text.innerHTML = data.user.last_login
-                                received.innerHTML = data.received
-                            })
-
-                        }
-
-                    </script>-->
                     <!-- Button trigger modal -->
                     <table class="table table-hover" id="table">
                         <thead>
@@ -155,9 +106,14 @@
                         </thead>
                         <tbody>
                         {% for table_user in users %}
-                            <tr>
+                            <tr data-role="{{ table_user.role }}" class="user-row">
                                 <th scope="row">{{ table_user.id }}</th>
-                                <td>{{ table_user.full_name }}</td>
+                                <td>
+                                    <img class="rounded-circle me-lg-2 avatar"
+                                         src="{{ table_user.get_avatar }}" alt=""
+                                         style="width: 40px; height: 40px;">
+                                    {{ table_user.full_name }}
+                                </td>
                                 <td>{{ table_user.email }}</td>
                                 <td>{% if table_user.get_role_display %}{{ table_user.get_role_display }}{% else %}
                                     Гость{% endif %}</td>
@@ -179,11 +135,21 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item {% if not users.has_previous %}disabled{% endif %}">
+                                <a class="page-link" href="?page={% if users.has_previous %}{{ users.previous_page_number }}{% endif %}" tabindex="-1">&laquo;</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">{{ users.number }}</a></li>
+                            <li class="page-item {% if not users.has_next %}disabled{% endif %}">
+                                <a class="page-link" href="?page={% if users.has_next %}{{ users.next_page_number }}{% endif %}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog" role="document">
@@ -248,5 +214,57 @@
     </div>
     <script src="{% static 'js/custom.js' %}"></script>
     <!-- Sales Chart End -->
+    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="overflow: hidden" id="mdp">
+                    <img src="" class="imagepreview" style="width: 470px; height: 470px;">
 
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+
+        $(function () {
+            $('.avatar').on('click', function () {
+                $('.imagepreview').attr('src', $(this).attr('src'));
+                $('#imagemodal').modal('show');
+            });
+        });
+    </script>
+
+    <script>
+        const users = document.querySelectorAll(".user-row")
+
+        function role_filter(e) {
+            if (e.value==="all") {
+                window.location.href = `http://${window.location.host}/lk/users/list?page={{ users.number }}`
+            }
+            else{
+            window.location.href = `http://${window.location.host}/lk/users/list?role=${e.value}&page={{ users.number }}`
+            }
+                //users.forEach((elem) => {
+            //    if (e.value === "all") {
+            //        elem.style.display = ""
+            //    } else {
+            //        if (elem.dataset.role !== e.value) {
+            //            elem.style.display = "none"
+            //        } else {
+            //            elem.style.display = ""
+            //        }
+            //    }
+            //})
+        }
+
+
+
+    </script>
+    <script src="{% static 'js/search.js' %}"></script>
 {% endblock content %}
