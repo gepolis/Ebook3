@@ -1,0 +1,1088 @@
+[
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2023-06-22T18:43:06.925Z",
+    "user": 8,
+    "content_type": 7,
+    "object_id": "7",
+    "object_repr": "admin admin admin",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Building\", \"Is staff\", \"Is superuser\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2023-06-22T18:44:37.232Z",
+    "user": 8,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "Аксенов Иван Андреевич",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 1,
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": 1,
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 2,
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": 1,
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 3,
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": 1,
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 4,
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": 1,
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 5,
+  "fields": {
+    "name": "Can add permission",
+    "content_type": 2,
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 6,
+  "fields": {
+    "name": "Can change permission",
+    "content_type": 2,
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 7,
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": 2,
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 8,
+  "fields": {
+    "name": "Can view permission",
+    "content_type": 2,
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 9,
+  "fields": {
+    "name": "Can add group",
+    "content_type": 3,
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 10,
+  "fields": {
+    "name": "Can change group",
+    "content_type": 3,
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 11,
+  "fields": {
+    "name": "Can delete group",
+    "content_type": 3,
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 12,
+  "fields": {
+    "name": "Can view group",
+    "content_type": 3,
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 13,
+  "fields": {
+    "name": "Can add content type",
+    "content_type": 4,
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 14,
+  "fields": {
+    "name": "Can change content type",
+    "content_type": 4,
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 15,
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": 4,
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 16,
+  "fields": {
+    "name": "Can view content type",
+    "content_type": 4,
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 17,
+  "fields": {
+    "name": "Can add session",
+    "content_type": 5,
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 18,
+  "fields": {
+    "name": "Can change session",
+    "content_type": 5,
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 19,
+  "fields": {
+    "name": "Can delete session",
+    "content_type": 5,
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 20,
+  "fields": {
+    "name": "Can view session",
+    "content_type": 5,
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 21,
+  "fields": {
+    "name": "Can add building",
+    "content_type": 6,
+    "codename": "add_building"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 22,
+  "fields": {
+    "name": "Can change building",
+    "content_type": 6,
+    "codename": "change_building"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 23,
+  "fields": {
+    "name": "Can delete building",
+    "content_type": 6,
+    "codename": "delete_building"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 24,
+  "fields": {
+    "name": "Can view building",
+    "content_type": 6,
+    "codename": "view_building"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 25,
+  "fields": {
+    "name": "Can add account",
+    "content_type": 7,
+    "codename": "add_account"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 26,
+  "fields": {
+    "name": "Can change account",
+    "content_type": 7,
+    "codename": "change_account"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 27,
+  "fields": {
+    "name": "Can delete account",
+    "content_type": 7,
+    "codename": "delete_account"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 28,
+  "fields": {
+    "name": "Can view account",
+    "content_type": 7,
+    "codename": "view_account"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 29,
+  "fields": {
+    "name": "Can add Класс",
+    "content_type": 8,
+    "codename": "add_classroom"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 30,
+  "fields": {
+    "name": "Can change Класс",
+    "content_type": 8,
+    "codename": "change_classroom"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 31,
+  "fields": {
+    "name": "Can delete Класс",
+    "content_type": 8,
+    "codename": "delete_classroom"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 32,
+  "fields": {
+    "name": "Can view Класс",
+    "content_type": 8,
+    "codename": "view_classroom"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 33,
+  "fields": {
+    "name": "Can add class rooms number",
+    "content_type": 9,
+    "codename": "add_classroomsnumber"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 34,
+  "fields": {
+    "name": "Can change class rooms number",
+    "content_type": 9,
+    "codename": "change_classroomsnumber"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 35,
+  "fields": {
+    "name": "Can delete class rooms number",
+    "content_type": 9,
+    "codename": "delete_classroomsnumber"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 36,
+  "fields": {
+    "name": "Can view class rooms number",
+    "content_type": 9,
+    "codename": "view_classroomsnumber"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 37,
+  "fields": {
+    "name": "Can add Категория",
+    "content_type": 10,
+    "codename": "add_eventcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 38,
+  "fields": {
+    "name": "Can change Категория",
+    "content_type": 10,
+    "codename": "change_eventcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 39,
+  "fields": {
+    "name": "Can delete Категория",
+    "content_type": 10,
+    "codename": "delete_eventcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 40,
+  "fields": {
+    "name": "Can view Категория",
+    "content_type": 10,
+    "codename": "view_eventcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 41,
+  "fields": {
+    "name": "Can add Мероприятие",
+    "content_type": 11,
+    "codename": "add_events"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 42,
+  "fields": {
+    "name": "Can change Мероприятие",
+    "content_type": 11,
+    "codename": "change_events"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 43,
+  "fields": {
+    "name": "Can delete Мероприятие",
+    "content_type": 11,
+    "codename": "delete_events"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 44,
+  "fields": {
+    "name": "Can view Мероприятие",
+    "content_type": 11,
+    "codename": "view_events"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 45,
+  "fields": {
+    "name": "Can add Приглашение на мероприятие",
+    "content_type": 12,
+    "codename": "add_teacherinviteevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 46,
+  "fields": {
+    "name": "Can change Приглашение на мероприятие",
+    "content_type": 12,
+    "codename": "change_teacherinviteevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 47,
+  "fields": {
+    "name": "Can delete Приглашение на мероприятие",
+    "content_type": 12,
+    "codename": "delete_teacherinviteevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 48,
+  "fields": {
+    "name": "Can view Приглашение на мероприятие",
+    "content_type": 12,
+    "codename": "view_teacherinviteevent"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 49,
+  "fields": {
+    "name": "Can add photo report",
+    "content_type": 13,
+    "codename": "add_photoreport"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 50,
+  "fields": {
+    "name": "Can change photo report",
+    "content_type": 13,
+    "codename": "change_photoreport"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 51,
+  "fields": {
+    "name": "Can delete photo report",
+    "content_type": 13,
+    "codename": "delete_photoreport"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 52,
+  "fields": {
+    "name": "Can view photo report",
+    "content_type": 13,
+    "codename": "view_photoreport"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 53,
+  "fields": {
+    "name": "Can add events members",
+    "content_type": 14,
+    "codename": "add_eventsmembers"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 54,
+  "fields": {
+    "name": "Can change events members",
+    "content_type": 14,
+    "codename": "change_eventsmembers"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 55,
+  "fields": {
+    "name": "Can delete events members",
+    "content_type": 14,
+    "codename": "delete_eventsmembers"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 56,
+  "fields": {
+    "name": "Can view events members",
+    "content_type": 14,
+    "codename": "view_eventsmembers"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 57,
+  "fields": {
+    "name": "Can add notications",
+    "content_type": 15,
+    "codename": "add_notications"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 58,
+  "fields": {
+    "name": "Can change notications",
+    "content_type": 15,
+    "codename": "change_notications"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 59,
+  "fields": {
+    "name": "Can delete notications",
+    "content_type": 15,
+    "codename": "delete_notications"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 60,
+  "fields": {
+    "name": "Can view notications",
+    "content_type": 15,
+    "codename": "view_notications"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 61,
+  "fields": {
+    "name": "Can add site",
+    "content_type": 16,
+    "codename": "add_site"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 62,
+  "fields": {
+    "name": "Can change site",
+    "content_type": 16,
+    "codename": "change_site"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 63,
+  "fields": {
+    "name": "Can delete site",
+    "content_type": 16,
+    "codename": "delete_site"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 64,
+  "fields": {
+    "name": "Can view site",
+    "content_type": 16,
+    "codename": "view_site"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 1,
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 2,
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 3,
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 4,
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 5,
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 6,
+  "fields": {
+    "app_label": "Accounts",
+    "model": "building"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 7,
+  "fields": {
+    "app_label": "Accounts",
+    "model": "account"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 8,
+  "fields": {
+    "app_label": "MainApp",
+    "model": "classroom"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 9,
+  "fields": {
+    "app_label": "MainApp",
+    "model": "classroomsnumber"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 10,
+  "fields": {
+    "app_label": "MainApp",
+    "model": "eventcategory"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 11,
+  "fields": {
+    "app_label": "MainApp",
+    "model": "events"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 12,
+  "fields": {
+    "app_label": "MainApp",
+    "model": "teacherinviteevent"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 13,
+  "fields": {
+    "app_label": "MainApp",
+    "model": "photoreport"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 14,
+  "fields": {
+    "app_label": "MainApp",
+    "model": "eventsmembers"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 15,
+  "fields": {
+    "app_label": "PersonalArea",
+    "model": "notications"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 16,
+  "fields": {
+    "app_label": "sites",
+    "model": "site"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "47gn0pcxp1j3r8cwa6lrup05rlh32pb0",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQBf-FsyEFFgoevfsNZIFFqgaS0p6M_64kPej1zcx7MY_7VvzeafVLYmcm2el3CxgfVAdId6y3xmOr27oEPhR-0M6vLdHzcrh_BwV7-dZWG5FJYLaQs0GcAxGhc3IGstlJgJi1lSZoNaUUIappuAZJBKcgsfcHBP84pg:1qCOCT:jhvPXhTiOniysQ5pOel1p1w4ZZ28_tRSBmxvSf7J_JU",
+    "expire_date": "2023-07-06T17:34:29.864Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "6wftxch9ur9l1st6un5rj01nb5jkja0h",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQRP-FsyGFLYV69N5vIAu7SNVAUtqT8d9tkx70Npn3Zt7C47ZmvzVe_EziKlQnLr9lwPjkchB6YLlXGWtZlznIQ5EnbXKqxK_b6f4dZGx5X49dMogRnNoTs7JaMUAii2TQaK2CTWE0GnptTQyDZe0IVA_OJEsDi88XBfg31g:1qDBAo:u7BNp0w8PD2Gex5NvBtnS7uf-jAyNmsfECSaiGLvWG0",
+    "expire_date": "2023-07-08T21:52:02.437Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "n6f5gtmrrn8qtia271mh6dhgtzcslnru",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hAUGBiX7nsGMsAoVQNJaVfGu7dNutDtf-_9jwi0zCUsnacwZnEVXpx-t0jpxXUH-Un10WRqdZ7GKHdFHrTLoWV-3w7376BQL1ttnTXKKm3BITB64xgi2eSBFAE7xewhosmedb4QGpMYlSatMSLez-K7Ar3oNz0:1qCPea:P4AqFB0m_j46sn9NKmIilIwDufasi8qbb89MJ5x3-so",
+    "expire_date": "2023-07-06T19:07:36.154Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "r9oy87k5qog4vqhd7aiat3y1jra9shgn",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hAUGBiX7nsGMsAoVQNJaVfGu7dNutDtf-_9jwi0zCUsnacwZnEVXpx-t0jpxXUH-Un10WRqdZ7GKHdFHrTLoWV-3w7376BQL1ttnTXKKm3BITB64xgi2eSBFAE7xewhosmedb4QGpMYlSatMSLez-K7Ar3oNz0:1qCP1n:rq2LjVsiDwettx67Eab55Yo3MrS-X-2CG98X2-Ro4JU",
+    "expire_date": "2023-07-06T18:27:31.075Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ywkrbsca1lnclc9ev8y8m4l8zg0xgjrs",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQRf-FtSEMMNBx6b7fQHiMUjU0Ke3K-O_apAvd3nPOfYkQt7WGrfMSpiLOwovT75ZifnDbQbnHdptlntu6TEnuijxol-Nc-Hk53L-DGnv91pY9JGLFSuuBETAbhmvW2RF5dN6qAS1rYDRFuUiGEMECUqQCxmTx_gDDHTaQ:1qCdsm:032ugT4uShGbNmmIOe4ouRjKs7odc-F0V2yXpddKbus",
+    "expire_date": "2023-07-07T10:19:12.768Z"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 1,
+  "fields": {
+    "name": "Учебный корпус № 252",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 2,
+  "fields": {
+    "name": "Учебный корпус № 1236",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 3,
+  "fields": {
+    "name": "Учебный корпус № 968",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 4,
+  "fields": {
+    "name": "Учебный корпус № 963",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 5,
+  "fields": {
+    "name": "Учебный корпус № 250",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 6,
+  "fields": {
+    "name": "Учебный корпус № 230",
+    "type": "school"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 7,
+  "fields": {
+    "name": "Учебный корпус № 2149",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 8,
+  "fields": {
+    "name": "Учебный корпус № 1446",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 9,
+  "fields": {
+    "name": "Учебный корпус № 2151",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 10,
+  "fields": {
+    "name": "Учебный корпус № 1745",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 11,
+  "fields": {
+    "name": "Учебный корпус № 1832",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 12,
+  "fields": {
+    "name": "Учебный корпус № 5",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 13,
+  "fields": {
+    "name": "Учебный корпус № 181",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 14,
+  "fields": {
+    "name": "Учебный корпус № 121",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 15,
+  "fields": {
+    "name": "Учебный корпус № 832",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 16,
+  "fields": {
+    "name": "Учебный корпус № 567",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.building",
+  "pk": 17,
+  "fields": {
+    "name": "Учебный корпус № 425",
+    "type": "kg"
+  }
+},
+{
+  "model": "Accounts.account",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$TbUif4H3A4KUBaFbAAuLvQ$ZX10nMPJ5LSq/km6XZmnWrSBlikZZ8+RzFi+axFtRF0=",
+    "email": "teacher@test.ru",
+    "username": "teacher",
+    "date_joined": "2023-06-21T19:26:02.752Z",
+    "last_login": "2023-06-22T17:34:29.856Z",
+    "role": "teacher",
+    "first_name": "Наталья",
+    "second_name": "Лазуренко",
+    "middle_name": "Сергеевна",
+    "is_staff": false,
+    "is_superuser": false,
+    "is_active": true,
+    "date_of_birth": "1999-01-01",
+    "building": null,
+    "points": 0
+  }
+},
+{
+  "model": "Accounts.account",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$OSOQvlM9XPBrBBzKcnsfug$876P+2eRqbVTAfiia/uyD9po/KrahTJ7/AAKa6KD2Vw=",
+    "email": "student@test.ru",
+    "username": "student",
+    "date_joined": "2023-06-22T08:33:38.242Z",
+    "last_login": "2023-06-23T09:05:51.077Z",
+    "role": "student",
+    "first_name": "Иван",
+    "second_name": "Аксенов",
+    "middle_name": "Андреевич",
+    "is_staff": false,
+    "is_superuser": false,
+    "is_active": true,
+    "date_of_birth": "2010-09-27",
+    "building": null,
+    "points": 76
+  }
+},
+{
+  "model": "Accounts.account",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$vUXM6vUQfOTUMFGxvzS6Nk$euF5ah2esY57Z4s6TzKENkS75BfQUVjatGRWC3vQAoA=",
+    "email": "methodist@test.ru",
+    "username": "methodist",
+    "date_joined": "2023-06-22T08:35:57.768Z",
+    "last_login": "2023-06-23T10:17:24.039Z",
+    "role": "methodist",
+    "first_name": "Моисей",
+    "second_name": "Захаров",
+    "middle_name": "Всеволодович",
+    "is_staff": false,
+    "is_superuser": false,
+    "is_active": true,
+    "date_of_birth": "2000-09-27",
+    "building": null,
+    "points": 0
+  }
+},
+{
+  "model": "Accounts.account",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$WzsfQZKZE31JXomPBWArzK$Kai5bOnIWeMLu8kRdw43N4+xs9HIPblJEyJ9+mKXu1o=",
+    "email": "methodist2@test.ru",
+    "username": "methodist2",
+    "date_joined": "2023-06-22T08:37:30.987Z",
+    "last_login": "2023-06-22T08:37:30.987Z",
+    "role": "methodist",
+    "first_name": "Яков",
+    "second_name": "Уваров",
+    "middle_name": "Александрович",
+    "is_staff": false,
+    "is_superuser": false,
+    "is_active": true,
+    "date_of_birth": "1997-04-05",
+    "building": null,
+    "points": 0
+  }
+},
+{
+  "model": "Accounts.account",
+  "pk": 7,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$Y53Amd6s8TBxkxBZuiJSvT$HRjIsK7hfCwC5s+GHIZFggMhZctsky1AKAZk6yTcpR4=",
+    "email": "admin@volunteer.ru",
+    "username": "admin",
+    "date_joined": "2023-06-22T13:38:48.663Z",
+    "last_login": "2023-06-23T11:34:04.833Z",
+    "role": "admin",
+    "first_name": "d",
+    "second_name": "a",
+    "middle_name": "m",
+    "is_staff": true,
+    "is_superuser": true,
+    "is_active": true,
+    "date_of_birth": "2022-06-22",
+    "building": 1,
+    "points": 0
+  }
+},
+{
+  "model": "Accounts.account",
+  "pk": 8,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$sdSCmFO5E0n2drweg5F33o$P4ntPnM9own1n6hwrCzEz3wGh8raUHq/Riqxj4YZGPw=",
+    "email": "root@test.ru",
+    "username": "root",
+    "date_joined": "2023-06-22T18:22:46.706Z",
+    "last_login": "2023-06-22T19:07:36.142Z",
+    "role": "admin",
+    "first_name": "root",
+    "second_name": "root",
+    "middle_name": "root",
+    "is_staff": true,
+    "is_superuser": true,
+    "is_active": true,
+    "date_of_birth": "2000-02-07",
+    "building": null,
+    "points": 0
+  }
+},
+{
+  "model": "Accounts.account",
+  "pk": 10,
+  "fields": {
+    "password": "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyMTgxMDg3Iiwic2NwIjoib3BlbmlkIH",
+    "email": "ivanaksenov2010@mail.ru",
+    "username": "user_6",
+    "date_joined": "2023-06-24T11:16:49.014Z",
+    "last_login": "2023-06-24T21:52:02.415Z",
+    "role": "student",
+    "first_name": "Иван",
+    "second_name": "Аксенов",
+    "middle_name": "Андреевич",
+    "is_staff": false,
+    "is_superuser": false,
+    "is_active": true,
+    "date_of_birth": "2010-09-27",
+    "building": null,
+    "points": 0
+  }
+},
+{
+  "model": "MainApp.eventcategory",
+  "pk": 2,
+  "fields": {
+    "name": "Родной язык",
+    "methodists": [
+      5
+    ]
+  }
+},
+{
+  "model": "MainApp.eventcategory",
+  "pk": 3,
+  "fields": {
+    "name": "Математика",
+    "methodists": [
+      4
+    ]
+  }
+},
+{
+  "model": "MainApp.classroom",
+  "pk": 1,
+  "fields": {
+    "uuid": "caa57cc6-c816-4cb4-a27f-f8927b0f07c6",
+    "teacher": 2,
+    "classroom": 6,
+    "parallel": "И",
+    "member": [
+      3
+    ]
+  }
+}
+]
