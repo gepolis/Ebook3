@@ -73,7 +73,7 @@ def auth_mos_ru(request):
 def mos_ru_login(request, token):
     user = dnevniklib.User(token=token)
     school = dnevniklib.School(user=user)
-    print(user.data_about_user)
+    #print(user.data_about_user)
     if school.get_info_about_school()['short_name'] == "ГБОУ Школа № 1236":
         if not Account.objects.all().filter(email=user.email).exists():
 

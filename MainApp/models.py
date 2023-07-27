@@ -137,3 +137,5 @@ class TeacherInviteEvent(models.Model):
     class Meta:
         verbose_name = "Приглашение на мероприятие"
         verbose_name_plural = "Приглашения на мероприятия"
+
+

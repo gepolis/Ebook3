@@ -55,7 +55,8 @@ def get_token(user_login, user_password, tt=None):
             "https://login.mos.ru/sps/login/logout?post_logout_redirect_uri=https://www.mos.ru/api/acs/v1/logout/satisfy")
         return token
     except Exception as e:
-        print(e)
+        pass
+        #print(e)
     finally:
         driver.close()
         driver.quit()

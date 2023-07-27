@@ -176,7 +176,7 @@ class Account(AbstractBaseUser):
         return avatar_url
 
     def get_avatar(self):
-        print("test")
+        #print("test")
         if self.avatar:
             return self.avatar.url
         else:
