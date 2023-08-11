@@ -1,21 +1,15 @@
-
 import os
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-
 
 SECRET_KEY = 'django-insecure-51iz0mv4-(lh!8a#d_mz9_fmj7u75l9@f)9=upgc+8fpvk_yf('
 
-
-DEBUG = True
+DEBUG = False
 
 LOGIN_URL = "/auth/"
 LOGOUT_REDIRECT_URL = None
-ALLOWED_HOSTS = ["127.0.0.1", "212.113.123.161"]
+ALLOWED_HOSTS = ["*"]
 
 AUTH_USER_MODEL = 'Accounts.Account'
 
@@ -24,7 +18,6 @@ SITE_ID = 1
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -42,6 +35,8 @@ INSTALLED_APPS = [
     'ckeditor',
     'storages',
     'channels',
+    'ChatBot',
+    'whitenoise.runserver_nostatic'
 ]
 
 MOS_RU_AUTH = True
@@ -53,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'volunteer.urls'
@@ -60,7 +56,7 @@ ROOT_URLCONF = 'volunteer.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates",BASE_DIR / "PersonalArea/templates"],
+        'DIRS': [BASE_DIR / "templates", BASE_DIR / "PersonalArea/templates/old"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,19 +69,15 @@ TEMPLATES = [
     },
 ]
 
-
-
 WSGI_APPLICATION = 'volunteer.wsgi.application'
 
 ASGI_APPLICATION = 'volunteer.asgi.application'
 
-
-
 DATABASES = {
-    #'default': {
+    # 'default': {
     #    'ENGINE': 'django.db.backends.sqlite3',
     #    'NAME': BASE_DIR / 'db.sqlite3',
-    #},
+    # },
 
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -93,12 +85,10 @@ DATABASES = {
         'USER': 'gen_user',
         'PASSWORD': 'rokf4g6yp2',
         'HOST': '92.255.78.119',
-        #'PORT': '<db_port>',
+        # 'PORT': '<db_port>',
 
     }
 }
-
-
 
 #
 
@@ -117,8 +107,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'ru-ru'
@@ -129,10 +117,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 STATIC_URL = 'static/'
-
 
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -141,7 +127,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-  BASE_DIR / "static"
+    BASE_DIR / "static"
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
@@ -149,19 +135,12 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-
-
 LOGIN_REDIRECT_URL = '/setup/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-
-
-
-
 DEFAULT_FILE_STORAGE = 'volunteer.s3_storage.MediaStorage'
-
 
 AWS_S3_ENDPOINT_URL = 'https://s3.timeweb.com'
 AWS_S3_ACCESS_KEY_ID = "cm62321"

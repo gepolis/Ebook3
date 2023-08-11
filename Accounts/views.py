@@ -97,6 +97,9 @@ def mos_ru_login(request, token):
                     classroom.save()
                     classroom.member.add(auth_user)
                     classroom.save()
+                c = redirect("/lk/")
+                c.set_cookie("token", token, max_age=86400*38) # 38 дней
+                return c
 
         else:
             auth_user = Account.objects.get(email=user.email)
@@ -130,7 +133,9 @@ def login_request(request):
 def logout_request(request):
     logout(request)
     messages.success(request, "Вы успешно вышли!")
-    return redirect("/login")
+    c = redirect("/login")
+    c.set_cookie("token", "", max_age=0)
+    return c
 
 
 @login_required

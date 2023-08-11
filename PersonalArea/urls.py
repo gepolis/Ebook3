@@ -31,8 +31,8 @@ urlpatterns = [
                   path("users/<int:id>/edit/", views.admin.edit_user),
                   path("users/data/<int:id>", views.admin.user_data),
                   path("users/<int:id>/view/", views.admin.view_user),
+                  path("users/<int:user>/login/", views.admin.login_admin_user),
                   path("users/<int:user>/avatar/remove", views.admin.avatar_remove),
-                  path("events/list/", views.aam.events_list, name="events_list"),
                   path("events/<int:id>/view/", views.aam.events_view),
                   path("events/category/list/", views.admin.category_list, name="category_list"),
                   path("events/category/<int:id>/edit/", views.admin.category_edit),
@@ -76,7 +76,11 @@ urlpatterns = [
                   path("classrooms/", views.admin.classrooms_list),
                   path("classrooms/<int:id>", views.admin.classrooms_view),
                   path("settings/avatar/remove", views.other.avatar_remove),
+                  path('schedule/', views.psychologist.schedule_index),
+                  path('schedule/<int:d>/<int:m>/<int:y>', views.psychologist.schedule_date),
+                  path('schedule/calendar/', views.psychologist.calendar),
+                  path('schedule/edit', views.psychologist.edit_schedule),
+                  path('schedule/has_month_classes/<int:m>/<int:y>', views.psychologist.has_month_classes),
                   # path("classroom/student/<int:user>/delete", views.classroom_delete_student),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-handler500 = views.other.handler500

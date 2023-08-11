@@ -1,9 +1,12 @@
 import random
 import time
+from datetime import datetime, timedelta
 
 import django.contrib.auth
 from django.db import models
 from django.core import validators
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 Account = "Accounts.account"
 from multiselectfield import MultiSelectField
@@ -100,7 +103,7 @@ class Events(models.Model):
 
 def f(instance, filename):
     ext = filename.split('.')[-1]
-    return '{}.{}'.format(f"photo_reports/{instance.event.pk}/{random.randint(1, 1000000)}_{str(time.time())}", ext)
+    return '{}.{}'.format(f"photo_reports/{instance.event.pk}/{uuid.uuid4()}", ext)
 
 
 class PhotoReport(models.Model):
@@ -109,6 +112,12 @@ class PhotoReport(models.Model):
     uploaded = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
     author = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
+
+
+@receiver(post_delete, sender=PhotoReport)
+def delete_image_file(sender, instance, **kwargs):
+    print("delete_image_file")
+    instance.image.delete(False)
 
 
 class ClassRoom(models.Model):
@@ -129,6 +138,29 @@ class ClassRoom(models.Model):
         verbose_name_plural = "Классы"
 
 
+class PsychologistSchedule(models.Model):
+    psychologist = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="psychologist",
+                                     limit_choices_to={"role": "psychologist"})
+    child = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="child",
+                              limit_choices_to={"role": "student"})
+    date = models.DateField(null=True)
+    start_time = models.TimeField(null=True)
+    end_time = models.TimeField(null=True)
+    comment = models.TextField(max_length=2550, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.child} - {self.date}"
+
+    def can_move(self):
+        dt = datetime.now()
+        if self.date <= dt.date():
+            return False
+        elif (self.date - dt.date()).days <= 2:
+            print((self.date - dt.date()).days)
+            return False
+        else:
+            return True
+
 class TeacherInviteEvent(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="account")
     classroom = models.ForeignKey(ClassRoom, on_delete=models.CASCADE, related_name="event_classroom")
@@ -137,5 +169,3 @@ class TeacherInviteEvent(models.Model):
     class Meta:
         verbose_name = "Приглашение на мероприятие"
         verbose_name_plural = "Приглашения на мероприятия"
-
-

@@ -8,7 +8,7 @@
         }
 
         .chat-container {
-            height: 83vh;
+            height: 70vh;
             display: flex;
             flex-direction: column;
         }
@@ -40,7 +40,7 @@
         .chat-message.received {
             align-self: flex-start;
 
-            background-color: #C9E8FF ;
+            background-color: #C9E8FF;
         }
 
         .chat-message.sent .sender {
@@ -83,6 +83,9 @@
     <div class="container-fluid pt-4 px-4">
         <div class="row g-4">
             <div class="col-sm-12 col-xl-12">
+                <div class="alert alert-danger" role="alert" id="connection_error" style="display: none">К сожалению
+                    произошла ошибка, пожалуйста попробуйте позднее.
+                </div>
                 <div class="bg-light rounded h-90 p-4">
                     <h6 class="mb-4">Чат</h6>
                     <div class="chat-container">
@@ -105,8 +108,8 @@
                         </div>
 
                         <div class="message-input">
-                                <input id="message-input" type="text" placeholder="Сообщение">
-                                <button id="send-btn" ><i class="fas fa-paper-plane"></i></button>
+                            <input id="message-input" type="text" placeholder="Сообщение">
+                            <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
                         </div>
                     </div>
                 </div>
@@ -127,19 +130,28 @@
             '/ws/' + roomName + '/'
         );
 
-        socket.onmessage = function(e) {
+        socket.onerror = function (event) {
+            console.log("Error");
+            document.querySelector("#connection_error").style.display = "";
+            document.querySelector("#message-input").disabled = true;
+            document.querySelector("#send-btn").style.cursor = "not-allowed";
+        }
+
+
+        socket.onmessage = function (e) {
             document.body.scrollTop = 1000;
             var message = JSON.parse(e.data);
             if (message.author == "{{ user.id }}") {
-                document.querySelector(".chat-messages").innerHTML += '<div class="chat-message sent"><span class="sender">' + message.username + '</span><br><span class="message">' + message.message + '</span></div>';
+                document.querySelector(".chat-messages").innerHTML += '<div class="chat-message sent"><span class="sender">' + message.username + ' </span><br><span class="message">' + message.message + '</span></div>';
             } else {
-                document.querySelector(".chat-messages").innerHTML += '<div class="chat-message received"><span class="sender">' + message.username + '</span><br><span class="message">' + message.message + '</span></div>';
+                document.querySelector(".chat-messages").innerHTML += '<div class="chat-message received"><span class="sender">' + message.username + ' </span><br><span class="message">' + message.message + '</span></div>';
+
             }
             document.querySelector(".chat-messages").scrollTo(0, 20000)
         };
 
-        $(document).ready(function() {
-            $('#send-btn').click(function() {
+        $(document).ready(function () {
+            $('#send-btn').click(function () {
                 var message = $('#message-input').val();
                 $('#message-input').val('');
                 if (message != "") {
@@ -147,7 +159,8 @@
                         'message': message,
                         'username': '{{ user.full_name }}',
                         'author': '{{ user.id }}',
-                        'room': roomName
+                        'room': roomName,
+                        'avatar': '{{ user.get_avatar }}'
                     }));
                 }
 

@@ -55,7 +55,8 @@ class Account(AbstractBaseUser):
         ("student", "Ученик"),
         ("methodist", "Методист"),
         ("director", "Директор"),
-        ("head_teacher", "Завуч")
+        ("head_teacher", "Завуч"),
+        ("psychologist", "Психолог"),
     ]
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     username = models.CharField(max_length=30, unique=True)
@@ -71,7 +72,8 @@ class Account(AbstractBaseUser):
     date_of_birth = models.DateField(null=True, verbose_name="дата рождения")
     building = models.ForeignKey(Building, on_delete=models.SET_NULL, null=True)
     points = models.IntegerField(default=0)
-    avatar = models.ImageField(upload_to=f, null=True)
+    avatar = models.ImageField(upload_to=f, null=True, blank=True)
+    token = models.CharField(max_length=1000, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', "second_name", "first_name", "middle_name"]
@@ -169,7 +171,7 @@ class Account(AbstractBaseUser):
         return [h, s, l]
 
     def gen_avatar(self):
-        bg = self.stringToColor(self.first_name + " " + self.middle_name)
+        bg = self.stringToColor(self.full_name())
 
         fc = self.changeColor(bg)
         avatar_url = f"https://ui-avatars.com/api/?name={self.first_name}+{self.middle_name}&background={bg}&color={fc}"

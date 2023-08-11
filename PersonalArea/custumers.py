@@ -59,6 +59,9 @@ from PersonalArea.models import Message
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        #if self.scope['user'].is_anonymous:
+        #    await self.close()
+
         self.room_name = self.scope['url_route']['kwargs']['classroom']
         self.room_group_name = 'chat_%s' % self.room_name
 
@@ -85,6 +88,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         username = text_data_json['username']
         author = text_data_json['author']
         room = text_data_json['room']
+        avatar = text_data_json['avatar']
         await self.save_message(author, message, room)
         # Отправка сообщения всем клиентам в группе комнаты
         if message != "":
@@ -94,7 +98,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'username': username,
                     'message': message,
-                    'author': author
+                    'author': author,
+                    'avatar': avatar
                 }
             )
 
@@ -103,14 +108,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event['message']
         username = event['username']
         author = event['author']
+        avatar = event['avatar']
         # Отправка сообщения клиенту
         await self.send(text_data=json.dumps({
             'username': username,
             'message': message,
-            'author': author
+            'author': author,
+            'avatar': avatar
         }))
 
     @sync_to_async
-    def save_message(self,author, content, room):
+    def save_message(self, author, content, room):
         user = Account.objects.get(pk=author)
         Message.objects.create(user=user, room=room, context=content).save()

@@ -1,8 +1,23 @@
 import functools
 
-from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse, Http404, HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.contrib import messages
+
+
+def is_psychologist(view_func):
+    @functools.wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.role == "psychologist":
+                return view_func(request, *args, **kwargs)
+            else:
+                return PermissionDenied()
+        else:
+            return redirect("auth")
+
+    return wrapper
 
 
 def is_admin(view_func):
@@ -12,7 +27,7 @@ def is_admin(view_func):
             if request.user.role == "admin" or request.user.role == "director":
                 return view_func(request, *args, **kwargs)
             else:
-                return render(request, "404.html")
+                raise PermissionDenied
         else:
             return redirect("auth")
 
@@ -29,6 +44,7 @@ def has_role(view_func):
 
     return wrapper
 
+
 def is_teacher(view_func):
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
@@ -36,7 +52,7 @@ def is_teacher(view_func):
             if request.user.role == "teacher":
                 return view_func(request, *args, **kwargs)
             else:
-                return render(request, "404.html")
+                raise PermissionDenied
         else:
             return redirect("auth")
 
@@ -50,7 +66,7 @@ def is_student(view_func):
             if request.user.role == "student":
                 return view_func(request, *args, **kwargs)
             else:
-                return render(request, "404.html")
+                raise PermissionDenied
         else:
             return redirect("auth")
 
@@ -64,7 +80,7 @@ def is_methodist(view_func):
             if request.user.role == "methodist":
                 return view_func(request, *args, **kwargs)
             else:
-                return render(request, "404.html")
+                raise PermissionDenied
         else:
             return redirect("auth")
 
@@ -78,7 +94,7 @@ def is_admin_or_methodist(view_func):
             if request.user.role == "methodist" or request.user.role == "admin":
                 return view_func(request, *args, **kwargs)
             else:
-                return render(request, "404.html")
+                raise PermissionDenied
         else:
             return redirect("auth")
 

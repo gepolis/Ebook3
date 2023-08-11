@@ -238,5 +238,5 @@ class EventAddFormMethodist(forms.ModelForm):
 
 
 class UploadPhotoReport(forms.Form):
-    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'allow_multiple_selected': True, "class": "form-control"}),
-                           label="Изображения")
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'allow_multiple_selected': True, "class": "form-control", "accept": "image/*"}),
+                           label="Изображения", )

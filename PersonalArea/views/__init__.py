@@ -3,3 +3,4 @@ from . import aam
 from . import student
 from . import teacher
 from . import other
+from . import psychologist

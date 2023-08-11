@@ -40,7 +40,7 @@ def events_list(request, search=None):
         page_number = 1
     page_obj = paginator.get_page(page_number)
     context["events"] = page_obj
-    return render(request, "events_list.html", context)
+    return render(request, "aam/events_list.html", context)
 
 @decorators.is_admin_or_methodist
 def give_points(request, id):
@@ -58,7 +58,7 @@ def give_points(request, id):
             user_account.save()
             return redirect(f"/lk/events/{event.pk}/points/give")
     else:
-        return render(request, "give_points.html", {"event": event, "volunteers": volunteers, "section": "events"})
+        return render(request, "aam/give_points.html", {"event": event, "volunteers": volunteers, "section": "events"})
 
 
 @decorators.is_admin_or_methodist
@@ -79,7 +79,7 @@ def events_archive_list(request):
         page_number = 1
     page_obj = paginator.get_page(page_number)
     context["events"] = page_obj
-    return render(request, "events_archive_list.html", context)
+    return render(request, "aam/events_archive_list.html", context)
 
 @decorators.is_admin_or_methodist
 def event_export(request, id):
@@ -142,7 +142,7 @@ def events_view(request, id):
         "wait": Events.objects.all().filter(pk=event.pk,start_date__gt=timezone.now()).exists(),
         "end":  Events.objects.all().filter(pk=event.pk,end_date__lt=timezone.now()).exists()
     }
-    return render(request, "event_view.html", context)
+    return render(request, "aam/event_view.html", context)
 
 
 
@@ -157,7 +157,7 @@ def event_create(request):
                 form.save()
                 form.save_m2m()
             else:
-                return render(request, "event_create.html", {"form": form, "section": "events"})
+                return render(request, "aam/event_create.html", {"form": form, "section": "events"})
             return redirect("/lk/events/list")
     elif request.user.role == "methodist":
         if request.method == "GET":
@@ -168,11 +168,11 @@ def event_create(request):
                 form.save()
                 form.save_m2m()
             else:
-                return render(request, "event_create.html", {"form": form, "section": "events"})
+                return render(request, "aam/event_create.html", {"form": form, "section": "events"})
             return redirect("/lk/events/list")
     else:
         return redirect("/lk/")
-    return render(request, "event_create.html", {"form": form, "section": "events"})
+    return render(request, "aam/event_create.html", {"form": form, "section": "events"})
 
 
 @decorators.is_admin_or_methodist
@@ -200,7 +200,7 @@ def photo_report(request, id):
     }
     if request.method == "GET":
         context['form']=UploadPhotoReport()
-        return render(request,"photo_report.html",context)
+        return render(request,"aam/photo_report.html",context)
     else:
         form = UploadPhotoReport(request.POST, request.FILES)
         files = request.FILES.getlist("file")
@@ -213,6 +213,5 @@ def photo_report(request, id):
 @decorators.is_admin_or_methodist
 def photo_delete(request, id,image):
     photo = get_object_or_404(PhotoReport, pk=image)
-    photo.deleted = True
-    photo.save()
+    photo.delete()
     return redirect(f"/lk/events/{photo.event.pk}/photo/report")

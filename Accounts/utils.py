@@ -1,6 +1,6 @@
 import time
 
-import dnevniklib
+
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium import webdriver
@@ -13,13 +13,13 @@ ua = UserAgent()
 user_agent = ua.ff
 options = webdriver.ChromeOptions()
 options.add_argument("--window-size=1920,1080")
-options.add_argument("--disable-gpu")
+#options.add_argument("--disable-gpu")
 options.add_argument("--disable-extensions")
 options.add_experimental_option("useAutomationExtension", False)
 options.add_argument("--proxy-server='direct://'")
 options.add_argument("--proxy-bypass-list=*")
-options.add_argument("--start-maximized")
-options.add_argument("--headless")
+#options.add_argument("--start-maximized")
+#options.add_argument("--headless")
 options.add_argument("--disable-blink-features=AutomationControlled")
 
 
@@ -37,7 +37,7 @@ def get_token(user_login, user_password, tt=None):
             "%2Bblitz_user_rights%2Bblitz_change_password%26redirect_uri%3Dhttps%253A%252F%252Fschool.mos.ru%252Fv3%252Fauth"
             "%252Fsudir%252Fcallback")
 
-        driver.implicitly_wait(10)
+        time.sleep(10)
         # time.sleep(10)
         login = driver.find_element(By.ID, "login")
         password = driver.find_element(By.ID, "password")
@@ -45,7 +45,7 @@ def get_token(user_login, user_password, tt=None):
         login.send_keys(user_login)
         password.send_keys(user_password)
         button.click()
-        time.sleep(2)
+        time.sleep(10)
         token = driver.get_cookie("aupd_token")
         if token:
             token = token['value']

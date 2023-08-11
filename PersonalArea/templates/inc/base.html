@@ -16,11 +16,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css">
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}2">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Icon Font Stylesheet -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
@@ -69,10 +72,9 @@
                            data-bs-toggle="dropdown"><i
                                 class="far fa-calendar me-2"></i>Мероприятия</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="/lk/events/list/" class="dropdown-item">Список</a>
+                            <a href="/lk/events/" class="dropdown-item">Мероприятия</a>
                             <a href="/lk/events/archive/" class="dropdown-item">Архив</a>
                             <a href="/lk/events/category/list/" class="dropdown-item">Категории</a>
-                            <a href="/lk/events/create/" class="dropdown-item">Создать</a>
 
                         </div>
                     </div>
@@ -136,15 +138,23 @@
                         </div>
                     {% endif %}
                 {% elif user.role == "student" %}
-                    <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i class="fa fa-home me-2"></i>Главная</a>
-                    <a href="/lk/my/events/" class="nav-item nav-link {% if section == "my_events" %}active{% endif %}"><i class="fa fa-calendar me-2"></i>Мои
+                    <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i
+                            class="fa fa-home me-2"></i>Главная</a>
+                    <a href="/lk/my/events/" class="nav-item nav-link {% if section == "my_events" %}active{% endif %}"><i
+                            class="fa fa-calendar me-2"></i>Мои
                         события</a>
-                    <a href="/lk/events/" class="nav-item nav-link {% if section == "events" %}active{% endif %}"><i class="fa fa-calendar me-2"></i>Мероприятия</a>
+                    <a href="/lk/events/" class="nav-item nav-link {% if section == "events" %}active{% endif %}"><i
+                            class="fa fa-calendar me-2"></i>Мероприятия</a>
+                {% elif user.role == "psychologist" %}
+                    <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i
+                            class="fa fa-home me-2"></i>Главная</a>
+                    <a href="/lk/schedule/" class="nav-link {% if section == "schedule" %}active{% endif %}"><i class="fa fa-calendar me-2"></i>Расписание</a>
                 {% else %}
                     {% block sidebar %}
                     {% endblock sidebar %}
                 {% endif %}
-                <a href="/lk/chat/" class="nav-item nav-link {% if section == "chat" %}active{% endif %}"><i class="fas fa-paper-plane me-2"></i>Чат</a>
+                <a href="/lk/chat/" class="nav-item nav-link {% if section == "chat" %}active{% endif %}"><i
+                        class="fas fa-paper-plane me-2"></i>Чат</a>
             </div>
         </nav>
     </div>
@@ -173,6 +183,7 @@
         {% block content %}
 
         {% endblock content %}
+
         <!-- Footer Start -->
         <!-- Footer End -->
     </div>
@@ -180,8 +191,11 @@
 
 
     <!-- Back to Top -->
+
+
     <!--<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>-->
 </div>
+
 
 <!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -208,6 +222,44 @@
 <script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/calendar.js' %}"></script>
 {% block js %}
+    <script>
+        let opened = false
+        const open = document.querySelector("#chatbox__button")
+        const chatbox = document.querySelector(".chatbox__support")
+        const messages = document.querySelector(".chatbox__messages")
+        open.addEventListener("click", () => {
+            if (opened) {
+                chatbox.classList.remove("chatbox--active")
+                opened = false
+            } else {
+                chatbox.classList.add("chatbox--active")
+                opened = true
+            }
+        })
+        document.querySelector(".send__button").addEventListener("click", (e) => {
+            e.preventDefault()
+            let data = document.querySelector(".chatbox-data").value
+            if (data !== "") {
+                document.querySelector(".chatbox-data").value = ""
+                messages.innerHTML = `<div class='messages__item messages__item--visitor'>${data}</div>` + messages.innerHTML
+                data = fetch(`http://${location.host}/chatbot/?q=${data}`)
+                    .then(data => data.json())
+                    .then(data => {
+                        message = `<div class='messages__item messages__item--operator'>${data.answer}</div>`
+
+                        var urlRegex = /(http:\/\/[^\s]+)/g; // regex for only https:// (notice the missing "?")
+                        message = message.replace(urlRegex, function (url) {
+                            return '<a href="' + url + '">' + url + '</a>'; // return the replaced text
+                        })
+                        messages.innerHTML = message + messages.innerHTML
+                    })
+
+
+            }
+
+        })
+
+    </script>
 {% endblock js %}
 
 </body>

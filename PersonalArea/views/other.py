@@ -1,7 +1,7 @@
 from datetime import datetime
 import io
 from datetime import datetime
-
+from . import aam
 import xlsxwriter
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -30,7 +30,7 @@ def index(request):
             "students": item,
             "section": "index"
         }
-        return render(request, "index.html", context)
+        return render(request, "adminpanel/index.html", context)
     elif request.user.role == "teacher":
 
         context = {
@@ -52,6 +52,11 @@ def index(request):
             "section": "index"
         }
         return render(request, "methodist/index.html", context)
+    elif request.user.role == "psychologist":
+        context = {
+            "section": "index"
+        }
+        return render(request, "psychologist/index.html", context)
 
 
 def chat(request):
@@ -59,7 +64,7 @@ def chat(request):
         room = request.user.get_classroom().id
     else:
         room = "staff"
-    msgs = Message.objects.all().filter(room=room)[0:25]
+    msgs = Message.objects.all().filter(room=room).order_by("date_added")
     return render(request, "chat.html", context={"msgs": msgs, "section": "chat", "room": room})
 
 
@@ -77,12 +82,6 @@ def edit_profile(request):
     return render(request, "settings.html", {"form": form})
 
 
-def handler404(request, *args, **argv):
-    return render(request, '404.html', status=404)
-
-
-def handler500(request, *args, **argv):
-    return render(request, '500.html', status=500)
 
 
 @login_required
@@ -104,6 +103,8 @@ def events(request):
         else:
             messages.warning(request, "Сначала вступите в класс, по приглашению от классного руковадителя.")
             return redirect("/lk/")
+    else:
+        return aam.events_list(request)
 
 
 @login_required
