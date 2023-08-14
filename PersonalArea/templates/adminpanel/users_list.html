@@ -1,0 +1,271 @@
+{% extends "inc/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <style>
+        .avatar:hover {
+            cursor: pointer;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-users fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Пользователей</p>
+                        <h6 class="mb-0">{{ count_users }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-child fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Учеников</p>
+                        <h6 class="mb-0">{{ count_students }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-user fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Родителей</p>
+                        <h6 class="mb-0">{{ count_parents }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fas fa-user-shield fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Сотрудников</p>
+                        <h6 class="mb-0">{{ count_staff }}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Sales Chart Start -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-12">
+                <div class="bg-light rounded h-100 p-4">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm col-sm-4">
+                                <h6 class="mb-4">Пользователи</h6>
+                            </div>
+                            <div class="col-sm col-sm-5">
+                                <input type="search" class="form-control" placeholder="Поиск" id="search"
+                                       onkeyup="search()">
+
+                            </div>
+                            <div class="col-sm col-sm-2">
+                                <select id="role-filter" onchange="role_filter(this)" class="form-control">
+                                    <option value="all" {% if not role %}selected{% endif %}>Все</option>
+                                    <option value="director" {% if role == "director"%}selected{% endif %}>Директор</option>
+                                    <option value="teacher" {% if role  == "teacher"%}selected{% endif %}>Учителя</option>
+                                    <option value="student" {% if role  == "student"%}selected{% endif %}>Ученики</option>
+                                    <option value="methodist" {% if role  == "methodist" %}selected{% endif %}>Методисты</option>
+                                </select>
+                            </div>
+                            <div class="col-sm">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#createUserModal">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <!--<input type="search" class="form-control" placeholder="Поиск" id="search" onkeyup="search()">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#createUserModal">
+                            <i class="fa fa-plus"></i>
+                        </button>-->
+                    </div>
+                    <!-- Modal -->
+
+                    <!-- Button trigger modal -->
+                    <table class="table table-hover" id="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">ФИО</th>
+                            <th scope="col">Почта</th>
+                            <th scope="col">Роль</th>
+                            <th scope="col">Действия</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for table_user in users %}
+                            <tr data-role="{{ table_user.role }}" class="user-row">
+                                <td>
+                                    <img class="rounded-circle me-lg-2 avatar"
+                                         src="{{ table_user.get_avatar }}" alt=""
+                                         style="width: 40px; height: 40px;">
+                                    {{ table_user.full_name }}
+                                </td>
+                                <td>{{ table_user.email }}</td>
+                                <td>{% if table_user.get_role_display %}{{ table_user.get_role_display }}{% else %}
+                                    Гость{% endif %}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#exampleModal"
+                                            onclick="open_user_detail({{ table_user.pk }})">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    <a class="btn btn-primary" href="/lk/users/{{ table_user.id }}/edit"><i
+                                            class="fa fa-user-edit"></i></a>
+                                    {% if user.is_superuser %}
+                                        <a href="/lk/users/{{ table_user.id }}/login" class="btn btn-primary"><i class="fa fa-right-to-bracket"></i></a>
+                                    {% endif %}
+
+                                    {% if table_user.pk != user.pk %}
+                                        <a class="btn btn-danger" href="/lk/users/{{ table_user.id }}/delete"><i
+                                                class="fa fa-trash"></i></a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item {% if not users.has_previous %}disabled{% endif %}">
+                                <a class="page-link" href="?page={% if users.has_previous %}{{ users.previous_page_number }}{% endif %}" tabindex="-1">&laquo;</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">{{ users.number }}</a></li>
+                            <li class="page-item {% if not users.has_next %}disabled{% endif %}">
+                                <a class="page-link" href="?page={% if users.has_next %}{{ users.next_page_number }}{% endif %}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Информация</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"
+                            onclick="close_user_detail()">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="loader" id="modal_loader">
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="information" id="information">
+                        <p>ФИО: <strong id="full_name_model"></strong></p>
+                        <p>Почта: <strong id="email_model"></strong></p>
+                        <p>Роль: <strong id="role_model"></strong></p>
+                        <p>Дата регистрации: <strong id="join_date_model"></strong></p>
+                        <p>Последний вход: <strong id="last_login_model"></strong></p>
+                    </div>
+
+                </div>
+                <div class="modal-footer" id="modal_footer">
+                    <p class="small float-start">Информация актуальна на <span id="received"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Button trigger modal -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Создание пользователя</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'create_user' %}">
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            {% csrf_token %}
+                            {{ create_user_form|crispy }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <!-- Sales Chart End -->
+    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="overflow: hidden" id="mdp">
+                    <img src="" class="imagepreview" style="width: 470px; height: 470px;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+
+        $(function () {
+            $('.avatar').on('click', function () {
+                $('.imagepreview').attr('src', $(this).attr('src'));
+                $('#imagemodal').modal('show');
+            });
+        });
+    </script>
+
+    <script>
+        const users = document.querySelectorAll(".user-row")
+
+        function role_filter(e) {
+            if (e.value==="all") {
+                window.location.href = `http://${window.location.host}/lk/users/list?page={{ users.number }}`
+            }
+            else{
+            window.location.href = `http://${window.location.host}/lk/users/list?role=${e.value}&page={{ users.number }}`
+            }
+                //users.forEach((elem) => {
+            //    if (e.value === "all") {
+            //        elem.style.display = ""
+            //    } else {
+            //        if (elem.dataset.role !== e.value) {
+            //            elem.style.display = "none"
+            //        } else {
+            //            elem.style.display = ""
+            //        }
+            //    }
+            //})
+        }
+
+
+
+    </script>
+    <script src="{% static 'js/search.js' %}"></script>
+{% endblock content %}

@@ -1,0 +1,103 @@
+{% extends "inc/base.html" %}
+{% block content %}
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-users fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Пользователей</p>
+                        <h6 class="mb-0">{{ users }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-calendar fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Мероприятий</p>
+                        <h6 class="mb-0">{{ events }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-user-plus fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Заявок</p>
+                        <h6 class="mb-0">{{ reqs }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                    <i class="fa fa-building fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Корпус</p>
+                        <h6 class="mb-0">{{ builds }}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Sale & Revenue End -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-24 col-xl-12">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Топ баллов</h6>
+                    <canvas id="myChart"></canvas>
+
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+                    <script>
+                        const ctx = document.getElementById('myChart');
+
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: [{% for student in students %} '{{ student.full_name }}', {% endfor %}],
+                                datasets: [{
+                                    label: 'баллы',
+                                    data: [{% for student in students %} {{ student.points }}, {% endfor %}],
+                                    borderWidth: 2,
+                                    backgroundColor: [
+                                        'rgba(255, 206, 86, 0.8)',
+                                        'rgba(255, 99, 132, 0.8)',
+                                        'rgba(54, 162, 235, 0.8)',
+                                        'rgba(75, 192, 192, 0.8)',
+                                        'rgba(153, 102, 255, 0.8)',
+                                        'rgba(255, 159, 64, 0.8)',
+                                        'rgba(240, 120, 50, 0.8)',
+                                    ],
+                                    borderColor: [
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)',
+                                        'rgba(240, 120, 50, 1)',
+
+                                    ],
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock content %}
