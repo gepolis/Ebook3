@@ -5,14 +5,74 @@
     <div class="row g-4">
         <div class="col-sm-12 col-xl-12">
             <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                <div class="row">
-                    Тут должно быть расписание
-                </div>
+                <div id="calendar"></div>
             </div>
         </div>
     </div>
+    <style>
+        #calendar {
+            width: 100%;
+        }
 
+        .fc-col-header-cell a {
+            color: #191C24;
+        }
+
+        .fc-timegrid-slot {
+            height: 40px;
+        }
+
+        .fc-event-main {
+            cursor: pointer;
+        }
+    </style>
 {% endblock content %}
 
 {% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/locales-all.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var url = `${window.location.protocol}//${window.location.host}/lk/schedule/view/`;
+            console.log(url)
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                    timeZone: 'UTC',
+                    buttonText: {
+                        today: 'сегодня',
+                        day: 'день',
+                        week: 'неделя',
+                        month: 'месяц'
+                    },
+                    initialView: 'timeGridWeek',
+                    allDaySlot: false,
+                    firstDay: 1,
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'timeGridWeek,timeGridDay'
+                    },
+                    eventClick: function (info) {
+                        var eventObj = info.event;
+                        window.open(`${url}${info.event.id}`, "_self")
+                    },
+                    events: 'http://127.0.0.1:8000/lk/classes',
+                    locale: "ru",
+                    slotLabelFormat:
+                        {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            omitZeroMinute: false,
+                        },
+                    slotMinTime: "07:00",
+                    slotDuration: "00:30:01",
+                    slotMaxTime: "17:00",
+                    displayEventTime: false
+
+                })
+            ;
+
+            calendar.render();
+        });
+    </script>
 {% endblock js %}

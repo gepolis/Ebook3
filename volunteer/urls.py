@@ -37,7 +37,7 @@ urlpatterns = [
                   path('auth/register', accounts_views.register_request),
                   path('auth/login', accounts_views.login_request),
                   path('chatbot/', include("ChatBot.urls")),
-
+                  path("user_activity/", accounts_views.user_activity),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

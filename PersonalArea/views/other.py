@@ -1,6 +1,12 @@
 from datetime import datetime
 import io
 from datetime import datetime
+
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.sessions.models import Session
+from django.core.mail import send_mail
+
 from . import aam
 import xlsxwriter
 from django.contrib import messages
@@ -11,15 +17,17 @@ from django.utils import timezone
 from django.utils.formats import localize
 
 from Accounts import decorators
-from Accounts.models import Building
+from Accounts.models import Building, Connections
 from MainApp.models import *
 from PersonalArea.forms import *
 from PersonalArea.models import Message
-
+from PersonalArea.tasks import send
 
 @login_required
 @decorators.has_role
 def index(request):
+    for k, v in request.session.items():
+        print(k, v)
     if request.user.role == "admin" or request.user.role == "director":
         item = Account.objects.all().filter(points__gt=0).order_by("-points")[:10]
         context = {
@@ -67,11 +75,27 @@ def chat(request):
     msgs = Message.objects.all().filter(room=room).order_by("date_added")
     return render(request, "chat.html", context={"msgs": msgs, "section": "chat", "room": room})
 
-
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('change_password')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {
+        'form': form
+    })
 @login_required
 def edit_profile(request):
     if request.method == "GET":
         form = EditProfileForm(instance=request.user)
+
     else:
         form = EditProfileForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
@@ -193,3 +217,17 @@ def avatar_remove(request):
     user.save()
     return redirect("/lk/settings/")
 
+@login_required
+def devices(request):
+    devices = Connections.objects.all().filter(user=request.user).order_by("-last_activity")
+    return render(request, "devices.html", {"devices": devices})
+
+    return None
+
+
+def delete_device(request, device):
+    connection = get_object_or_404(Connections, session_key=device)
+    connection.delete()
+    Session.objects.all().filter(session_key=device).delete()
+    messages.success(request, "Устройство удалено.")
+    return redirect("/lk/settings/security/devices")

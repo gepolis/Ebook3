@@ -10,7 +10,7 @@ class SnippetModelAdmin(admin.ModelAdmin):
     fieldsets = (
         ('', {
             'fields': (
-            'username', 'email', ('second_name', 'first_name', 'middle_name'), "building")
+            'username', 'email', ('second_name', 'first_name', 'middle_name'), "building","peculiarity")
         }),
         ('Permissions', {
             'fields': ("is_staff", "is_superuser","role")

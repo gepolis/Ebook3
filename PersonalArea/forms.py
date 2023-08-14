@@ -13,7 +13,7 @@ class EditUserForm(forms.ModelForm):
         model = Account
         fields = (
             "username", "email", "second_name", "first_name", "middle_name", "date_of_birth", "building", "role",
-            "points",'avatar')
+            "points",'avatar', "peculiarity")
         labels = {
             "username": "Имя пользователя",
             "email": "Почта",
@@ -24,7 +24,8 @@ class EditUserForm(forms.ModelForm):
             "role": "Роль",
             "building": "Корпус",
             "points": "Баллов",
-            "avatar": "Изображение"
+            "avatar": "Изображение",
+            "peculiarity": "Особенность"
         }
         widgets = {
             'date_of_birth': forms.DateInput(

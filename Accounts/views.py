@@ -1,19 +1,47 @@
 import random
+from datetime import datetime
 
+import django_user_agents.utils
 import dnevniklib
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import *
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.utils import timezone
+
 from .models import Account
 from .forms import *
+from .models import *
 from .utils import get_token
 from MainApp.models import ClassRoom
 
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
+def add_connection(request):
+    ip = get_client_ip(request)
+    ua_string = request.META.get('HTTP_USER_AGENT', '')
+    print("----")
+    print(ua_string)
+    print("----")
+    ua = django_user_agents.utils.parse(ua_string)
+
+    Connections.objects.create(ip=ip, user=request.user, session_key=request.session.session_key,
+                               device_system=request.user_agent.os.family,
+                               device_browser=request.user_agent.browser.family).save()
+
+
 def register_request(request):
+    add_connection(request)
     if request.user.is_authenticated:
         return redirect("/lk/")
 
@@ -23,6 +51,7 @@ def register_request(request):
             user = form.save()
             user.save()
             login(request, user)
+            add_connection(request)
             messages.success(request, 'Вы успешно зарегистрировались!')
             return redirect("/lk/")
         else:
@@ -35,7 +64,6 @@ def register_request(request):
 def auth(request):
     if request.user.is_authenticated:
         return redirect("/lk/")
-
     context = {
         "register_form": NewUserForm(),
         "login_form": AccountSignInForm()
@@ -49,7 +77,7 @@ def auth_mos_ru(request):
 
     if request.method == "GET":
         if request.GET.get("token"):
-            return mos_ru_login(request,request.GET.get("token"))
+            return mos_ru_login(request, request.GET.get("token"))
         else:
             context = {
                 "login_form": AccountMosRuForm()
@@ -73,7 +101,7 @@ def auth_mos_ru(request):
 def mos_ru_login(request, token):
     user = dnevniklib.User(token=token)
     school = dnevniklib.School(user=user)
-    #print(user.data_about_user)
+    # print(user.data_about_user)
     if school.get_info_about_school()['short_name'] == "ГБОУ Школа № 1236":
         if not Account.objects.all().filter(email=user.email).exists():
 
@@ -98,7 +126,7 @@ def mos_ru_login(request, token):
                     classroom.member.add(auth_user)
                     classroom.save()
                 c = redirect("/lk/")
-                c.set_cookie("token", token, max_age=86400*38) # 38 дней
+                c.set_cookie("token", token, max_age=86400 * 38)  # 38 дней
                 return c
 
         else:
@@ -106,6 +134,7 @@ def mos_ru_login(request, token):
             login(request, auth_user)
         return redirect("/lk/")
     return HttpResponse(user.data_about_user)
+
 
 def login_request(request):
     if request.user.is_authenticated:
@@ -119,6 +148,11 @@ def login_request(request):
             user = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
+                ip = get_client_ip(request)
+                if not Connections.objects.all().filter(ip=get_client_ip(request), user=user).exists():
+                    add_connection(request)
+                else:
+                    add_connection(request)
                 messages.success(request, 'Вы успешно вошли!')
                 return redirect("/lk/")
             else:
@@ -131,6 +165,7 @@ def login_request(request):
 
 @login_required
 def logout_request(request):
+    Connections.objects.all().filter(user=request.user, session_key=request.session.session_key).delete()
     logout(request)
     messages.success(request, "Вы успешно вышли!")
     c = redirect("/login")
@@ -178,3 +213,19 @@ def setup(request):
             return redirect("setup")
         else:
             return redirect("/")
+
+
+@login_required
+def user_activity(request):
+    if request.COOKIES.get("activity") is None:
+        print("update")
+        j = JsonResponse({"status": "ok"}, status=200, safe=False)
+        j.set_cookie("activity", "ok", max_age=60)
+        con = Connections.objects.all().get(user=request.user, session_key=request.session.session_key)
+        con.last_activity = datetime.now()
+        con.save()
+    else:
+        j = JsonResponse({"status": "cancel"}, status=200, safe=False)
+        print("cancel")
+    j.set_cookie("welcome_screen", "", max_age=60)  # 2 hours(60*60*2)
+    return j

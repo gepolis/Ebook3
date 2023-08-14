@@ -2,46 +2,48 @@
 {% block content %}
     <!-- Sale & Revenue End -->
     <div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-xl-12">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-12">
 
-            <div class="g-light rounded h-100 p-4">
-                <h6 class="mb-4">Занятия - {{ date }}</h6>
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th style="width: 15%;" scope="col">Время</th>
-                        <th style="width: 80%;" scope="col">Ребенок</th>
-                        <th>Действия</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for e in classes %}
-                        <tr class="">
-                            <td class="">{{ e.start_time }} - {{ e.end_time }}</td>
-                            <td><a href="#" data-comment="{{ e.comment }}"
-                                   data-born="{{ e.child.date_of_birth }}">{{ e.child.full_name }}</a></td>
-                            <td class="text-center">
-                                {% if e.can_move %}
-                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#classesMove" data-pk="{{ e.pk }}" id="moveModalOpenBtn"
-                                            data-end="{{ e.end_time }}"
-                                            data-start="{{ e.start_time }}"><i
-                                            class="fa fa-clock"></i></button>
-                                {% endif %}
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                        id="classes_info" data-student_id="{{ e.child.pk }}"
-                                        data-student="{{ e.child.full_name }}" data-end="{{ e.end_time }}"
-                                        data-start="{{ e.start_time }}" data-date="{{ e.date }}"
-                                        data-comment="{{ e.comment }}">
-                                    <i class="fa fa-info"></i>
-                                </button>
-                            </td>
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Занятия - {{ date }}</h6>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width: 15%;" scope="col">Время</th>
+                            <th style="width: 80%;" scope="col">Ребенок</th>
+                            <th>Действия</th>
                         </tr>
-                    {% endfor %}
+                        </thead>
+                        <tbody>
+                        {% for e in classes %}
+                            <tr class="">
+                                <td class="">{{ e.start_time }} - {{ e.end_time }}</td>
+                                <td><a href="#" data-comment="{{ e.comment }}"
+                                       data-born="{{ e.child.date_of_birth }}">{{ e.child.full_name }}</a></td>
+                                <td class="text-center">
+                                    {% if e.can_move %}
+                                        <button class="btn btn-primary moveModalOpenBtn" data-bs-toggle="modal"
+                                                data-bs-target="#classesMove" data-pk="{{ e.pk }}"
+                                                data-end="{{ e.end_time }}"
+                                                data-start="{{ e.start_time }}"><i
+                                                class="fa fa-clock"></i></button>
+                                    {% endif %}
+                                    <button class="btn btn-primary classes_info" data-bs-toggle="modal"
+                                            data-bs-target="#exampleModal"
+                                            data-student_id="{{ e.child.pk }}"
+                                            data-student="{{ e.child.full_name }}" data-end="{{ e.end_time }}"
+                                            data-start="{{ e.start_time }}" data-date="{{ e.date }}"
+                                            data-comment="{{ e.comment }}">
+                                        <i class="fa fa-info"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
 
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -109,23 +111,28 @@
 
 {% block js %}
     <script>
-        const btn = document.querySelector("#classes_info")
+        const buttons = document.querySelectorAll(".classes_info")
+        console.log(buttons)
         const student = document.querySelector("#classes_student")
         const start = document.querySelector("#classes_start")
         const end = document.querySelector("#classes_end")
         const date = document.querySelector("#classes_date")
         const comment = document.querySelector("#classes_comment")
 
-        btn.addEventListener("click", async () => {
-            await delay(500)
-            student.innerHTML = `<a href='#${btn.dataset.student_id}'>${btn.dataset.student}</a>`
-            start.innerText = btn.dataset.start
-            end.innerText = btn.dataset.end
-            date.innerText = btn.dataset.date
-            comment.innerText = btn.dataset.comment
+        buttons.forEach((btn) => {
+            console.log("test")
+            btn.addEventListener("click", async () => {
+                console.log("test")
+                student.innerHTML = `<a href='#${btn.dataset.student_id}'>${btn.dataset.student}</a>`
+                start.innerText = btn.dataset.start
+                end.innerText = btn.dataset.end
+                date.innerText = btn.dataset.date
+                comment.innerText = btn.dataset.comment
+            })
         })
     </script>
     <script>
+
         const classesStartTime = document.querySelector("#classesStartTime")
         const classesEndTime = document.querySelector("#classesEndTime")
         const prevNext = document.querySelectorAll(".icons")
@@ -135,37 +142,49 @@
         let step = 1;
         const nextStepBtn = document.querySelector("#nextStepBtn")
         let date_field;
-        const moveModalOpenBtn = document.querySelector("#moveModalOpenBtn")
+        const moveModalOpenBtn = document.querySelectorAll(".moveModalOpenBtn")
         let start_time;
         let end_time;
+
         function delay(time) {
             return new Promise(resolve => setTimeout(resolve, time));
         }
-        moveModalOpenBtn.addEventListener("click", async (e) => {
-            console.log("open")
-            console.log(e.target.dataset.pk)
-            step = 1
-            let pk = e.target.dataset.pk
-            editpk.innerText = pk
-            stepTwo.style.display = "none"
-            stepOne.style.display = "block"
-            nextStepBtn.innerHTML = "Далее"
-            next_button(false)
-            await calendar_update()
-        })
-        prevNext.forEach((e) => {
-            e.addEventListener("click", (m) => {
-                calendar_update()
+
+        moveModalOpenBtn.forEach((e) => {
+            e.addEventListener("click", async (e) => {
+                await delay(500)
+                stepTwo.style.display = "none"
+                stepOne.style.display = "block"
+                document.querySelector("#classesMoveLabel").innerHTML = "Выберите дату"
+                let cmd = document.querySelector("#classesMoveDialog")
+                cmd.classList.add("modal-lg")
+                nextStepBtn.innerHTML = "Далее"
+                next_button(false)
+
+                await delay(1000)
+                console.log("open")
+                console.log(e.target.dataset.pk)
+                step = 1
+                console.log(e.target.dataset)
+                let pk = e.target.dataset.pk
+                editpk.innerText = pk
+                next_button(false)
+                await calendar_update()
             })
         })
 
+        prevNext.forEach((e) => {
+            e.addEventListener("click", (m) => {
+                calendar_update(e.target)
+            })
+        })
 
 
         classesStartTime.addEventListener("change", (e) => {
             classesEndTime.setAttribute("min", `${classesStartTime.value}:00`)
         })
 
-        async function calendar_update() {
+        async function calendar_update(pk) {
 
             next_button(false)
             await delay(250)
@@ -197,7 +216,7 @@
                 let form = document.querySelector("form")
                 let final_data = `?date=${date_field}&start=${classesStartTime.value}&end=${classesEndTime.value}&id=${editpk.innerText}`
 
-                window.location.replace(`/lk/schedule/edit${final_data}`)
+                window.open(`/lk/schedule/edit${final_data}`, "_self")
             }
 
         })
@@ -210,5 +229,9 @@
             }
         }
 
+    </script>
+    <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+    <script>
+        $('.modal-dialog').draggable();
     </script>
 {% endblock js %}

@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import django.contrib.auth
 from django.db import models
 from django.core import validators
+from django.db.models import Q
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
@@ -142,7 +143,7 @@ class PsychologistSchedule(models.Model):
     psychologist = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="psychologist",
                                      limit_choices_to={"role": "psychologist"})
     child = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="child",
-                              limit_choices_to={"role": "student"})
+                              limit_choices_to=Q(peculiarity__in=["handicapped", "autism"]))
     date = models.DateField(null=True)
     start_time = models.TimeField(null=True)
     end_time = models.TimeField(null=True)

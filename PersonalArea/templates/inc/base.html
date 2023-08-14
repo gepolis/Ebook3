@@ -7,6 +7,7 @@
     <title>{% block title %}Личный кабинет{% endblock title %}</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
+
     <meta content="" name="description">
 
     <!-- Favicon -->
@@ -41,12 +42,13 @@
 <div class="container-xxl position-relative bg-white d-flex p-0">
     <!-- Spinner Start -->
     <div id="spinner"
-         class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Загрузка...</span>
-        </div>
+         class="bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+
+
+        <h4 class="user_welcome">test</h4>
+
     </div>
-    <!-- Spinner End -->
+   <!-- Spinner End -->
 
 
     <!-- Sidebar Start -->
@@ -148,7 +150,8 @@
                 {% elif user.role == "psychologist" %}
                     <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i
                             class="fa fa-home me-2"></i>Главная</a>
-                    <a href="/lk/schedule/" class="nav-link {% if section == "schedule" %}active{% endif %}"><i class="fa fa-calendar me-2"></i>Расписание</a>
+                    <a href="/lk/schedule/" class="nav-link {% if section == "schedule" %}active{% endif %}"><i
+                            class="fa fa-calendar me-2"></i>Расписание</a>
                 {% else %}
                     {% block sidebar %}
                     {% endblock sidebar %}
@@ -258,6 +261,52 @@
             }
 
         })
+
+    </script>
+    <script defer>
+        function delay(time) {
+            return new Promise(resolve => setTimeout(resolve, time));
+        }
+        fetch(`${window.location.protocol}//${window.location.host}/user_activity/`)
+        var hour = new Date().getHours();
+        var greeting;
+        if (hour >= 5 && hour < 12)
+            greeting = "Доброе утро";
+        else if (hour >= 12 && hour < 18)
+            greeting = "Добрый день";
+        else if (hour >= 18 && hour < 24)
+            greeting = "Добрый вечер";
+        else if (hour >= 0 && hour < 5)
+            greeting = "Доброй ночи";
+        var welcome_msg = greeting+"!"
+        document.querySelector(".user_welcome").innerHTML=welcome_msg
+        async function showWelcomeScreen() {
+            var cookies = document.cookie.split(';').reduce(
+                (cookies, cookie) => {
+                    const [name, val] = cookie.split('=').map(c => c.trim());
+                    cookies[name] = val;
+                    return cookies;
+                }, {});
+            console.log(cookies)
+            let welcome = cookies.hasOwnProperty("welcome_screen")
+            if (welcome === false) {
+                console.log("show")
+                document.querySelector("#spinner").classList.add("show")
+                await delay(1000)
+                document.querySelector("#spinner").classList.remove("show")
+
+
+            }
+            console.log(welcome)
+
+            for (var i = 1; i <= cookies.length; i++) {
+                ret += i + ' - ' + cookies[i - 1] + "\n";
+            }
+            return ret;
+        }
+
+        let r = showWelcomeScreen()
+        console.log(r)
 
     </script>
 {% endblock js %}

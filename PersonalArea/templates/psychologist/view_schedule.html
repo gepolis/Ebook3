@@ -1,0 +1,148 @@
+{% extends "inc/base.html" %}
+{% block content %}
+    <!-- Sale & Revenue End -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-12">
+
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Занятия с {{ classes.child.full_name }}</h6>
+                    <p>Дата: <strong>{{ classes.date }}</strong></p>
+                    <p>Время: <strong>{{ classes.start_time }} - {{ classes.end_time }}</strong></p>
+                    <p>Ученик: <strong><a href="/lk/users/view/{{ classes.child.pk }}">{{ classes.child }}</a></strong>
+                    </p>
+                    {% if classes.comment %}
+                        <p>Комментарий к занятию: <strong>{{ classes.comment }}</strong></p>
+                    {% endif %}
+                    {% if classes.can_move %}
+                        <button class="btn btn-primary moveModalOpenBtn" data-bs-toggle="modal"
+                                data-bs-target="#classesMove"><i
+                                class="fa fa-clock"></i></button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Button trigger modal -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="classesMove" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" id="classesMoveDialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="classesMoveLabel">Выберите дату</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="stepOne">
+                        {{ cal|safe }}
+                    </div>
+                    <div id="stepTwo" style="display:none;">
+                        <form>
+                            <div class="mb-5">
+                                <label for="classesStartTime" class="col-sm-4 col-form-label">Начало занятия</label>
+                                <input type="time" class="form-control" id="classesStartTime"
+                                       value="{{ classes.start_time }}">
+                            </div>
+                            <div class="mb-5">
+                                <label for="classesEndTime" class="col-sm-4 col-form-label">Конец занятия</label>
+                                <input type="time" class="form-control" id="classesEndTime"
+                                       value="{{ classes.end_time }}">
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="nextStepBtn" disabled>Далее</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+    <script>
+        const classesStartTime = document.querySelector("#classesStartTime")
+        const classesEndTime = document.querySelector("#classesEndTime")
+        const prevNext = document.querySelectorAll(".icons")
+        const stepOne = document.querySelector("#stepOne")
+        const stepTwo = document.querySelector("#stepTwo")
+        const pk = "{{ classes.pk }}"
+        let step = 1;
+        const nextStepBtn = document.querySelector("#nextStepBtn")
+        let date_field;
+        const moveModalOpenBtn = document.querySelector(".moveModalOpenBtn")
+        let start_time;
+        let end_time;
+
+        function delay(time) {
+            return new Promise(resolve => setTimeout(resolve, time));
+        }
+
+        moveModalOpenBtn.addEventListener("click", async (e) => {
+            step = 1
+            stepTwo.style.display = "none"
+            stepOne.style.display = "block"
+            nextStepBtn.innerHTML = "Далее"
+            next_button(false)
+            await calendar_update()
+        })
+        prevNext.forEach((e) => {
+            e.addEventListener("click", (m) => {
+                calendar_update()
+            })
+        })
+
+
+        classesStartTime.addEventListener("change", (e) => {
+            classesEndTime.setAttribute("min", `${classesStartTime.value}:00`)
+        })
+
+        async function calendar_update() {
+
+            next_button(false)
+            await delay(250)
+            let d = document.querySelectorAll(".days .day")
+            d.forEach((e) => {
+                e.addEventListener("click", () => {
+                    let a = document.querySelector(".days .active")
+                    if (a) {
+                        a.classList.remove("active")
+                    }
+                    date_field = e.dataset.date
+                    next_button(true)
+                    e.classList.add("active")
+                })
+            })
+        }
+
+        nextStepBtn.addEventListener("click", (e) => {
+            if (step === 1) {
+                stepOne.style.display = "none"
+                stepTwo.style.display = "block"
+                document.querySelector("#classesMoveLabel").innerHTML = "Выберите время"
+                let cmd = document.querySelector("#classesMoveDialog")
+                cmd.classList.remove("modal-lg")
+                step += 1
+                nextStepBtn.innerHTML = "Перенести"
+                next_button(true)
+            } else {
+                let form = document.querySelector("form")
+                let final_data = `?date=${date_field}&start=${classesStartTime.value}&end=${classesEndTime.value}&id=${pk}`
+
+                window.location.replace(`/lk/schedule/edit${final_data}`)
+            }
+
+        })
+
+        function next_button(selected) {
+            if (selected) {
+                nextStepBtn.removeAttribute("disabled")
+            } else {
+                nextStepBtn.setAttribute("disabled", "")
+            }
+        }
+
+    </script>
+{% endblock js %}

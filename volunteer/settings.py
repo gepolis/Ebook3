@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-51iz0mv4-(lh!8a#d_mz9_fmj7u75l9@f)9=upgc+8fpvk_yf('
 
-DEBUG = False
+DEBUG = True
 
 LOGIN_URL = "/auth/"
 LOGOUT_REDIRECT_URL = None
@@ -36,8 +36,14 @@ INSTALLED_APPS = [
     'storages',
     'channels',
     'ChatBot',
-    'whitenoise.runserver_nostatic'
+    'whitenoise.runserver_nostatic',
+    'django_user_agents',
 ]
+
+
+# Name of cache backend to cache user agents. If it not specified default
+# cache alias will be used. Set to `None` to disable caching.
+USER_AGENTS_CACHE = 'default'
 
 MOS_RU_AUTH = True
 MIDDLEWARE = [
@@ -49,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+'django_user_agents.middleware.UserAgentMiddleware',
 ]
 
 ROOT_URLCONF = 'volunteer.urls'
@@ -153,3 +160,20 @@ CHANNEL_LAYERS = {
     }
 }
 ITEMS_FOR_PAGE = 25
+
+
+REDIS_HOST = '0.0.0.0'
+REDIS_PORT = 6379
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'ivanaksenov2010@mail.ru'
+EMAIL_HOST_PASSWORD = 'SeZcYwzd9pxJX2As9niV'
+EMAIL_USE_SSL = True
