@@ -69,7 +69,9 @@
                             <div class="col-sm col-sm-2">
                                 <select id="role-filter" onchange="role_filter(this)" class="form-control">
                                     <option value="all" {% if not role %}selected{% endif %}>Все</option>
-                                    <option value="director" {% if role == "director"%}selected{% endif %}>Директор</option>
+                                    {% if user.role != "head_teacher" %}
+                                        <option value="director" {% if role == "director"%}selected{% endif %}>Директор</option>
+                                    {% endif %}
                                     <option value="teacher" {% if role  == "teacher"%}selected{% endif %}>Учителя</option>
                                     <option value="student" {% if role  == "student"%}selected{% endif %}>Ученики</option>
                                     <option value="methodist" {% if role  == "methodist" %}selected{% endif %}>Методисты</option>
@@ -127,9 +129,11 @@
                                         <a href="/lk/users/{{ table_user.id }}/login" class="btn btn-primary"><i class="fa fa-right-to-bracket"></i></a>
                                     {% endif %}
 
-                                    {% if table_user.pk != user.pk %}
-                                        <a class="btn btn-danger" href="/lk/users/{{ table_user.id }}/delete"><i
-                                                class="fa fa-trash"></i></a>
+                                    {% if user.role != "head_teacher" %}
+                                        {% if table_user.pk != user.pk %}
+                                            <a class="btn btn-danger" href="/lk/users/{{ table_user.id }}/delete"><i
+                                                    class="fa fa-trash"></i></a>
+                                        {% endif %}
                                     {% endif %}
                                 </td>
                             </tr>

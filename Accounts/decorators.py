@@ -91,7 +91,52 @@ def is_admin_or_methodist(view_func):
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
-            if request.user.role == "methodist" or request.user.role == "admin":
+            if request.user.role == "methodist" or request.user.role == "admin" or request.user.role == "director" or request.user.role == "head_teacher":
+                if request.user.role == "head_teacher":
+                    if request.user.building is None:
+                        raise PermissionDenied
+                return view_func(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            return redirect("auth")
+
+    return wrapper
+
+def has_building(view_func):
+    @functools.wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.building is not None:
+                return view_func(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            return redirect("auth")
+
+    return wrapper
+
+def is_head_teacher(view_func):
+    @functools.wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.role == "head_teacher":
+                return view_func(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            return redirect("auth")
+
+    return wrapper
+
+def is_school_administrator(view_func):
+    @functools.wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.role in ["head_teacher", "admin", "director"]:
+                if request.user.role == "head_teacher":
+                    if request.user.building is None:
+                        raise PermissionDenied
                 return view_func(request, *args, **kwargs)
             else:
                 raise PermissionDenied

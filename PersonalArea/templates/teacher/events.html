@@ -14,12 +14,28 @@
 {% block content %}
     <div class="container-fluid pt-4 px-4">
         <div class="bg-light rounded h-100 p-4">
-        <h6 class="mb-4">Мероприятия</h6>
+            <div class="row">
+                <div class="col-sm col-sm-8">
+                    <h6 class="mb-4">Пользователи</h6>
+                </div>
+                <div class="col-sm col-sm-4">
+                    <select id="role-filter" onchange="building_filter(this)" class="form-control">
+                        <option value="all" {% if building == "all" %}selected{% endif %}>Все</option>
+                        <option value="classroom" {% if not building %}selected{% endif %}>Для моего класса</option>
+                        {% for build in buildings %}
+                            <option value="{{ build.pk }}"
+                                    {% if building == build.pk %}selected{% endif %}>{{ build.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <br>
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 {% for event in events %}
                     <div class="col">
                         <div class="card">
-                            <img src="{{ event.image.url }}" class="card-img-top" alt="...">
+                            <img src="{{ event.image.url }}" class="card-img-top" width="100px"
+                                 height="220px">
                             <div class="card-body">
                                 <h5 class="card-title"><a href="/lk/events/{{ event.pk }}/detail">{{ event.name }}</a>
                                 </h5>
@@ -34,10 +50,48 @@
                             </div>
                         </div>
                     </div>
+                {% empty %}
+                    <p>Мероприятия отсутствуют</p>
                 {% endfor %}
             </div>
+            <br>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {% if not events.has_previous %}disabled{% endif %}">
+                        <a class="page-link"
+                           href="?page={% if events.has_previous %}{{ events.previous_page_number }}{% endif %}"
+                           tabindex="-1">&laquo;</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">{{ events.number }}</a></li>
+                    <li class="page-item {% if not events.has_next %}disabled{% endif %}">
+                        <a class="page-link"
+                           href="?page={% if events.has_next %}{{ events.next_page_number }}{% endif %}{% if building %}&building={{ building }}{% endif %}">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
+    <script>
+
+        function building_filter(e) {
+            if (e.value === "classroom") {
+                window.location.href = `http://${window.location.host}/lk/events/`
+            } else {
+                window.location.href = `http://${window.location.host}/lk/events/?building=${e.value}`
+            }
+            //users.forEach((elem) => {
+            //    if (e.value === "all") {
+            //        elem.style.display = ""
+            //    } else {
+            //        if (elem.dataset.role !== e.value) {
+            //            elem.style.display = "none"
+            //        } else {
+            //            elem.style.display = ""
+            //        }
+            //    }
+            //})
+        }
+    </script>
     <!-- Sales Chart End -->
 
 

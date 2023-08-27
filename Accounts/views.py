@@ -217,15 +217,21 @@ def setup(request):
 
 @login_required
 def user_activity(request):
-    if request.COOKIES.get("activity") is None:
-        print("update")
-        j = JsonResponse({"status": "ok"}, status=200, safe=False)
-        j.set_cookie("activity", "ok", max_age=60)
+    if Connections.objects.all().filter(user=request.user, session_key=request.session.session_key).exists():
         con = Connections.objects.all().get(user=request.user, session_key=request.session.session_key)
-        con.last_activity = datetime.now()
-        con.save()
+        if request.COOKIES.get("activity") is None:
+            print("update")
+            j = JsonResponse({"status": "ok", "code": 1}, status=200, safe=False)
+            j.set_cookie("activity", "ok", max_age=60)
+            con.last_activity = datetime.now()
+            con.save()
+        else:
+            j = JsonResponse({"status": "cancel", "code": 2}, status=200, safe=False)
+            print("cancel")
+        j.set_cookie("welcome_screen", "", max_age=60*30)  # 30 min - 60*30
+        return j
     else:
-        j = JsonResponse({"status": "cancel"}, status=200, safe=False)
-        print("cancel")
-    j.set_cookie("welcome_screen", "", max_age=60)  # 2 hours(60*60*2)
-    return j
+        return JsonResponse({"status": "error"}, status=400, safe=False)
+
+def mos_ru_info(request):
+    return render(request, "mos_ru_auth_info.html")

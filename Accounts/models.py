@@ -1,5 +1,7 @@
 import random
 import time
+import uuid
+
 from MainApp.models import EventsMembers, ClassRoom
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
@@ -44,7 +46,7 @@ class Building(models.Model):
 
 def f(instance, filename):
     ext = filename.split('.')[-1]
-    return '{}.{}'.format(f"avatars/{random.randint(1, 1000000)}_{str(time.time())}", ext)
+    return '{}.{}'.format(f"avatars/{instance.pk}/{uuid.uuid4()}", ext)
 
 
 class Account(AbstractBaseUser):
@@ -59,8 +61,11 @@ class Account(AbstractBaseUser):
         ("psychologist", "Психолог"),
     ]
     PECULARITY_CHOICE = [
-        ("handicapped", "инвалидность"),
-        ("autism","аутизм")
+        ("handicapped", "Инвалидность"),
+        ("autism","Аутизм")
+    ]
+    TWO_AUTH_CHOICES = [
+        ("email", "email"),
     ]
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     username = models.CharField(max_length=30, unique=True)
@@ -79,6 +84,7 @@ class Account(AbstractBaseUser):
     avatar = models.ImageField(upload_to=f, null=True, blank=True)
     token = models.CharField(max_length=1000, null=True)
     peculiarity = models.CharField(max_length=1000, null=True, choices=PECULARITY_CHOICE, blank=True)
+    two_auth = models.CharField(max_length=1000, null=True, blank=True, choices=TWO_AUTH_CHOICES)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', "second_name", "first_name", "middle_name"]
 
@@ -133,53 +139,6 @@ class Account(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
-    def stringToColor(self, text):
-        hash = 0
-        color = ''
-        for i in range(len(text)):
-            hash = ord(text[i]) + ((hash << 5) - hash)
-        for i in range(3):
-            value = (hash >> (i * 8)) & 0xFF
-            color += ('00' + hex(value)[2:])[-2:]
-        return color
-
-
-    def changeColor(self, HTMLcolor):
-        e = self.rgb2hsl(HTMLcolor)
-        if (e[0] < 0.55 and e[2] >= 0.5) or (e[0] >= 0.55 and e[2] >= 0.75):
-            fc = '000000'  # черный
-        else:
-            fc = 'FFFFFF'  # белый
-        return fc
-        # далее меняем цвет, где это необходимо
-
-    def rgb2hsl(self, HTMLcolor):
-        r = int(HTMLcolor[0:2], 16) / 255
-        g = int(HTMLcolor[2:4], 16) / 255
-        b = int(HTMLcolor[4:6], 16) / 255
-        max_val = max(r, g, b)
-        min_val = min(r, g, b)
-        l = (max_val + min_val) / 2
-        if max_val == min_val:
-            h = s = 0
-        else:
-            d = max_val - min_val
-            s = d / (2 - max_val - min_val) if l > 0.5 else d / (max_val + min_val)
-            if max_val == r:
-                h = (g - b) / d + (6 if g < b else 0)
-            elif max_val == g:
-                h = (b - r) / d + 2
-            else:
-                h = (r - g) / d + 4
-            h /= 6
-        return [h, s, l]
-
-    def gen_avatar(self):
-        bg = self.stringToColor(self.full_name())
-
-        fc = self.changeColor(bg)
-        avatar_url = f"https://ui-avatars.com/api/?name={self.first_name}+{self.middle_name}&background={bg}&color={fc}"
-        return avatar_url
 
     def get_avatar(self):
         #print("test")
@@ -231,3 +190,4 @@ class Connections(models.Model):
     device_browser = models.CharField(max_length=1000, null=True, blank=True)
     device_system = models.CharField(max_length=1000, null=True, blank=True)
     last_activity = models.DateTimeField(null=True, auto_now_add=True)
+    verify = models.BooleanField(default=False)

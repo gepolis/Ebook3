@@ -2,10 +2,12 @@ from datetime import datetime
 import io
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.sessions.models import Session
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 
 from . import aam
 import xlsxwriter
@@ -23,11 +25,10 @@ from PersonalArea.forms import *
 from PersonalArea.models import Message
 from PersonalArea.tasks import send
 
+
 @login_required
 @decorators.has_role
 def index(request):
-    for k, v in request.session.items():
-        print(k, v)
     if request.user.role == "admin" or request.user.role == "director":
         item = Account.objects.all().filter(points__gt=0).order_by("-points")[:10]
         context = {
@@ -64,7 +65,19 @@ def index(request):
         context = {
             "section": "index"
         }
-        return render(request, "psychologist/index.html", context)
+        return render(request, "psychologist/index.html", context),
+    elif request.user.role == "head_teacher":
+        item = Account.objects.all().filter(points__gt=0).order_by("-points")[:10]
+        context = {
+            "section": "index",
+            "events": Events.objects.all().filter(building=request.user.building).count(),
+            "students": Account.objects.all().filter(building=request.user.building, role="student").count(),
+            "teachers": Account.objects.all().filter(building=request.user.building, role="teacher").count(),
+            "psychologists": Account.objects.all().filter(building=request.user.building, role="psychologist").count(),
+            "students_data": item
+
+        }
+        return render(request, "head_teacher/index.html", context)
 
 
 def chat(request):
@@ -74,6 +87,7 @@ def chat(request):
         room = "staff"
     msgs = Message.objects.all().filter(room=room).order_by("date_added")
     return render(request, "chat.html", context={"msgs": msgs, "section": "chat", "room": room})
+
 
 @login_required
 def change_password(request):
@@ -91,6 +105,8 @@ def change_password(request):
     return render(request, 'change_password.html', {
         'form': form
     })
+
+
 @login_required
 def edit_profile(request):
     if request.method == "GET":
@@ -106,16 +122,33 @@ def edit_profile(request):
     return render(request, "settings.html", {"form": form})
 
 
-
-
 @login_required
 def events(request):
     if request.user.role == "teacher":
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(teacher=request.user)
-            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=datetime.now(),
-                                                 end_date__gt=timezone.now())
-            return render(request, "teacher/events.html", {"events": events, "section": "events"})
+            buildings = Building.objects.all()
+            events = Events.objects.all().filter(end_date__gt=timezone.now(), start_date__lt=timezone.now())
+            if request.GET.get("building"):
+                if request.GET.get("building") != "all":
+                    classroom = ClassRoom.objects.get(teacher=request.user)
+                    building = Building.objects.get(pk=request.GET.get("building")).pk
+                    events = Events.objects.all().filter(classroom_number=classroom.classroom, building_id=building)
+                else:
+                    building = "all"
+
+                paginator = Paginator(events, settings.ITEMS_FOR_PAGE)  # Show 25 contacts per page.
+                page_number = request.GET.get("page")
+                if page_number is None:
+                    page_number = 1
+                page_obj = paginator.get_page(page_number)
+                return render(request, "teacher/events.html",
+                              {"events": page_obj, "section": "events", "buildings": buildings, "building": building})
+            else:
+                events = events.filter(classroom_number=classroom.classroom, start_date__lt=datetime.now(),
+                                       end_date__gt=timezone.now())
+                return render(request, "teacher/events.html",
+                              {"events": events, "section": "events", "buildings": buildings})
         else:
             return redirect("/lk/classroom/create/")
     elif request.user.role == "student":
@@ -154,6 +187,16 @@ def all_events(request):
             'start': event.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
             'end': event.end_date.strftime("%m/%d/%Y, %H:%M:%S"),
         })
+    if request.user.peculiarity is not None:
+        for p in PsychologistSchedule.objects.all().filter(child=request.user):
+            start_time = datetime.combine(p.date, p.start_time)
+            end_time = datetime.combine(p.date, p.end_time)
+            out.append({
+                'title': "Психолог",
+                'id': p.pk,
+                'start': start_time,
+                'end': end_time,
+            })
 
     return JsonResponse(out, safe=False)
 
@@ -210,12 +253,14 @@ def event_detail(request, id):
     }
     return render(request, "event_detail.html", context=context)
 
+
 @login_required
 def avatar_remove(request):
     user = request.user
     user.avatar = None
     user.save()
     return redirect("/lk/settings/")
+
 
 @login_required
 def devices(request):

@@ -34,6 +34,7 @@ urlpatterns = [
                   path('', views.index),
                   path('auth/', accounts_views.auth, name="auth"),
                   path('auth/mosru/', accounts_views.auth_mos_ru, name="auth"),
+                  path('auth/mosru/info/', accounts_views.mos_ru_info, name="auth"),
                   path('auth/register', accounts_views.register_request),
                   path('auth/login', accounts_views.login_request),
                   path('chatbot/', include("ChatBot.urls")),

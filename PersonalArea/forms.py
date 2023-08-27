@@ -46,6 +46,24 @@ class EditUserForm(forms.ModelForm):
             user.save()
         return user
 
+class EditUserFormHeadTeacher(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = ("peculiarity",)
+        labels = {
+            "peculiarity": "Особенность"
+        }
+        widgets = {
+            'avatar': forms.FileInput(
+                attrs={"class":"form-control"}
+            )
+        }
+
+    def save(self, commit=True):
+        user = super(EditUserFormHeadTeacher, self).save(commit=False)
+        if commit:
+            user.save()
+        return user
 
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True, label="Почта")
@@ -231,6 +249,7 @@ class EventAddFormMethodist(forms.ModelForm):
         if loggedin_user is not None:
             self.fields['category'].queryset = EventCategory.objects.all().filter(methodists=loggedin_user)
 
+
     def save(self, commit=True):
         user = super(EventAddFormMethodist, self).save(commit=False)
         if commit:
@@ -241,3 +260,39 @@ class EventAddFormMethodist(forms.ModelForm):
 class UploadPhotoReport(forms.Form):
     file = forms.FileField(widget=forms.ClearableFileInput(attrs={'allow_multiple_selected': True, "class": "form-control", "accept": "image/*"}),
                            label="Изображения", )
+
+
+
+class EventAddFormHeadTeacher(forms.ModelForm):
+    class Meta:
+        model = Events
+        # Описываем поля, которые будем заполнять в форме
+        fields = ('name', 'description', 'start_date', 'end_date', 'category', 'classroom_number', 'building', 'image',
+                  "organizer")
+
+        widgets = {
+            'name': forms.TextInput(),
+            'description': forms.Textarea(),
+            'start_date': forms.DateTimeInput(format=['%d/%m/%y'], attrs={'type': 'datetime-local'}),
+            'end_date': forms.DateTimeInput(format=['%d/%m/%y'], attrs={'type': 'datetime-local'}),
+            'building': forms.Select(),
+            'image': forms.FileInput(attrs={"class": "form-control"})
+        }
+        labels = {
+            "name": "Название",
+            "description": "Описание",
+            "start_date": "Дата начала",
+            "end_date": "Дата окончания",
+            "organizer": "Организатор",
+            "building": "Корпус",
+            "classroom_number": "Доступно для",
+            "image": "Изображение",
+            "category": "Категория"
+
+        }
+
+
+    def __init__(self, loggedin_user=None, *args, **kwargs):
+        super(EditUserFormHeadTeacher, self).__init__(*args, **kwargs)
+        if loggedin_user is not None:
+            self.fields['building'].queryset = Building.objects.all().filter(pk=loggedin_user.building.pk)

@@ -36,10 +36,13 @@
 
     <!-- Template Stylesheet -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <style>
+    </style>
 </head>
 
-<body>
-<div class="container-xxl position-relative bg-white d-flex p-0">
+<body data-bs-theme="dark" id="body">
+
+<div class="container-xxl position-relative bg-white d-flex p-0" id="content">
     <!-- Spinner Start -->
     <div id="spinner"
          class="bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
@@ -48,7 +51,7 @@
         <h4 class="user_welcome">test</h4>
 
     </div>
-   <!-- Spinner End -->
+    <!-- Spinner End -->
 
 
     <!-- Sidebar Start -->
@@ -152,6 +155,25 @@
                             class="fa fa-home me-2"></i>Главная</a>
                     <a href="/lk/schedule/" class="nav-link {% if section == "schedule" %}active{% endif %}"><i
                             class="fa fa-calendar me-2"></i>Расписание</a>
+                {% elif user.role == "head_teacher" %}
+                    <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i
+                            class="fa fa-home me-2"></i>Главная</a>
+                    <a href="/lk/users/list/" class="nav-item nav-link {% if section == "users" %}active{% endif %}"><i
+                            class="fa fa-users me-2"></i>Пользователи</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle {% if section == "events" %}active{% endif %}"
+                           data-bs-toggle="dropdown"><i
+                                class="far fa-calendar me-2"></i>Мероприятия</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="/lk/events/" class="dropdown-item">Мероприятия</a>
+                            <a href="/lk/events/archive/" class="dropdown-item">Архив</a>
+                            <a href="/lk/events/category/list/" class="dropdown-item">Категории</a>
+
+                        </div>
+                    </div>
+                    <a href="/lk/classrooms/"
+                       class="nav-item nav-link {% if section == "classrooms" %}active{% endif %}"><i
+                            class="fa fa-users me-2"></i>Классы</a>
                 {% else %}
                     {% block sidebar %}
                     {% endblock sidebar %}
@@ -182,10 +204,10 @@
                 </ul>
             {% endif %}
         </div>
-
         {% block content %}
 
         {% endblock content %}
+
 
         <!-- Footer Start -->
         <!-- Footer End -->
@@ -218,7 +240,7 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 <!-- Template Javascript -->
@@ -264,10 +286,18 @@
 
     </script>
     <script defer>
+        fetch(`${window.location.protocol}//${window.location.host}/user_activity/`).then(data => data.json()).then(data => {
+            console.log(data)
+            if (data.code == 3) {
+                console.log("no verify")
+                window.location.href = `${window.location.protocol}//${window.location.host}/verify/`
+            }
+        })
+
         function delay(time) {
             return new Promise(resolve => setTimeout(resolve, time));
         }
-        fetch(`${window.location.protocol}//${window.location.host}/user_activity/`)
+
         var hour = new Date().getHours();
         var greeting;
         if (hour >= 5 && hour < 12)
@@ -278,8 +308,9 @@
             greeting = "Добрый вечер";
         else if (hour >= 0 && hour < 5)
             greeting = "Доброй ночи";
-        var welcome_msg = greeting+"!"
-        document.querySelector(".user_welcome").innerHTML=welcome_msg
+        var welcome_msg = greeting + "!"
+        document.querySelector(".user_welcome").innerHTML = welcome_msg
+
         async function showWelcomeScreen() {
             var cookies = document.cookie.split(';').reduce(
                 (cookies, cookie) => {
