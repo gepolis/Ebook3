@@ -28,13 +28,6 @@ def view_user(request, id):
     return redirect("/lk/users/list")
 
 
-@decorators.is_admin
-def login_admin_user(request, user):
-    if request.user.is_superuser:
-        logout(request)
-        user = get_object_or_404(Account, pk=user)
-        login(request, user)
-        return redirect("/lk/")
 
 
 @decorators.is_school_administrator
@@ -67,15 +60,6 @@ def users_list(request, role=None):
     return render(request, "administration/users_list.html", context=context)
 
 
-@decorators.is_admin
-def user_create(request):
-    if request.method == "GET":
-        return redirect("/lk/users/list")
-    else:
-        form = NewUserForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=True)
-        return redirect("/lk/users/list")
 
 
 @decorators.is_school_administrator
@@ -97,7 +81,7 @@ def edit_user(request, id):
     return render(request, "administration/edit_user.html", {"form": form, "section": "users", "table_user": user})
 
 
-@decorators.is_admin
+@decorators.is_school_administrator
 def avatar_remove(request, user):
     user = get_object_or_404(Account, pk=user)
     user.avatar = None
@@ -105,14 +89,6 @@ def avatar_remove(request, user):
     return redirect(f"/lk/users/{user.pk}/edit")
 
 
-@decorators.is_admin
-def event_add_user(request, id, user):
-    user = Account.objects.get(id=user)
-    user = EventsMembers(user=user, is_active=False)
-    user.save()
-    event = Events.objects.get(pk=id)
-    event.volunteer.add(user)
-    return redirect(f"/lk/events/{id}/view")
 
 
 @decorators.is_school_administrator

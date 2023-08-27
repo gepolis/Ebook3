@@ -72,6 +72,8 @@ def auth(request):
 
 
 def auth_mos_ru(request):
+    messages.error(request, "Авторизация через mos.ru временно не работает, пожалуйста, используйте другой способ авторизации или попробуйте позже.")
+    return redirect("/auth/")
     if request.user.is_authenticated:
         return redirect("/lk/")
 
@@ -218,13 +220,13 @@ def setup(request):
 @login_required
 def user_activity(request):
     if Connections.objects.all().filter(user=request.user, session_key=request.session.session_key).exists():
-        con = Connections.objects.all().get(user=request.user, session_key=request.session.session_key)
+        con = Connections.objects.get(user=request.user, session_key=request.session.session_key)
         if request.COOKIES.get("activity") is None:
             print("update")
-            j = JsonResponse({"status": "ok", "code": 1}, status=200, safe=False)
-            j.set_cookie("activity", "ok", max_age=60)
             con.last_activity = datetime.now()
             con.save()
+            j = JsonResponse({"status": "ok", "code": 1}, status=200, safe=False)
+            j.set_cookie("activity", "ok", max_age=60)
         else:
             j = JsonResponse({"status": "cancel", "code": 2}, status=200, safe=False)
             print("cancel")

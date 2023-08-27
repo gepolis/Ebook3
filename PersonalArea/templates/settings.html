@@ -4,6 +4,19 @@
     <div class="container-fluid pt-4 px-4">
         <div class="row g-4">
             <div class="col-sm-12 col-xl-12">
+            <div class="col-sm-12 col-xl-12">
+
+                <ul class="nav nav-pills flex-column flex-md-row mb-3">
+                    <li class="nav-item"><a class="nav-link active" href="/lk/settings"><i
+                            class="bx bx-user me-1"></i>Основное</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/lk/settings/security/change-password"><i
+                            class="bx bx-bell me-1"></i>Пароль</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/lk/settings/security/devices"><i
+                            class="bx bx-link-alt me-1"></i>Устройства</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/lk/settings/linking/mosru"><i
+                            class="bx bx-link-alt me-1"></i>МЭШ</a></li>
+                </ul>
+            </div>
                 <div class="bg-light rounded h-100 p-4">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}

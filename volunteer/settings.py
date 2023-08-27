@@ -177,3 +177,4 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = 'ivanaksenov2010@mail.ru'
 EMAIL_HOST_PASSWORD = 'SeZcYwzd9pxJX2As9niV'
 EMAIL_USE_SSL = True
+SERV = False

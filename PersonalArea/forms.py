@@ -296,3 +296,10 @@ class EventAddFormHeadTeacher(forms.ModelForm):
         super(EditUserFormHeadTeacher, self).__init__(*args, **kwargs)
         if loggedin_user is not None:
             self.fields['building'].queryset = Building.objects.all().filter(pk=loggedin_user.building.pk)
+
+
+class LinkingMosruForm(forms.Form):
+    login = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)
+    class Meta:
+        model = Events

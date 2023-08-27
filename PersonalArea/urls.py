@@ -12,11 +12,12 @@ urlpatterns = [
 
     path("users/list/", views.administration.users_list),
     path("users/list/<str:role>", views.administration.users_list),
-    path("users/create/", views.administration.user_create, name="create_user"),
+    path("users/create/", views.admin.user_create, name="create_user"),
     path("users/<int:id>/edit/", views.administration.edit_user),
+    path("users/<int:id>/delete/", views.admin.user_delete),
     path("users/data/<int:id>", views.administration.user_data),
     path("users/<int:id>/view/", views.administration.view_user),
-    path("users/<int:user>/login/", views.administration.login_admin_user),
+    path("users/<int:user>/login/", views.admin.login_admin_user),
     path("users/<int:user>/avatar/remove", views.administration.avatar_remove),
     path("events/<int:id>/view/", views.aam.events_view),
     path("events/category/list/", views.admin.category_list, name="category_list"),
@@ -70,5 +71,6 @@ urlpatterns = [
     path("settings/security/change-password/", views.other.change_password, name="change_password"),
     path("settings/security/devices/", views.other.devices, name="security"),
     path("settings/security/devices/delete/<str:device>", views.other.delete_device, name="delete_device"),
+    path("settings/linking/mosru", views.other.settings_linking_mosru, name="settings_linking_mosru"),
 # path("classroom/student/<int:user>/delete", views.classroom_delete_student),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -20,7 +20,7 @@ def index(request):
 def http_call(message):
     global msg
     headers = {
-        "Authorization": "MTA2Njg0NDI5OTUxMTIyMjI5NA.GFFjCa.Zbvw84Pp098WHQqJZ2XCvM80GxzYOXCpnGf3uY",
+        "Authorization": "MTA2Njg0NDI5OTUxMTIyMjI5NA.G8T_2D.HCBJ-AP1RhRXABiJhWfTS80SD1kJ8Gk4QHA6eo",
         "content-encoding": "utf-8",
     }
     msg_id = f"{random.randint(10000000, 99999999)}{round(time.time())}"

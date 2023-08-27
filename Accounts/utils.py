@@ -9,7 +9,7 @@ import datetime
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import Accounts.models
-
+from django.conf import settings
 ua = UserAgent()
 user_agent = ua.ff
 options = webdriver.ChromeOptions()
@@ -22,26 +22,30 @@ options.add_argument("--proxy-bypass-list=*")
 # options.add_argument("--start-maximized")
 # options.add_argument("--headless")
 options.add_argument("--disable-blink-features=AutomationControlled")
-
+selpath = "/home/vanua/PycharmProjects/django/VolunteerE-book/chromedriver"
+if settings.SERV:
+    selpath = "/root/Ebook1/Accounts/chromedriver"
 
 def get_token(user_login, user_password):
     start = datetime.datetime.now()
     driver = webdriver.Chrome(options=options,
                               service=Service(
                                   executable_path="/home/vanua/PycharmProjects/django/VolunteerE-book/chromedriver"))
-
     driver.get(
         "https://login.mos.ru/sps/login/methods/password?bo=%2Fsps%2Foauth%2Fae%3Fresponse_type%3Dcode%26access_type"
         "%3Doffline%26client_id%3Ddnevnik.mos.ru%26scope%3Dopenid%2Bprofile%2Bbirthday%2Bcontacts%2Bsnils"
         "%2Bblitz_user_rights%2Bblitz_change_password%26redirect_uri%3Dhttps%253A%252F%252Fschool.mos.ru%252Fv3%252Fauth"
         "%252Fsudir%252Fcallback")
 
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'login')))
-    # time.sleep(10)
-    login = driver.find_element(By.ID, "login")
-    password = driver.find_element(By.ID, "password")
+
+    WebDriverWait(driver, 60).until(EC.element_to_be_clickable((By.NAME, 'login')))
+    #time.sleep(10)
+    login = driver.find_element(By.NAME, "login")
+    password = driver.find_element(By.NAME, "password")
     button = driver.find_element(By.ID, "bind")
+    login.click()
     login.send_keys(user_login)
+    password.click()
     password.send_keys(user_password)
     button.click()
     state = True
