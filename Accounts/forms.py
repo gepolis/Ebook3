@@ -8,7 +8,7 @@ class NewUserForm(UserCreationForm):
     class Meta:
         model = Account
         fields = (
-        "username", "email", "second_name", "first_name", "middle_name", "password1", "password2", "date_of_birth", "role")
+        "username", "email", "second_name", "first_name", "middle_name", "password1", "password2", "date_of_birth", "building","role")
         labels = {
             "username": "Имя пользователя",
             "second_name": "Фамилия",
@@ -17,6 +17,7 @@ class NewUserForm(UserCreationForm):
             "password1": "Пароль",
             "password2": "Подтверждение пароля",
             "date_of_birch": "Дата рождения",
+            "building": "Учебный корпус",
         }
         widgets = {
             'date_of_birth': forms.DateInput(attrs={"type": "date"}),
