@@ -3,17 +3,18 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-51iz0mv4-(lh!8a#d_mz9_fmj7u75l9@f)9=upgc+8fpvk_yf('
+SECRET_KEY = '!DqvOUY=kWjhkaNi2m~Jb12,)=66b=E65jISNn-9s{i5YxUU]9LKvbW;iDso2OmXp-sX$^E2'
 
-DEBUG = True
+ALLOWED_HOSTS = ["*"]
+
+DEBUG = False
+SERV = False
 
 LOGIN_URL = "/auth/"
 LOGOUT_REDIRECT_URL = None
-ALLOWED_HOSTS = ["*"]
+
 
 AUTH_USER_MODEL = 'Accounts.Account'
-
-SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -45,7 +46,6 @@ INSTALLED_APPS = [
 # cache alias will be used. Set to `None` to disable caching.
 USER_AGENTS_CACHE = 'default'
 
-MOS_RU_AUTH = True
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -177,4 +177,3 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = 'ivanaksenov2010@mail.ru'
 EMAIL_HOST_PASSWORD = 'SeZcYwzd9pxJX2As9niV'
 EMAIL_USE_SSL = True
-SERV = False

@@ -131,16 +131,16 @@ def events(request):
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(teacher=request.user)
             buildings = Building.objects.all()
-            events = Events.objects.all().filter(end_date__gt=timezone.now(), start_date__lt=timezone.now())
+            e = Events.objects.all().filter(end_date__gt=timezone.now(), start_date__lt=timezone.now())
             if request.GET.get("building"):
                 if request.GET.get("building") != "all":
                     classroom = ClassRoom.objects.get(teacher=request.user)
                     building = Building.objects.get(pk=request.GET.get("building")).pk
-                    events = Events.objects.all().filter(classroom_number=classroom.classroom, building_id=building)
+                    e =e.filter(classroom_number=classroom.classroom, building_id=building)
                 else:
                     building = "all"
 
-                paginator = Paginator(events, settings.ITEMS_FOR_PAGE)  # Show 25 contacts per page.
+                paginator = Paginator(e, settings.ITEMS_FOR_PAGE)  # Show 25 contacts per page.
                 page_number = request.GET.get("page")
                 if page_number is None:
                     page_number = 1
@@ -148,20 +148,19 @@ def events(request):
                 return render(request, "teacher/events.html",
                               {"events": page_obj, "section": "events", "buildings": buildings, "building": building})
             else:
-                events = events.filter(classroom_number=classroom.classroom, start_date__lt=datetime.now(),
+                e = e.filter(classroom_number=classroom.classroom, start_date__lt=datetime.now(),
                                        end_date__gt=timezone.now())
                 return render(request, "teacher/events.html",
-                              {"events": events, "section": "events", "buildings": buildings})
+                              {"events": e, "section": "events", "buildings": buildings})
         else:
             return redirect("/lk/classroom/create/")
     elif request.user.role == "student":
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(member=request.user)
-            events = Events.objects.all().filter(classroom_number=classroom.classroom, start_date__lt=datetime.now(),
-                                                 end_date__gt=timezone.now())
-            return render(request, "student/events.html", {"events": events, 'section': 'events'})
+            e = e.filter(classroom_number=classroom.classroom)
+            return render(request, "student/events.html", {"events": e, 'section': 'events'})
         else:
-            messages.warning(request, "Сначала вступите в класс, по приглашению от классного руковадителя.")
+            messages.warning(request, "Сначала вступите в класс, по приглашению от классного руководителя.")
             return redirect("/lk/")
     else:
         return aam.events_list(request)

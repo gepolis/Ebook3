@@ -1,21 +1,216 @@
 {% extends "inc/no_menu_base.html" %}
+{% load static %}
 {% block content %}
-<!-- Sales Chart Start -->
-<div class="container-fluid pt-4 px-4">
-    <div class="row vh-100 bg-light rounded align-items-center justify-content-center mx-0">
-        <div class="col-md-6 text-center p-4">
-            <i class="bi bi-exclamation-triangle display-1 text-primary"></i>
-            <h1 class="display-1 fw-bold">404</h1>
-            <h1 class="mb-4">Страница не найдина</h1>
-            <p class="mb-4">К сожалению, страница, которую вы искали, не существует на сайте!</p>
-            <a class="btn btn-primary rounded-pill py-3 px-5" href="/lk/">На главную</a>
+    <!-- Sales Chart Start -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row vh-100 bg-light rounded align-items-center justify-content-center mx-0">
+            <div class="col-md-6 text-center p-4">
+                <i class="bi bi-exclamation-triangle display-1 text-primary"></i>
+                <h1 class="display-1 fw-bold">404</h1>
+                <h1 class="mb-4">Страница не найдена</h1>
+                <p class="mb-4">К сожалению, страница, которую вы искали, не существует на сайте!</p>
+                <a class="btn btn-primary rounded-pill py-3 px-5" href="/lk/">На главную</a>
+            </div>
         </div>
     </div>
-</div>
 
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Launch demo modal
+    </button>
 
-<!-- Sales Chart End -->
-<!-- Button trigger modal -->
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <canvas width="460px" height="460px" id="game">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+
+        class SnakePart {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+        let speed = 20;
+
+        let tileCount = 20;
+        let tileSize = canvas.width / tileCount - 2;
+        headX = Math.floor(Math.random() * tileCount)
+        headY = Math.floor(Math.random() * tileCount)
+        let score = 1;
+        const snakeParts = []
+        let tailLength = 2;
+        let xv = 0;
+        let yv = 0;
+        let appleX = 5;
+        let appleY = 5;
+
+        const glupSound = new Audio("/static/gulp.mp3")
+
+        function drawGame() {
+            changeSnakePosition();
+            let result = isGameOver();
+            if (result) {
+                document.body.removeEventListener("keydown", keyDown)
+                return;
+            }
+
+            clearScreen();
+
+            checkAppleCollision();
+            drawApple();
+            drawSnake();
+
+            drawScore();
+
+            if (score > 5) {
+                speed = 9;
+            }
+            if (score > 10) {
+                speed = 11;
+            }
+
+            setTimeout(drawGame, 1000 / speed);
+
+        }
+
+        function isGameOver() {
+            let gameOver = false;
+            if (yv === 0 && xv === 0)
+                return false
+            if (headX < 0 || headY < 0)
+                gameOver = true
+            if (headX >= tileCount || headY >= tileCount)
+                gameOver = true
+            for (let i = 0; i < snakeParts.length; i++) {
+                let part = snakeParts[i];
+                if (part.x == headX && part.y == headY) {
+                    gameOver = true;
+                    break;
+                }
+            }
+            if (gameOver) {
+                ctx.fillStyle = "white"
+                ctx.font = "50px Verdana"
+
+                var gradient = ctx.createLinearGradient(9, 0, canvas.width, 0)
+                gradient.addColorStop(0, "magenta")
+                gradient.addColorStop(0.5, "blue")
+                gradient.addColorStop(1, "red")
+                ctx.fillStyle = gradient
+                ctx.fillText("Game Over!", canvas.width / 6.5, canvas.height / 2)
+            }
+            return gameOver
+        }
+
+        function drawScore() {
+            ctx.fillStyle = "white";
+            ctx.font = "20px Verdana";
+            ctx.fillText("Score " + score, canvas.width - 90, 20);
+        }
+
+        function checkAppleCollision() {
+            if (appleY == headY && appleX == headX) {
+                appleX = Math.floor(Math.random() * tileCount)
+                appleY = Math.floor(Math.random() * tileCount)
+                glupSound.play()
+                tailLength++
+                score++
+                if (score % 5 == 0)
+                    speed++
+            }
+
+        }
+
+        function clearScreen() {
+            ctx.fillStyle = 'black'
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+        }
+
+        function drawSnake() {
+            ctx.fillStyle = "orange"
+            ctx.fillRect(headX * tileCount, headY * tileCount, tileSize, tileSize)
+            ctx.fillStyle = "green"
+            for (let i = 0; i < snakeParts.length; i++) {
+                let part = snakeParts[i];
+                ctx.fillRect(part.x * tileCount, part.y * tileCount, tileSize, tileSize)
+
+            }
+            snakeParts.push(new SnakePart(headX, headY))
+            if (snakeParts.length > tailLength) {
+                snakeParts.shift();
+            }
+        }
+
+        function changeSnakePosition() {
+            headX = headX + xv;
+            headY = headY + yv;
+        }
+
+        function drawApple() {
+            ctx.fillStyle = "red"
+            ctx.fillRect(appleX * tileCount, appleY * tileCount, tileSize, tileSize)
+        }
+
+        document.body.addEventListener("keydown", keyDown)
+
+        function keyDown(e) {
+            // up
+            if (e.keyCode == 38 || e.keyCode == 87) {
+                if (yv == 1)
+                    return;
+                yv = -1;
+                xv = 0;
+
+            }
+            //down
+            if (e.keyCode == 40 || e.keyCode == 83) {
+                if (yv == -1)
+                    return;
+                yv = 1;
+                xv = 0;
+
+            }
+            //left
+            if (e.keyCode == 37 || e.keyCode == 65) {
+                if (xv == 1)
+                    return;
+                yv = 0;
+                xv = -1;
+
+            }
+            if (e.keyCode == 39 || e.keyCode == 68) {
+                if (xv == -1)
+                    return;
+                yv = 0;
+                xv = 1;
+
+            }
+        }
+
+        drawGame();
+    </script>
+
+    <!-- Sales Chart End -->
+    <!-- Button trigger modal -->
 
 
 {% endblock content %}
+
