@@ -72,8 +72,8 @@ def auth(request):
 
 
 def auth_mos_ru(request):
-    messages.error(request, "Авторизация через mos.ru временно не работает, пожалуйста, используйте другой способ авторизации или попробуйте позже.")
-    return redirect("/auth/")
+    #messages.error(request, "Авторизация через mos.ru временно не работает, пожалуйста, используйте другой способ авторизации или попробуйте позже.")
+    #return redirect("/auth/")
     if request.user.is_authenticated:
         return redirect("/lk/")
 
