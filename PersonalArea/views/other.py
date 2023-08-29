@@ -127,11 +127,14 @@ def edit_profile(request):
 
 @login_required
 def events(request):
+    e = Events.objects.all().filter(end_date__gt=timezone.now(), start_date__gt=timezone.now())
+
+
     if request.user.role == "teacher":
         if request.user.has_classroom():
             classroom = ClassRoom.objects.get(teacher=request.user)
             buildings = Building.objects.all()
-            e = Events.objects.all().filter(end_date__gt=timezone.now(), start_date__lt=timezone.now())
+
             if request.GET.get("building"):
                 if request.GET.get("building") != "all":
                     classroom = ClassRoom.objects.get(teacher=request.user)
