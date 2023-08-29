@@ -10,17 +10,21 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import Accounts.models
 from django.conf import settings
+from django.conf import settings
 ua = UserAgent()
 user_agent = ua.ff
 options = webdriver.ChromeOptions()
 options.add_argument("--window-size=1920,1080")
-# options.add_argument("--disable-gpu")
 options.add_argument("--disable-extensions")
 options.add_experimental_option("useAutomationExtension", False)
 options.add_argument("--proxy-server='direct://'")
 options.add_argument("--proxy-bypass-list=*")
-# options.add_argument("--start-maximized")
-# options.add_argument("--headless")
+
+if settings.SERV:
+    options.add_argument("--headless")
+    options.add_argument("--start-maximized")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
 options.add_argument("--disable-blink-features=AutomationControlled")
 selpath = "/home/vanua/PycharmProjects/django/VolunteerE-book/chromedriver"
 if settings.SERV:
