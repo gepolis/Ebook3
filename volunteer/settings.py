@@ -8,7 +8,11 @@ SECRET_KEY = '!DqvOUY=kWjhkaNi2m~Jb12,)=66b=E65jISNn-9s{i5YxUU]9LKvbW;iDso2OmXp-
 ALLOWED_HOSTS = ["*"]
 
 DEBUG = True
-SERV = False
+SERV = True
+if os.getenv("SERV") is None:
+    SERV = False
+if os.getenv("DEBUG") is None:
+    DEBUG = False
 
 LOGIN_URL = "/auth/"
 LOGOUT_REDIRECT_URL = None
