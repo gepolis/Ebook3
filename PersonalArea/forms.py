@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 from Accounts.models import Account
 
-from MainApp.models import Events, ClassRoom, EventCategory
+from MainApp.models import Events, ClassRoom, EventCategory, PsychologistSchedule
 
 
 class EditUserForm(forms.ModelForm):
@@ -303,3 +303,10 @@ class LinkingMosruForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
     class Meta:
         model = Events
+
+
+class PsychologistScheduleAddForm(forms.Form):
+    date = forms.DateField(label="Дата", widget=forms.DateInput(attrs={'type': 'date'}))
+    start_time = forms.TimeField(label="Время начала", widget=forms.TimeInput(attrs={'type': 'time'}))
+    end_time = forms.TimeField(label="Время окончания", widget=forms.TimeInput(attrs={'type': 'time'}))
+    child = forms.ModelChoiceField(queryset=Account.objects.all().filter(role="student", peculiarity__isnull=False), label="Ученик")

@@ -17,7 +17,6 @@ if os.getenv("DEBUG") is None:
 LOGIN_URL = "/auth/"
 LOGOUT_REDIRECT_URL = None
 
-
 AUTH_USER_MODEL = 'Accounts.Account'
 
 AUTHENTICATION_BACKENDS = [

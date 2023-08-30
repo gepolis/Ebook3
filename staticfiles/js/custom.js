@@ -4,7 +4,7 @@ const role_text = document.getElementById("role_model")
 const join_date_text = document.getElementById("join_date_model")
 const last_login_text = document.getElementById("last_login_model")
 const received = document.getElementById("received")
-const modal = document.getElementById("exampleModal")
+const modal = document.getElementById("infoModal")
 const loader = document.getElementById("modal_loader")
 const modal_data = document.getElementById("information")
 const modal_footer = document.getElementById("modal_footer")
@@ -63,4 +63,3 @@ function get_user_detail(pk) {
     })
 
 }
-

@@ -6,6 +6,9 @@
         <div class="icons">
             <span id="prev" class="material-symbols-rounded">chevron_left</span>
             <span id="next" class="material-symbols-rounded">chevron_right</span>
+            {% if add_btn %}
+                <a href="add"><span class="material-symbols-rounded">add</span></a>
+            {% endif %}
         </div>
     </header>
     <div class="calendar">
@@ -35,11 +38,12 @@
     const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль",
         "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
     const withClasses = {% if classes %}true{% else %}false{% endif %}
+
     async function funcName() {
         var data;
         if (withClasses) {
 
-            const response = await fetch(`http://${location.host}/lk/schedule/has_month_classes/${currMonth+1}/${currYear}`);
+            const response = await fetch(`http://${location.host}/lk/schedule/has_month_classes/${currMonth + 1}/${currYear}`);
             var data = await response.json();
         }
         renderCalendar(data)
@@ -49,7 +53,7 @@
         let firstDayofMonth = new Date(currYear, currMonth, 7).getDay(), // getting first day of month
             lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate(), // getting last date of month
             lastDayofMonth = new Date(currYear, currMonth, lastDateofMonth).getDay(), // getting last day of month
-            lastDateofLastMonth = currMonth === 0 ? new Date(currYear-1, 11, 0).getDate() : new Date(currYear, currMonth, 0).getDate();
+            lastDateofLastMonth = currMonth === 0 ? new Date(currYear - 1, 11, 0).getDate() : new Date(currYear, currMonth, 0).getDate();
         let liTag = "";
         let d = 0
         for (let i = firstDayofMonth; i > 0; i--) { // creating li of previous month last days
@@ -73,7 +77,8 @@
 
 
                 } else {
-                    liTag += `<li class="${isToday} ${withClasses && data[i] ? 'has' : ''}" data-date='${i}.${currMonth + 1}.${currYear}'>{% if url %}
+                    liTag += `<li class="${isToday} ${withClasses && data[i] ? 'has' : ''}" data-date='${i}.${currMonth + 1}.${currYear}'>
+                    {% if url %}
                         <a href='/lk/schedule/${i}/${currMonth + 1}/${currYear}'>{% endif %}${i}{% if url %}
                         </a>{% endif %}</li>`;
 

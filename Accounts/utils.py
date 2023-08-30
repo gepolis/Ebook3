@@ -34,7 +34,7 @@ def get_token(user_login, user_password):
     start = datetime.datetime.now()
     driver = webdriver.Chrome(options=options,
                               service=Service(
-                                  executable_path="/home/vanua/PycharmProjects/django/VolunteerE-book/chromedriver"))
+                                  executable_path=selpath))
     driver.get(
         "https://login.mos.ru/sps/login/methods/password?bo=%2Fsps%2Foauth%2Fae%3Fresponse_type%3Dcode%26access_type"
         "%3Doffline%26client_id%3Ddnevnik.mos.ru%26scope%3Dopenid%2Bprofile%2Bbirthday%2Bcontacts%2Bsnils"
@@ -60,6 +60,7 @@ def get_token(user_login, user_password):
         if driver.current_url == "https://school.mos.ru/auth/callback":
             state = False
             print(datetime.datetime.now() - start)
+
         timer -= 1
         time.sleep(1)
     if not state:
@@ -69,7 +70,8 @@ def get_token(user_login, user_password):
         else:
             token = False
         driver.get(
-            "https://login.mos.ru/sps/login/logout?post_logout_redirect_uri=https://www.mos.ru/api/acs/v1/logout/satisfy")
+            "https://login.mos.ru/sps/login/logout?post_logout_redirect_uri=https://www.mos.ru/api/acs/v1/logout"
+            "/satisfy")
         return token
     else:
         return False

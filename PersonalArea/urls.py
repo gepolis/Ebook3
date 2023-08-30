@@ -62,6 +62,8 @@ urlpatterns = [
     path("classrooms/<int:id>", views.administration.classrooms_view, name="classrooms_view"),
     path("settings/avatar/remove", views.other.avatar_remove, name="avatar_remove"),
     path('schedule/', views.psychologist.schedule_index, name="schedule_index"),
+    path('schedule/add', views.psychologist.schedule_add, name="schedule_add"),
+
     path('schedule/<int:d>/<int:m>/<int:y>', views.psychologist.schedule_date, name="schedule_date"),
     path('schedule/calendar/', views.psychologist.calendar, name="calendar"),
     path('schedule/edit', views.psychologist.edit_schedule, name="edit_schedule"),

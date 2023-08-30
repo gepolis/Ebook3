@@ -1,10 +1,12 @@
 import datetime
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 
+from Accounts.models import Account
 from MainApp.models import PsychologistSchedule
+from PersonalArea.forms import PsychologistScheduleAddForm
 
 
 def calendar(request):
@@ -29,7 +31,7 @@ def classes(request):
 
 
 def schedule_index(request):
-    cal = render_to_string("psychologist/calendar.html", {"url": True, "classes": True})
+    cal = render_to_string("psychologist/calendar.html", {"url": True, "classes": True, "add_btn": True})
     return render(request, "psychologist/schedule.html", {"section": "schedule", "cal": cal, "classes": False})
 
 
@@ -77,7 +79,24 @@ def has_month_classes(request, m, y):
         data[i] = has
     return JsonResponse(data)
 
+
 def view_schedule(request, id):
     classes = get_object_or_404(PsychologistSchedule, pk=id)
     cal = render_to_string("psychologist/calendar.html", {"url": False, "classes": False})
     return render(request, "psychologist/view_schedule.html", {"section": "schedule", "classes": classes, "cal": cal})
+
+
+def schedule_add(request):
+    if request.method == "POST":
+        form = PsychologistScheduleAddForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+            PsychologistSchedule.objects.create(psychologist=request.user, child=form.cleaned_data["child"],
+                                                start_time=form.cleaned_data["start_time"],
+                                                end_time=form.cleaned_data["end_time"], date=form.cleaned_data["date"])
+
+            return redirect(request.META.get("HTTP_REFERER"))
+    else:
+        form = PsychologistScheduleAddForm()
+    cal = render_to_string("psychologist/calendar.html", {"url": False, "classes": False})
+    return render(request, "psychologist/schedule_add.html", {"section": "schedule", "form": form, "cal": cal})

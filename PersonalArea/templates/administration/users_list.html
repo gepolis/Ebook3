@@ -10,6 +10,19 @@
         .hide {
             display: none;
         }
+
+        @media (max-width: 820px) {
+            .avatar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 756px) {
+
+            .dropdownMenuButtonText {
+                display: none;
+            }
+        }
     </style>
     <div class="container-fluid pt-4 px-4">
         <div class="row g-4">
@@ -61,7 +74,7 @@
                             <div class="col-sm col-sm-4">
                                 <h6 class="mb-4">Пользователи</h6>
                             </div>
-                            <div class="col-sm col-sm-5">
+                            <div class="col-sm col-sm-4">
                                 <input type="search" class="form-control" placeholder="Поиск" id="search"
                                        onkeyup="search()">
 
@@ -70,11 +83,17 @@
                                 <select id="role-filter" onchange="role_filter(this)" class="form-control">
                                     <option value="all" {% if not role %}selected{% endif %}>Все</option>
                                     {% if user.role != "head_teacher" %}
-                                        <option value="director" {% if role == "director"%}selected{% endif %}>Директор</option>
+                                        <option value="director" {% if role == "director" %}selected{% endif %}>
+                                            Директор
+                                        </option>
                                     {% endif %}
-                                    <option value="teacher" {% if role  == "teacher"%}selected{% endif %}>Учителя</option>
-                                    <option value="student" {% if role  == "student"%}selected{% endif %}>Ученики</option>
-                                    <option value="methodist" {% if role  == "methodist" %}selected{% endif %}>Методисты</option>
+                                    <option value="teacher" {% if role  == "teacher" %}selected{% endif %}>Учителя
+                                    </option>
+                                    <option value="student" {% if role  == "student" %}selected{% endif %}>Ученики
+                                    </option>
+                                    <option value="methodist" {% if role  == "methodist" %}selected{% endif %}>
+                                        Методисты
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-sm">
@@ -100,7 +119,7 @@
                         <thead>
                         <tr>
                             <th scope="col">ФИО</th>
-                            <th scope="col">Почта</th>
+                            <th scope="col" class="email-address">Почта</th>
                             <th scope="col">Роль</th>
                             <th scope="col">Действия</th>
                         </tr>
@@ -114,27 +133,45 @@
                                          style="width: 40px; height: 40px;">
                                     {{ table_user.full_name }}
                                 </td>
-                                <td>{{ table_user.email }}</td>
+                                <td class="email-address">{{ table_user.email }}</td>
                                 <td>{% if table_user.get_role_display %}{{ table_user.get_role_display }}{% else %}
                                     Гость{% endif %}</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                            data-target="#exampleModal"
-                                            onclick="open_user_detail({{ table_user.pk }})">
-                                        <i class="fa fa-eye"></i>
-                                    </button>
-                                    <a class="btn btn-primary" href="/lk/users/{{ table_user.id }}/edit"><i
-                                            class="fa fa-user-edit"></i></a>
-                                    {% if user.is_superuser %}
-                                        <a href="/lk/users/{{ table_user.id }}/login" class="btn btn-primary"><i class="fa fa-right-to-bracket"></i></a>
-                                    {% endif %}
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary" type="button"
+                                                id="dropdownMenuButton1" data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                            <i class="fa-solid fa-caret-down"></i>
+                                            <span class="dropdownMenuButtonText">
+                                                Действия</span>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                            <li>
 
-                                    {% if user.role != "head_teacher" %}
-                                        {% if table_user.pk != user.pk %}
-                                            <a class="btn btn-danger" href="/lk/users/{{ table_user.id }}/delete"><i
-                                                    class="fa fa-trash"></i></a>
-                                        {% endif %}
-                                    {% endif %}
+                                                <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                                        data-bs-target="#exampleModal"
+                                                        onclick="open_user_detail({{ table_user.pk }})">
+                                                    Подробнее
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="/lk/users/{{ table_user.id }}/edit">Изменить</a>
+                                            </li>
+                                            {% if user.is_superuser %}
+                                                <li>
+                                                    <a href="/lk/users/{{ table_user.id }}/login"
+                                                       class="dropdown-item">Войти</a>
+                                                </li>
+                                            {% endif %}
+
+                                            {% if user.role != "head_teacher" %}
+                                                {% if table_user.pk != user.pk %}
+                                                    <li><a class="dropdown-item"
+                                                           href="/lk/users/{{ table_user.id }}/delete">Удалить</a></li>
+                                                {% endif %}
+                                            {% endif %}
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -143,11 +180,14 @@
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-center">
                             <li class="page-item {% if not users.has_previous %}disabled{% endif %}">
-                                <a class="page-link" href="?page={% if users.has_previous %}{{ users.previous_page_number }}{% endif %}" tabindex="-1">&laquo;</a>
+                                <a class="page-link"
+                                   href="?page={% if users.has_previous %}{{ users.previous_page_number }}{% endif %}"
+                                   tabindex="-1">&laquo;</a>
                             </li>
                             <li class="page-item"><a class="page-link" href="#">{{ users.number }}</a></li>
                             <li class="page-item {% if not users.has_next %}disabled{% endif %}">
-                                <a class="page-link" href="?page={% if users.has_next %}{{ users.next_page_number }}{% endif %}">&raquo;</a>
+                                <a class="page-link" href="?page=
+                                        {% if users.has_next %}{{ users.next_page_number }}{% endif %}">&raquo;</a>
                             </li>
                         </ul>
                     </nav>
@@ -156,7 +196,7 @@
         </div>
     </div>
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
-         aria-labelledby="exampleModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -249,13 +289,12 @@
         const users = document.querySelectorAll(".user-row")
 
         function role_filter(e) {
-            if (e.value==="all") {
+            if (e.value === "all") {
                 window.location.href = `http://${window.location.host}/lk/users/list?page={{ users.number }}`
+            } else {
+                window.location.href = `http://${window.location.host}/lk/users/list?role=${e.value}&page={{ users.number }}`
             }
-            else{
-            window.location.href = `http://${window.location.host}/lk/users/list?role=${e.value}&page={{ users.number }}`
-            }
-                //users.forEach((elem) => {
+            //users.forEach((elem) => {
             //    if (e.value === "all") {
             //        elem.style.display = ""
             //    } else {
@@ -269,7 +308,7 @@
         }
 
 
-
     </script>
     <script src="{% static 'js/search.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
 {% endblock content %}

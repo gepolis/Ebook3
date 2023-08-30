@@ -92,13 +92,9 @@
                             <a href="/lk/building/add/" class="dropdown-item">Добавить</a>
                         </div>
                     </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle {% if section == "classrooms" %}active{% endif %}"
-                           data-bs-toggle="dropdown"><i class="fas fa-chalkboard-teacher me-2"></i>Классы</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="/lk/classrooms/" class="dropdown-item">Список</a>
-                        </div>
-                    </div>
+                    <a href="/lk/classrooms/"
+                       class="nav-item nav-link {% if section == "classrooms" %}active{% endif %}"><i
+                            class="fas fa-chalkboard-teacher me-2"></i>Классы</a>
 
                 {% elif user.role == "methodist" %}
                     <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i
@@ -118,7 +114,6 @@
                     <a href="/lk/" class="nav-item nav-link {% if section == "index" %}active{% endif %}"><i
                             class="fa fa-home me-2"></i>Главная</a>
                     {% if user.has_classroom %}
-
                         <div class="nav-item dropdown ">
                             <a href="#"
                                class="nav-link dropdown-toggle {% if section == "classroom" %}active{% endif %}"
@@ -178,47 +173,47 @@
                     {% block sidebar %}
                     {% endblock sidebar %}
                 {% endif %}
-                <a href="/lk/chat/" class="nav-item nav-link {% if section == "chat" %}active{% endif %}"><i
-                        class="fas fa-paper-plane me-2"></i>Чат</a>
-            </div>
-        </nav>
+            <a href="/lk/chat/" class="nav-item nav-link {% if section == "chat" %}active{% endif %}"><i
+                    class="fas fa-paper-plane me-2"></i>Чат</a>
     </div>
-    <!-- Sidebar End -->
+    </nav>
+</div>
+<!-- Sidebar End -->
 
 
-    <!-- Content Start -->
-    <div class="content">
-        <!-- Navbar Start -->
-        {% include 'inc/admin_menu.html' %}
-        <!-- Navbar End -->
-        <div class="container-fluid pt-4 px-4">
-            {% if messages %}
-                <ul class="messagelist">
-                    {% for message in messages %}
-                        {% if message.tags == "error" %}
-                            <div class="alert alert-danger" role="alert">{{ message.message }}</div>
-                        {% else %}
-                            <div class="alert alert-{{ message.tags }}" role="alert">{{ message.message }}</div>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
-        {% block content %}
-
-        {% endblock content %}
-
-
-        <!-- Footer Start -->
-        <!-- Footer End -->
+<!-- Content Start -->
+<div class="content">
+    <!-- Navbar Start -->
+    {% include 'inc/admin_menu.html' %}
+    <!-- Navbar End -->
+    <div class="container-fluid pt-4 px-4">
+        {% if messages %}
+            <ul class="messagelist">
+                {% for message in messages %}
+                    {% if message.tags == "error" %}
+                        <div class="alert alert-danger" role="alert">{{ message.message }}</div>
+                    {% else %}
+                        <div class="alert alert-{{ message.tags }}" role="alert">{{ message.message }}</div>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
-    <!-- Content End -->
+    {% block content %}
+
+    {% endblock content %}
 
 
-    <!-- Back to Top -->
+    <!-- Footer Start -->
+    <!-- Footer End -->
+</div>
+<!-- Content End -->
 
 
-    <!--<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>-->
+<!-- Back to Top -->
+
+
+<!--<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>-->
 </div>
 
 
@@ -285,7 +280,7 @@
         })
 
     </script>
-    <script defer>
+    <!--<script defer>
         fetch(`${window.location.protocol}//${window.location.host}/user_activity/`).then(data => data.json()).then(data => {
             console.log(data)
             if (data.code == 3) {
@@ -339,7 +334,7 @@
         let r = showWelcomeScreen()
         console.log(r)
 
-    </script>
+    </script>-->
 {% endblock js %}
 
 </body>
