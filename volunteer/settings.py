@@ -8,12 +8,12 @@ SECRET_KEY = '!DqvOUY=kWjhkaNi2m~Jb12,)=66b=E65jISNn-9s{i5YxUU]9LKvbW;iDso2OmXp-
 ALLOWED_HOSTS = ["*"]
 
 BUILDINGS_PARALELS = {
-    1: ["М", "Л", "Н"],
+    1: ["М", "Л"],
     2: ["А", "Б", "В"],
-    3: ["Е", "", ""],
+    3: ["Д" "Е", "Р"],
     4: ["З", "И", "К", "С"],
-    5: ["", "", ""],
-    6: ["", "", ""]
+    5: ["Г", "Ю"],
+    6: ["Н", "О"]
 }
 
 DEBUG = True
