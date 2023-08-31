@@ -24,4 +24,5 @@ def feedback(request):
         }
         r = requests.post("https://discord.com/api/v8/channels/1146777719917531156/messages",
                             headers=headers, data={"content": f"Запрос, от {name}\n\nТел: {phone}\nПочта: {email}\n\n{message}"})
+        print(r.json())
         return redirect("/")
