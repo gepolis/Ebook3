@@ -21,6 +21,6 @@ def feedback(request):
                     "Authorization": "Bot MTE0NTQ3MTMwMDcwMjMyNjkzNw.GQSnnl.SJt9a0Ul8kxCZVvnBgnXcdV3EcsS4tfnM_WnQU",
                     "content-encoding": "utf-8",
         }
-        r = requests.post("https://discord.com/api/v8/channels/1145459123270459513/messages",
+        r = requests.post("https://discord.com/api/v8/channels/1146777719917531156/messages",
                             headers=headers, data={"content": f"Запрос, от {name}\n\nТел: {phone}\nПочта: {email}\n\n{message}"})
         return redirect("/")
