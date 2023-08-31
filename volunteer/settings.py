@@ -7,6 +7,15 @@ SECRET_KEY = '!DqvOUY=kWjhkaNi2m~Jb12,)=66b=E65jISNn-9s{i5YxUU]9LKvbW;iDso2OmXp-
 
 ALLOWED_HOSTS = ["*"]
 
+BUILDINGS_PARALELS = {
+    1: ["", "", ""],
+    2: ["", "", ""],
+    3: ["", "", ""],
+    4: ["", "", ""],
+    5: ["", "", ""],
+    6: ["", "", ""]
+}
+
 DEBUG = True
 SERV = True
 if os.getenv("SERV") is None:
