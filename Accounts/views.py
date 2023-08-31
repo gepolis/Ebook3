@@ -119,7 +119,7 @@ def mos_ru_login(request, token):
                 classroom_number, classroom_paralell = user.class_name.split("-")
                 building = None
                 for key, value in settings.BUILDINGS_PARALELS.items():
-                    print(key, value)
+                    print(key, type(value))
                     if value in classroom_paralell:
                         auth_user.building = Building.objects.get(pk=key)
                     
