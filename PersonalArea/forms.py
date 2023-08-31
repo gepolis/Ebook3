@@ -299,8 +299,8 @@ class EventAddFormHeadTeacher(forms.ModelForm):
 
 
 class LinkingMosruForm(forms.Form):
-    login = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    login = forms.CharField(label="Логин mos.ru")
+    password = forms.CharField(widget=forms.PasswordInput, label="Пароль mos.ru")
     class Meta:
         model = Events
 
