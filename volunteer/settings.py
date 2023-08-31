@@ -18,10 +18,6 @@ BUILDINGS_PARALELS = {
 
 DEBUG = True
 SERV = True
-if os.getenv("SERV") is None:
-    SERV = False
-if os.getenv("DEBUG") is None:
-    DEBUG = False
 
 LOGIN_URL = "/auth/"
 LOGOUT_REDIRECT_URL = None
