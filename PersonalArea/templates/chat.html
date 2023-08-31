@@ -126,7 +126,7 @@
         var roomName = '{{ room }}'; // Имя комнаты чата
 
         var socket = new WebSocket(
-            'ws://' + window.location.host +
+            'wss://' + window.location.host +
             '/ws/' + roomName + '/'
         );
 
