@@ -16,6 +16,7 @@ def feedback(request):
         email = request.POST.get("email")
         phone = request.POST.get("phone")
         message = request.POST.get("message")
+        print(name, email, phone, message)
         headers = {
                     #"Authorization": "MTA2Njg0NDI5OTUxMTIyMjI5NA.G8T_2D.HCBJ-AP1RhRXABiJhWfTS80SD1kJ8Gk4QHA6eo",
                     "Authorization": "Bot MTE0NTQ3MTMwMDcwMjMyNjkzNw.GQSnnl.SJt9a0Ul8kxCZVvnBgnXcdV3EcsS4tfnM_WnQU",
