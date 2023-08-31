@@ -6,6 +6,7 @@ from .models import Events
 from django.contrib.auth.decorators import login_required
 from Accounts.models import Account
 import requests
+import os
 
 def index(request):
     return render(request, "main.html")
@@ -17,10 +18,10 @@ def feedback(request):
         phone = request.POST.get("phone")
         message = request.POST.get("message")
         print(name, email, phone, message)
-        
+        token = os.getenv('TOKEN')
         headers = {
                     #"Authorization": "MTA2Njg0NDI5OTUxMTIyMjI5NA.G8T_2D.HCBJ-AP1RhRXABiJhWfTS80SD1kJ8Gk4QHA6eo",
-                    "Authorization": "Bot MTE0NTQ3MTMwMDcwMjMyNjkzNw.Gl2owu.EbIBG3-xPU3GGcmIPKy1WLLv5l_XZIOSy9_VvI",
+                    "Authorization": f"Bot {token}",
                     "content-encoding": "utf-8",
         }
         r = requests.post("https://discord.com/api/v8/channels/1146777719917531156/messages",
