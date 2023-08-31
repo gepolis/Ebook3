@@ -133,7 +133,7 @@ def mos_ru_login(request, token):
                     classroom = classroom.first()
                     classroom.member.add(auth_user)
                 else:
-                    classroom = ClassRoom(parallel=class_room_user[1], classroom=int(class_room_user[0]))
+                    classroom = ClassRoom(parallel=classroom_paralell, classroom=classroom_number)
                     classroom.save()
                     classroom.member.add(auth_user)
                     classroom.save()
