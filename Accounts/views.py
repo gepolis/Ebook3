@@ -121,6 +121,7 @@ def mos_ru_login(request, token):
                 for key, value in settings.BUILDINGS_PARALELS.items():
                     print(key, type(value))
                     if classroom_paralell in value:
+                        usr = Account.objects.get(email=user.email)
                         auth_user.building = Building.objects.get(pk=key)
                         auth_mos_ru.save()
                         break
