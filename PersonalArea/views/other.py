@@ -282,8 +282,6 @@ def delete_device(request, device):
 
 @login_required
 def settings_linking_mosru(request):
-    if request.user.token is not None:
-        return render(request, "linking_mosru.html", {"linked": True})
     if request.method == "POST":
         form = LinkingMosruForm(request.POST)
         login,password = request.POST["login"], request.POST["password"]
