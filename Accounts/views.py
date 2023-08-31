@@ -9,8 +9,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.conf import settings
 from django.utils import timezone
-
 from .models import Account
 from .forms import *
 from .models import *
@@ -116,9 +116,16 @@ def mos_ru_login(request, token):
             login(request, auth_user)
 
             if user.type == "student":
-                class_room_user = user.class_name.split("-")
-                classroom = ClassRoom.objects.all().filter(parallel=class_room_user[1],
-                                                           classroom=int(class_room_user[0]))
+                classroom_number, classroom_paralell = user.class_name.split("-")
+                building = None
+                for key, value in settings.BUILDINGS_PARALELS.items():
+                    if value in classroom_paralell:
+                        auth_user.building = Building.objects.get(pk=key)
+                    
+                classroom_number = int(classroom_number)
+
+                classroom = ClassRoom.objects.all().filter(parallel=classroom_paralell,
+                                                           classroom=classroom_number)
                 if classroom.exists():
                     classroom = classroom.first()
                     classroom.member.add(auth_user)
