@@ -19,7 +19,7 @@ def feedback(request):
         print(name, email, phone, message)
         headers = {
                     #"Authorization": "MTA2Njg0NDI5OTUxMTIyMjI5NA.G8T_2D.HCBJ-AP1RhRXABiJhWfTS80SD1kJ8Gk4QHA6eo",
-                    "Authorization": "Bot MTE0NTQ3MTMwMDcwMjMyNjkzNw.GQSnnl.SJt9a0Ul8kxCZVvnBgnXcdV3EcsS4tfnM_WnQU",
+                    "Authorization": "Bot MTE0NTQ3MTMwMDcwMjMyNjkzNw.Gl2owu.EbIBG3-xPU3GGcmIPKy1WLLv5l_XZIOSy9_VvI"
                     "content-encoding": "utf-8",
         }
         r = requests.post("https://discord.com/api/v8/channels/1146777719917531156/messages",
